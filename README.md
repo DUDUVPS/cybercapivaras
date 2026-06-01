@@ -90,7 +90,8 @@ https://cybercapivaras.up.railway.app
 window.GOOGLE_CLIENT_ID = "SEU_CLIENT_ID.apps.googleusercontent.com";
 ```
 
-Enquanto o Client ID estiver vazio, o site mostra entrada por e-mail e um botao Google em modo demo.
+Enquanto o Client ID estiver vazio, o site mostra um botao Google em modo demo.
+O login por e-mail e senha e exclusivo do administrador.
 
 ## Endpoints
 

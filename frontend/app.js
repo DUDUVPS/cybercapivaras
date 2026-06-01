@@ -429,14 +429,19 @@ function setupLogin() {
     event.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
 
-    if (!data.email) {
-      status.textContent = "Informe seu e-mail.";
+    if (!data.email || !data.password) {
+      status.textContent = "Informe e-mail e senha do administrador.";
+      return;
+    }
+
+    if (data.email !== "admin@cybercapivaras.com" || data.password !== "admin123") {
+      status.textContent = "Credenciais de administrador invalidas.";
       return;
     }
 
     applySession({
-      name: data.email.split("@")[0],
-      email: data.email,
+      name: "Administrador",
+      email: "admin@cybercapivaras.com",
       picture: "",
     });
   });

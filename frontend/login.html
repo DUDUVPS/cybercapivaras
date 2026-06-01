@@ -21,10 +21,14 @@
             <span>G</span>
             Entrar com Google
           </button>
-          <div class="login-divider"><span>ou</span></div>
+          <div class="login-divider"><span>admin</span></div>
           <label>
-            Entrar com e-mail
-            <input type="email" name="email" placeholder="seuemail@gmail.com" required />
+            E-mail do administrador
+            <input type="email" name="email" placeholder="admin@cybercapivaras.com" />
+          </label>
+          <label>
+            Senha do administrador
+            <input type="password" name="password" placeholder="Digite a senha do admin" />
           </label>
           <div class="form-row">
             <label class="check-label">
@@ -33,9 +37,9 @@
             </label>
             <a href="index.html">Voltar ao site</a>
           </div>
-          <button class="btn btn-primary full" type="submit">Entrar com e-mail</button>
+          <button class="btn btn-primary full" type="submit">Entrar como admin</button>
           <p class="login-help">
-            Quando o Google estiver configurado, o botao oficial aparece acima. O e-mail usa a funcao definida pelo admin.
+            E-mail e senha sao exclusivos do administrador. Demais usuarios entram com Google.
           </p>
           <p class="form-status" id="loginStatus" role="status"></p>
         </form>
