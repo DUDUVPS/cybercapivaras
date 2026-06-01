@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const { checkDatabase, hasDatabase, initDatabase, saveContact } = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,35 +11,68 @@ app.use(express.json());
 
 app.get("/", (req, res) => {
   res.json({
-    name: "RoboTech API",
+    name: "Cybercapivaras API",
     status: "online",
+    database: hasDatabase() ? "configured" : "not configured",
     endpoints: ["/api/health", "/api/contact"],
   });
 });
 
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok" });
+app.get("/api/health", async (req, res) => {
+  try {
+    const database = await checkDatabase();
+    res.json({ status: "ok", database });
+  } catch (error) {
+    res.status(503).json({
+      status: "degraded",
+      database: { configured: true, connected: false },
+      error: "Banco de dados indisponivel.",
+    });
+  }
 });
 
-app.post("/api/contact", (req, res) => {
+app.post("/api/contact", async (req, res) => {
   const { name, email, message } = req.body;
 
   if (!name || !email || !message) {
     return res.status(400).json({ error: "Preencha nome, e-mail e mensagem." });
   }
 
-  console.log("Nova mensagem recebida:", {
-    name,
-    email,
-    message,
-    receivedAt: new Date().toISOString(),
-  });
+  try {
+    const contactId = await saveContact({ name, email, message });
 
-  return res.status(201).json({
-    message: "Mensagem enviada com sucesso! O time entrará em contato em breve.",
-  });
+    if (!contactId) {
+      console.log("Nova mensagem recebida sem banco configurado:", {
+        name,
+        email,
+        message,
+        receivedAt: new Date().toISOString(),
+      });
+    }
+
+    return res.status(201).json({
+      id: contactId,
+      message: "Mensagem enviada com sucesso! O time entrara em contato em breve.",
+    });
+  } catch (error) {
+    console.error("Erro ao salvar contato:", error);
+
+    return res.status(500).json({
+      error: "Nao foi possivel salvar a mensagem agora.",
+    });
+  }
 });
 
-app.listen(PORT, () => {
-  console.log(`RoboTech API rodando na porta ${PORT}`);
-});
+async function startServer() {
+  try {
+    await initDatabase();
+  } catch (error) {
+    console.error("Banco configurado, mas nao foi possivel inicializar:", error.message);
+  }
+
+  app.listen(PORT, () => {
+    console.log(`Cybercapivaras API rodando na porta ${PORT}`);
+  });
+}
+
+startServer();

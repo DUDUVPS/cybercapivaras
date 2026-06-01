@@ -59,6 +59,18 @@ npm start
 
 7. Adicione a variável `ALLOWED_ORIGIN` com o endereço do frontend em produção.
 
+## MySQL no Railway
+
+1. No projeto do Railway, clique em `+ New`.
+2. Escolha `Database` e depois `MySQL`.
+3. No serviço do backend, adicione a variável:
+
+```text
+MYSQL_URL=${{MySQL.MYSQL_URL}}
+```
+
+O backend cria automaticamente a tabela `contacts` quando iniciar.
+
 ## Endpoints
 
 ```text
