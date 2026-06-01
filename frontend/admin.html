@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin | Cyber Capivaras</title>
+    <link rel="icon" type="image/png" href="imgs/apple-touch-icon.png" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-protected="true" data-required-role="admin">
+    <header class="topbar">
+      <a class="brand" href="index.html">
+        <img src="imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png" alt="Logo Cyber Capivaras" />
+        <span>Cyber Capivaras</span>
+      </a>
+      <nav class="nav-links open-desktop" aria-label="Menu admin">
+        <a class="active" href="admin.html">Admin</a>
+        <a href="area-equipe.html">Area da equipe</a>
+        <a href="equipe.html">Equipe publica</a>
+        <a href="mais.html">Contato</a>
+      </nav>
+      <button class="login-link logout-button" type="button" id="logoutButton">Sair</button>
+    </header>
+
+    <main>
+      <section class="page-hero compact">
+        <p class="kicker">Painel administrativo</p>
+        <h1>Controle geral Cyber Capivaras</h1>
+        <p>Administra conteudo do site, equipe, hierarquia, projetos, avisos e status do backend.</p>
+      </section>
+
+      <section class="section dashboard-grid">
+        <article class="dashboard-card">
+          <span class="card-number">ADM</span>
+          <h3>Acesso total</h3>
+          <p>Permissao para gerenciar site, membros, robos, conquistas e mural interno.</p>
+        </article>
+        <article class="dashboard-card">
+          <span class="card-number">10</span>
+          <h3>Membros cadastrados</h3>
+          <p>Organizados por area, funcao e nivel de permissao.</p>
+        </article>
+        <article class="dashboard-card">
+          <span class="card-number" id="apiState">...</span>
+          <h3>Railway + MySQL</h3>
+          <p id="apiStateText">Verificando conexao com API e banco.</p>
+        </article>
+      </section>
+
+      <section class="section admin-grid">
+        <article class="dashboard-card">
+          <p class="kicker">Conteudo do site</p>
+          <h2>Publicacao rapida</h2>
+          <form class="admin-form">
+            <label>Titulo <input type="text" value="Novo teste do robo seguidor" /></label>
+            <label>Tipo
+              <select>
+                <option>Noticia</option>
+                <option>Conquista</option>
+                <option>Projeto</option>
+                <option>Aviso interno</option>
+              </select>
+            </label>
+            <label>Resumo <textarea rows="4">Equipe realizou ajustes de sensores e calibracao de motores.</textarea></label>
+            <button class="btn btn-primary" type="button">Salvar rascunho</button>
+          </form>
+        </article>
+
+        <article class="dashboard-card">
+          <p class="kicker">Controle</p>
+          <h2>Permissoes do sistema</h2>
+          <div class="permission-list">
+            <article><strong>Admin</strong><span>Tudo: site, equipe, projetos, contatos e permissoes</span></article>
+            <article><strong>Capitao</strong><span>Projetos, agenda, tarefas e comunicados</span></article>
+            <article><strong>Lider tecnico</strong><span>Robos, testes, tecnologias e documentacao tecnica</span></article>
+            <article><strong>Membro</strong><span>Visualiza tarefas, envia atualizacoes e acompanha agenda</span></article>
+          </div>
+        </article>
+      </section>
+
+      <section class="section dark">
+        <div class="section-title">
+          <p class="kicker">Hierarquia</p>
+          <h2>Equipe por funcao</h2>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Funcao</th>
+                <th>Nivel</th>
+                <th>Permissao</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="hierarchyTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section admin-grid">
+        <article class="dashboard-card">
+          <p class="kicker">Usuarios Google</p>
+          <h2>Definir funcao de cada usuario</h2>
+          <form class="admin-form" id="userRoleForm">
+            <label>Nome do usuario <input type="text" name="name" placeholder="Nome completo" required /></label>
+            <label>E-mail Google <input type="email" name="email" placeholder="usuario@gmail.com" required /></label>
+            <label>Funcao
+              <select name="role" required>
+                <option value="Administrador">Administrador</option>
+                <option value="Capitao">Capitao</option>
+                <option value="Lider tecnico">Lider tecnico</option>
+                <option value="Programacao">Programacao</option>
+                <option value="Hardware">Hardware</option>
+                <option value="Mecanica">Mecanica</option>
+                <option value="Design 3D">Design 3D</option>
+                <option value="Documentacao">Documentacao</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Membro">Membro</option>
+              </select>
+            </label>
+            <button class="btn btn-primary" type="submit">Salvar funcao</button>
+            <p class="form-status" id="userRoleStatus" role="status"></p>
+          </form>
+        </article>
+        <article class="dashboard-card">
+          <p class="kicker">Mapa de acesso</p>
+          <h2>Regras atuais</h2>
+          <div class="permission-list" id="userRoleList"></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

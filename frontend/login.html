@@ -14,16 +14,13 @@
       </a>
       <section class="login-box">
         <h1>Bem-vindo</h1>
-        <p>Acesso da equipe Cyber Capivaras</p>
+        <p>Acesso exclusivo com conta Google da equipe Cyber Capivaras</p>
         <form id="loginForm" class="login-form">
-          <label>
-            E-mail
-            <input type="email" name="email" placeholder="seuemail@ifgoiano.edu.br" required />
-          </label>
-          <label>
-            Senha
-            <input type="password" name="password" placeholder="Digite sua senha" required />
-          </label>
+          <div id="googleSignIn" class="google-signin-slot"></div>
+          <button class="google-demo-button" id="googleDemoButton" type="button">
+            <span>G</span>
+            Entrar com Google
+          </button>
           <div class="form-row">
             <label class="check-label">
               <input type="checkbox" name="remember" />
@@ -31,12 +28,15 @@
             </label>
             <a href="index.html">Voltar ao site</a>
           </div>
-          <button class="btn btn-primary full" type="submit">Entrar</button>
+          <p class="login-help">
+            O login oficial usa Google. Enquanto o Client ID nao estiver configurado, este botao simula a entrada para desenvolvimento.
+          </p>
           <p class="form-status" id="loginStatus" role="status"></p>
         </form>
       </section>
     </main>
 
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="app.js"></script>
   </body>
 </html>
