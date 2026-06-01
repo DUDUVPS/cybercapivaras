@@ -30,9 +30,9 @@
     <main>
       <section class="hero home-hero">
         <div class="hero-copy">
-          <p class="kicker">IF Goiano - Campus Campos Belos</p>
-          <h1>Cyber Capivaras</h1>
-          <p>
+          <p class="kicker" data-site-field="heroKicker">IF Goiano - Campus Campos Belos</p>
+          <h1 data-site-field="heroTitle">Cyber Capivaras</h1>
+          <p data-site-field="heroText">
             Inovacao, tecnologia e trabalho em equipe para transformar ideias em robos, projetos
             e solucoes reais.
           </p>
@@ -54,43 +54,18 @@
       <section class="section dark">
         <div class="section-title">
           <p class="kicker">Ultimas noticias</p>
-          <h2>O time em movimento</h2>
+          <h2 data-site-field="newsTitle">O time em movimento</h2>
         </div>
-        <div class="news-grid">
-          <article class="post-card">
-            <img src="imgs/post-1-fab.jpg" alt="Processo seletivo Cyber Capivaras" />
-            <div>
-              <span>Cyber Capivaras - 2025</span>
-              <h3>Processo Seletivo 2025</h3>
-              <p>Resultado final e novos integrantes para fortalecer a equipe de robotica.</p>
-            </div>
-          </article>
-          <article class="post-card">
-            <img src="imgs/fotos/ft-naju.png" alt="Integrante da equipe" />
-            <div>
-              <span>Equipe</span>
-              <h3>Treinamento tecnico</h3>
-              <p>Rotina de estudos em programacao, hardware, mecanica e documentacao.</p>
-            </div>
-          </article>
-          <article class="post-card">
-            <img src="imgs/20250618_104600.jpg" alt="Projeto de robotica" />
-            <div>
-              <span>Projetos</span>
-              <h3>Prototipos em teste</h3>
-              <p>Novos testes de sensores, motores e controle para competicoes.</p>
-            </div>
-          </article>
-        </div>
+        <div class="news-grid" id="homeNewsGrid"></div>
       </section>
 
       <section class="section split">
         <div>
           <p class="kicker">Sobre nos</p>
-          <h2>Robos, conhecimento e protagonismo estudantil</h2>
+          <h2 data-site-field="aboutTitle">Robos, conhecimento e protagonismo estudantil</h2>
         </div>
         <div class="text-panel">
-          <p>
+          <p data-site-field="aboutText">
             Somos o Cyber Capivaras, time de robotica oficial do IF Goiano - Campus Campos Belos.
             Nascemos da paixao por tecnologia, inovacao e trabalho em equipe.
           </p>
@@ -106,28 +81,7 @@
           <p class="kicker">Frentes do time</p>
           <h2>Como a Cyber Capivaras trabalha</h2>
         </div>
-        <div class="focus-grid">
-          <article>
-            <span>01</span>
-            <h3>Software</h3>
-            <p>Logica, sensores, automacao, testes de percurso e integracao com os robos.</p>
-          </article>
-          <article>
-            <span>02</span>
-            <h3>Hardware</h3>
-            <p>Montagem de circuitos, motores, alimentacao, placas e manutencao dos prototipos.</p>
-          </article>
-          <article>
-            <span>03</span>
-            <h3>Mecanica</h3>
-            <p>Estrutura, chassi, impressao 3D, fixacao de pecas e melhorias de desempenho.</p>
-          </article>
-          <article>
-            <span>04</span>
-            <h3>Comunicacao</h3>
-            <p>Documentacao, fotos, redes sociais, apresentacoes e registro das conquistas.</p>
-          </article>
-        </div>
+        <div class="focus-grid" id="homeFocusGrid"></div>
       </section>
     </main>
 

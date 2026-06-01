@@ -150,6 +150,72 @@ const defaultUserRoles = {
   },
 };
 
+const defaultSiteContent = {
+  heroKicker: "IF Goiano - Campus Campos Belos",
+  heroTitle: "Cyber Capivaras",
+  heroText: "Inovacao, tecnologia e trabalho em equipe para transformar ideias em robos, projetos e solucoes reais.",
+  newsTitle: "O time em movimento",
+  aboutTitle: "Robos, conhecimento e protagonismo estudantil",
+  aboutText:
+    "Somos o Cyber Capivaras, time de robotica oficial do IF Goiano - Campus Campos Belos. Nascemos da paixao por tecnologia, inovacao e trabalho em equipe.",
+  news: [
+    {
+      label: "Cyber Capivaras - 2025",
+      title: "Processo Seletivo 2025",
+      text: "Resultado final e novos integrantes para fortalecer a equipe de robotica.",
+      image: "imgs/post-1-fab.jpg",
+    },
+    {
+      label: "Equipe",
+      title: "Treinamento tecnico",
+      text: "Rotina de estudos em programacao, hardware, mecanica e documentacao.",
+      image: "imgs/fotos/ft-naju.png",
+    },
+    {
+      label: "Projetos",
+      title: "Prototipos em teste",
+      text: "Novos testes de sensores, motores e controle para competicoes.",
+      image: "imgs/20250618_104600.jpg",
+    },
+  ],
+  focus: [
+    {
+      number: "01",
+      title: "Software",
+      text: "Logica, sensores, automacao, testes de percurso e integracao com os robos.",
+    },
+    {
+      number: "02",
+      title: "Hardware",
+      text: "Montagem de circuitos, motores, alimentacao, placas e manutencao dos prototipos.",
+    },
+    {
+      number: "03",
+      title: "Mecanica",
+      text: "Estrutura, chassi, impressao 3D, fixacao de pecas e melhorias de desempenho.",
+    },
+    {
+      number: "04",
+      title: "Comunicacao",
+      text: "Documentacao, fotos, redes sociais, apresentacoes e registro das conquistas.",
+    },
+  ],
+};
+
+function getSiteContent() {
+  const saved = localStorage.getItem("cybercapivaras_site_content");
+
+  if (!saved) {
+    return defaultSiteContent;
+  }
+
+  return { ...defaultSiteContent, ...JSON.parse(saved) };
+}
+
+function saveSiteContent(content) {
+  localStorage.setItem("cybercapivaras_site_content", JSON.stringify(content));
+}
+
 function getUserRoles() {
   const saved = localStorage.getItem("cybercapivaras_user_roles");
 
@@ -192,6 +258,49 @@ function setupMenu() {
     const isOpen = nav.classList.toggle("open");
     button.setAttribute("aria-expanded", String(isOpen));
   });
+}
+
+function renderPublicHome() {
+  const content = getSiteContent();
+
+  document.querySelectorAll("[data-site-field]").forEach((element) => {
+    const field = element.dataset.siteField;
+    element.textContent = content[field] || "";
+  });
+
+  const newsGrid = document.querySelector("#homeNewsGrid");
+  const focusGrid = document.querySelector("#homeFocusGrid");
+
+  if (newsGrid) {
+    newsGrid.innerHTML = content.news
+      .map(
+        (item) => `
+          <article class="post-card">
+            <img src="${item.image}" alt="${item.title}" />
+            <div>
+              <span>${item.label}</span>
+              <h3>${item.title}</h3>
+              <p>${item.text}</p>
+            </div>
+          </article>
+        `
+      )
+      .join("");
+  }
+
+  if (focusGrid) {
+    focusGrid.innerHTML = content.focus
+      .map(
+        (item) => `
+          <article>
+            <span>${item.number}</span>
+            <h3>${item.title}</h3>
+            <p>${item.text}</p>
+          </article>
+        `
+      )
+      .join("");
+  }
 }
 
 function renderMembers() {
@@ -437,6 +546,114 @@ function setupUserRoleAdmin() {
   renderList();
 }
 
+function setupSiteContentAdmin() {
+  const form = document.querySelector("#siteContentForm");
+  const status = document.querySelector("#siteContentStatus");
+  const newsForm = document.querySelector("#newsEditorForm");
+  const newsStatus = document.querySelector("#newsEditorStatus");
+  const focusForm = document.querySelector("#focusEditorForm");
+  const focusStatus = document.querySelector("#focusEditorStatus");
+
+  if (!form || !status || !newsForm || !newsStatus || !focusForm || !focusStatus) {
+    return;
+  }
+
+  const content = getSiteContent();
+
+  Object.keys(defaultSiteContent).forEach((key) => {
+    if (form.elements[key] && typeof content[key] === "string") {
+      form.elements[key].value = content[key];
+    }
+  });
+
+  newsForm.innerHTML = content.news
+    .map(
+      (item, index) => `
+        <fieldset class="editor-fieldset">
+          <legend>Card ${index + 1}</legend>
+          <label>Etiqueta <input type="text" name="news-${index}-label" value="${item.label}" /></label>
+          <label>Titulo <input type="text" name="news-${index}-title" value="${item.title}" /></label>
+          <label>Imagem <input type="text" name="news-${index}-image" value="${item.image}" /></label>
+          <label>Texto <textarea rows="3" name="news-${index}-text">${item.text}</textarea></label>
+        </fieldset>
+      `
+    )
+    .join("");
+
+  focusForm.innerHTML = content.focus
+    .map(
+      (item, index) => `
+        <fieldset class="editor-fieldset">
+          <legend>Area ${index + 1}</legend>
+          <label>Numero <input type="text" name="focus-${index}-number" value="${item.number}" /></label>
+          <label>Titulo <input type="text" name="focus-${index}-title" value="${item.title}" /></label>
+          <label>Texto <textarea rows="3" name="focus-${index}-text">${item.text}</textarea></label>
+        </fieldset>
+      `
+    )
+    .join("");
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    const nextContent = { ...getSiteContent(), ...data };
+
+    saveSiteContent(nextContent);
+    status.textContent = "Pagina principal atualizada.";
+  });
+
+  newsForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+  });
+
+  focusForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+  });
+
+  const saveNews = () => {
+    const data = Object.fromEntries(new FormData(newsForm).entries());
+    const nextContent = getSiteContent();
+
+    nextContent.news = nextContent.news.map((item, index) => ({
+      label: data[`news-${index}-label`],
+      title: data[`news-${index}-title`],
+      image: data[`news-${index}-image`],
+      text: data[`news-${index}-text`],
+    }));
+
+    saveSiteContent(nextContent);
+    newsStatus.textContent = "Noticias da home atualizadas.";
+  };
+
+  const saveFocus = () => {
+    const data = Object.fromEntries(new FormData(focusForm).entries());
+    const nextContent = getSiteContent();
+
+    nextContent.focus = nextContent.focus.map((item, index) => ({
+      number: data[`focus-${index}-number`],
+      title: data[`focus-${index}-title`],
+      text: data[`focus-${index}-text`],
+    }));
+
+    saveSiteContent(nextContent);
+    focusStatus.textContent = "Frentes do time atualizadas.";
+  };
+
+  const newsButton = document.createElement("button");
+  newsButton.className = "btn btn-primary";
+  newsButton.type = "button";
+  newsButton.textContent = "Salvar noticias";
+  newsButton.addEventListener("click", saveNews);
+  newsForm.appendChild(newsButton);
+
+  const focusButton = document.createElement("button");
+  focusButton.className = "btn btn-primary";
+  focusButton.type = "button";
+  focusButton.textContent = "Salvar frentes";
+  focusButton.addEventListener("click", saveFocus);
+  focusForm.appendChild(focusButton);
+}
+
 async function checkApiState() {
   const state = document.querySelector("#apiState");
   const text = document.querySelector("#apiStateText");
@@ -460,6 +677,7 @@ async function checkApiState() {
 
 protectInternalArea();
 setupMenu();
+renderPublicHome();
 renderMembers();
 setupContactForm();
 setupLogin();
@@ -467,4 +685,5 @@ setupLogout();
 renderAccessInfo();
 renderHierarchyTable();
 setupUserRoleAdmin();
+setupSiteContentAdmin();
 checkApiState();

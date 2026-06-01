@@ -48,24 +48,39 @@
       </section>
 
       <section class="section admin-grid">
-        <article class="dashboard-card">
-          <p class="kicker">Conteudo do site</p>
-          <h2>Publicacao rapida</h2>
-          <form class="admin-form">
-            <label>Titulo <input type="text" value="Novo teste do robo seguidor" /></label>
-            <label>Tipo
-              <select>
-                <option>Noticia</option>
-                <option>Conquista</option>
-                <option>Projeto</option>
-                <option>Aviso interno</option>
-              </select>
-            </label>
-            <label>Resumo <textarea rows="4">Equipe realizou ajustes de sensores e calibracao de motores.</textarea></label>
-            <button class="btn btn-primary" type="button">Salvar rascunho</button>
+        <article class="dashboard-card span-2">
+          <p class="kicker">Pagina principal</p>
+          <h2>Editar conteudo publico</h2>
+          <form class="admin-form cms-form" id="siteContentForm">
+            <label>Chamada pequena <input type="text" name="heroKicker" /></label>
+            <label>Titulo principal <input type="text" name="heroTitle" /></label>
+            <label>Texto principal <textarea rows="3" name="heroText"></textarea></label>
+            <label>Titulo das noticias <input type="text" name="newsTitle" /></label>
+            <label>Titulo sobre nos <input type="text" name="aboutTitle" /></label>
+            <label>Texto sobre nos <textarea rows="4" name="aboutText"></textarea></label>
+            <button class="btn btn-primary" type="submit">Salvar pagina principal</button>
+            <p class="form-status" id="siteContentStatus" role="status"></p>
           </form>
         </article>
+      </section>
 
+      <section class="section admin-grid">
+        <article class="dashboard-card">
+          <p class="kicker">Noticias da home</p>
+          <h2>Editar cards</h2>
+          <form class="admin-form" id="newsEditorForm"></form>
+          <p class="form-status" id="newsEditorStatus" role="status"></p>
+        </article>
+
+        <article class="dashboard-card">
+          <p class="kicker">Frentes do time</p>
+          <h2>Editar areas</h2>
+          <form class="admin-form" id="focusEditorForm"></form>
+          <p class="form-status" id="focusEditorStatus" role="status"></p>
+        </article>
+      </section>
+
+      <section class="section admin-grid">
         <article class="dashboard-card">
           <p class="kicker">Controle</p>
           <h2>Permissoes do sistema</h2>
