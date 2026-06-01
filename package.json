@@ -1,0 +1,16 @@
+{
+  "name": "cybercapivaras",
+  "version": "1.0.0",
+  "description": "Site e backend do time de robótica Cybercapivaras.",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.3"
+  }
+}
