@@ -371,10 +371,11 @@ function setupContactForm() {
 }
 
 function setupLogin() {
+  const form = document.querySelector("#loginForm");
   const demoButton = document.querySelector("#googleDemoButton");
   const status = document.querySelector("#loginStatus");
 
-  if (!demoButton) {
+  if (!form || !demoButton) {
     return;
   }
 
@@ -387,7 +388,11 @@ function setupLogin() {
     });
   };
 
-  if (window.google && window.GOOGLE_CLIENT_ID) {
+  const initGoogle = () => {
+    if (!window.google || !window.GOOGLE_CLIENT_ID) {
+      return false;
+    }
+
     window.google.accounts.id.initialize({
       client_id: window.GOOGLE_CLIENT_ID,
       callback: window.handleGoogleCredential,
@@ -397,6 +402,18 @@ function setupLogin() {
       size: "large",
       width: 320,
     });
+    demoButton.style.display = "none";
+    return true;
+  };
+
+  if (!initGoogle()) {
+    let attempts = 0;
+    const timer = window.setInterval(() => {
+      attempts += 1;
+      if (initGoogle() || attempts > 20) {
+        window.clearInterval(timer);
+      }
+    }, 250);
   }
 
   demoButton.addEventListener("click", () => {
@@ -404,6 +421,22 @@ function setupLogin() {
     applySession({
       name: "Administrador",
       email: "admin@cybercapivaras.com",
+      picture: "",
+    });
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    if (!data.email) {
+      status.textContent = "Informe seu e-mail.";
+      return;
+    }
+
+    applySession({
+      name: data.email.split("@")[0],
+      email: data.email,
       picture: "",
     });
   });

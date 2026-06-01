@@ -73,6 +73,25 @@ MYSQL_URL=${{MySQL.MYSQL_URL}}
 
 O backend cria automaticamente a tabela `contacts` quando iniciar.
 
+## Login com Google
+
+O frontend usa Google Identity Services. Para ativar o botao real do Google:
+
+1. Crie um OAuth Client ID do tipo `Web application` no Google Cloud.
+2. Adicione a origem autorizada:
+
+```text
+https://cybercapivaras.up.railway.app
+```
+
+3. Copie o Client ID e coloque em `frontend/config.js`:
+
+```js
+window.GOOGLE_CLIENT_ID = "SEU_CLIENT_ID.apps.googleusercontent.com";
+```
+
+Enquanto o Client ID estiver vazio, o site mostra entrada por e-mail e um botao Google em modo demo.
+
 ## Endpoints
 
 ```text
