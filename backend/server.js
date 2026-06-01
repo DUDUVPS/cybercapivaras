@@ -1,15 +1,18 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const { checkDatabase, hasDatabase, initDatabase, saveContact } = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const allowedOrigin = process.env.ALLOWED_ORIGIN || "*";
+const frontendPath = path.join(__dirname, "..", "frontend");
 
 app.use(cors({ origin: allowedOrigin }));
 app.use(express.json());
+app.use(express.static(frontendPath));
 
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res.json({
     name: "Cybercapivaras API",
     status: "online",
@@ -61,6 +64,10 @@ app.post("/api/contact", async (req, res) => {
       error: "Nao foi possivel salvar a mensagem agora.",
     });
   }
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 async function startServer() {

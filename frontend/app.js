@@ -1,4 +1,4 @@
-const API_URL = "https://cybercapivaras.up.railway.app";
+const API_URL = window.location.origin;
 
 const team = [
   {

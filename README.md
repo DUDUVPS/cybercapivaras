@@ -22,6 +22,8 @@ robotica-site/
 
 Abra o arquivo `frontend/index.html` no navegador.
 
+No Railway, o backend também serve o frontend automaticamente. A URL pública do serviço abre o site, e as rotas `/api/*` continuam funcionando como API.
+
 ## Como rodar o backend localmente
 
 ```bash
