@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Site moderno para um time de robótica, com projetos, integrantes, competições, galeria e contato."
+    />
+    <title>RoboTech | Time de Robótica</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#inicio" aria-label="Ir para o início">
+        <span class="brand-mark">RT</span>
+        <span>RoboTech</span>
+      </a>
+
+      <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="main-nav" aria-label="Menu principal">
+        <a href="#inicio">Início</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#integrantes">Integrantes</a>
+        <a href="#projetos">Projetos</a>
+        <a href="#competicoes">Competições</a>
+        <a href="#galeria">Galeria</a>
+        <a href="#tecnologias">Tecnologias</a>
+        <a href="#contato">Contato</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" id="inicio">
+        <img class="hero-image" src="assets/hero-robotica.png" alt="Robô de competição em uma bancada de laboratório" />
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <p class="eyebrow">Time escolar de robótica</p>
+          <h1>RoboTech</h1>
+          <p class="hero-text">Construindo o futuro através da robótica, tecnologia e inovação.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#sobre">Conheça o time</a>
+            <a class="button secondary" href="#projetos">Ver projetos</a>
+            <a class="button ghost" href="#contato">Entrar em contato</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sobre">
+        <div class="section-heading">
+          <p class="eyebrow">Sobre o time</p>
+          <h2>Estudantes criando soluções com tecnologia</h2>
+        </div>
+        <div class="about-grid">
+          <div class="about-copy">
+            <p>
+              Somos um time de robótica formado por estudantes interessados em programação, eletrônica,
+              mecânica, design 3D e inovação. O RoboTech nasceu dentro da escola para desenvolver robôs,
+              participar de competições e criar soluções criativas para problemas reais.
+            </p>
+            <p>
+              Nosso objetivo é aprender na prática, compartilhar conhecimento e transformar ideias em
+              protótipos funcionais. Cada projeto passa por pesquisa, montagem, testes, ajustes e
+              documentação.
+            </p>
+          </div>
+          <div class="stats-panel" aria-label="Resumo do time">
+            <article>
+              <strong>2026</strong>
+              <span>Ano de criação</span>
+            </article>
+            <article>
+              <strong>7</strong>
+              <span>Áreas de atuação</span>
+            </article>
+            <article>
+              <strong>3</strong>
+              <span>Projetos em destaque</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-muted" id="integrantes">
+        <div class="section-heading">
+          <p class="eyebrow">Integrantes</p>
+          <h2>Equipe multidisciplinar</h2>
+        </div>
+        <div class="card-grid team-grid" id="teamGrid"></div>
+      </section>
+
+      <section class="section" id="projetos">
+        <div class="section-heading">
+          <p class="eyebrow">Projetos</p>
+          <h2>Robôs e sistemas desenvolvidos pelo time</h2>
+        </div>
+        <div class="card-grid project-grid" id="projectGrid"></div>
+      </section>
+
+      <section class="section section-muted" id="competicoes">
+        <div class="section-heading">
+          <p class="eyebrow">Competições</p>
+          <h2>Eventos, torneios e resultados</h2>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Competição</th>
+                <th>Data</th>
+                <th>Local</th>
+                <th>Resultado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Torneio Interno de Robótica</td>
+                <td>2026</td>
+                <td>Escola</td>
+                <td>1º lugar</td>
+              </tr>
+              <tr>
+                <td>Feira de Tecnologia</td>
+                <td>2026</td>
+                <td>Centro de inovação</td>
+                <td>Participação</td>
+              </tr>
+              <tr>
+                <td>Desafio Seguidor de Linha</td>
+                <td>2026</td>
+                <td>Laboratório maker</td>
+                <td>Finalista</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="section" id="galeria">
+        <div class="section-heading">
+          <p class="eyebrow">Galeria</p>
+          <h2>Bastidores, testes e protótipos</h2>
+        </div>
+        <div class="filter-bar" aria-label="Filtros da galeria">
+          <button class="filter-button active" type="button" data-filter="todos">Todos</button>
+          <button class="filter-button" type="button" data-filter="montagem">Montagem</button>
+          <button class="filter-button" type="button" data-filter="testes">Testes</button>
+          <button class="filter-button" type="button" data-filter="eventos">Eventos</button>
+          <button class="filter-button" type="button" data-filter="prototipos">Protótipos</button>
+        </div>
+        <div class="gallery-grid" id="galleryGrid"></div>
+      </section>
+
+      <section class="section section-muted" id="tecnologias">
+        <div class="section-heading">
+          <p class="eyebrow">Tecnologias</p>
+          <h2>Ferramentas usadas nos projetos</h2>
+        </div>
+        <div class="tech-cloud" id="techCloud"></div>
+      </section>
+
+      <section class="section" id="patrocinadores">
+        <div class="section-heading">
+          <p class="eyebrow">Apoiadores</p>
+          <h2>Quem incentiva nosso desenvolvimento</h2>
+        </div>
+        <div class="supporters">
+          <article>
+            <span>ESC</span>
+            <strong>Instituição de ensino</strong>
+            <p>Espaço, orientação e incentivo para pesquisa tecnológica.</p>
+          </article>
+          <article>
+            <span>LAB</span>
+            <strong>Laboratório maker</strong>
+            <p>Ferramentas, bancada de testes e suporte para prototipagem.</p>
+          </article>
+          <article>
+            <span>PROF</span>
+            <strong>Professores orientadores</strong>
+            <p>Acompanhamento técnico e pedagógico durante os projetos.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section section-muted" id="noticias">
+        <div class="section-heading">
+          <p class="eyebrow">Notícias</p>
+          <h2>Atualizações do time</h2>
+        </div>
+        <div class="news-list">
+          <article>
+            <time datetime="2026-05-20">20 maio 2026</time>
+            <h3>Novo protótipo em desenvolvimento</h3>
+            <p>O time iniciou o desenvolvimento de um robô autônomo com sensores, motores e programação embarcada.</p>
+          </article>
+          <article>
+            <time datetime="2026-04-12">12 abril 2026</time>
+            <h3>Treinamento de programação</h3>
+            <p>A equipe realizou uma oficina de lógica, Arduino e controle de motores para novos integrantes.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section contact-section" id="contato">
+        <div class="section-heading">
+          <p class="eyebrow">Contato</p>
+          <h2>Fale com o RoboTech</h2>
+        </div>
+        <div class="contact-grid">
+          <div class="contact-info">
+            <p><strong>E-mail:</strong> contato@timederobotica.com</p>
+            <p><strong>Instagram:</strong> @timederobotica</p>
+            <p><strong>Localização:</strong> Nome da instituição</p>
+            <p class="small-note">
+              Para produção, configure a variável <code>API_URL</code> no arquivo <code>app.js</code>
+              com a URL gerada pelo Railway.
+            </p>
+          </div>
+          <form class="contact-form" id="contactForm">
+            <label>
+              Nome
+              <input type="text" name="name" placeholder="Seu nome" required />
+            </label>
+            <label>
+              E-mail
+              <input type="email" name="email" placeholder="seuemail@exemplo.com" required />
+            </label>
+            <label>
+              Mensagem
+              <textarea name="message" rows="5" placeholder="Como podemos ajudar?" required></textarea>
+            </label>
+            <button class="button primary" type="submit">Enviar mensagem</button>
+            <p class="form-status" id="formStatus" role="status"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>RoboTech © 2026. Tecnologia, educação e inovação.</p>
+      <a href="#inicio">Voltar ao topo</a>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
