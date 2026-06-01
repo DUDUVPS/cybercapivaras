@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mais | Cyber Capivaras</title>
+    <link rel="icon" type="image/png" href="imgs/apple-touch-icon.png" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="index.html">
+        <img src="imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png" alt="Logo Cyber Capivaras" />
+        <span>Cyber Capivaras</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-links" aria-label="Menu principal">
+        <a href="index.html">Inicio</a>
+        <a href="equipe.html">Equipe</a>
+        <a href="conquistas.html">Conquistas</a>
+        <a href="robos.html">Robos</a>
+        <a class="active" href="mais.html">Mais</a>
+      </nav>
+      <a class="login-link" href="login.html">Fazer login</a>
+    </header>
+
+    <main>
+      <section class="page-hero compact">
+        <p class="kicker">Contato e tecnologias</p>
+        <h1>Fale com o Cyber Capivaras</h1>
+        <p>Envie uma mensagem para o time ou acompanhe as areas tecnicas que usamos.</p>
+      </section>
+
+      <section class="section contact-layout">
+        <form class="contact-form" id="contactForm">
+          <label>Nome <input type="text" name="name" required /></label>
+          <label>E-mail <input type="email" name="email" required /></label>
+          <label>Mensagem <textarea name="message" rows="5" required></textarea></label>
+          <button class="btn btn-primary" type="submit">Enviar mensagem</button>
+          <p class="form-status" id="formStatus" role="status"></p>
+        </form>
+        <aside class="tech-panel">
+          <h2>Tecnologias</h2>
+          <div class="tech-list">
+            <span>Arduino</span><span>ESP32</span><span>Sensores</span><span>Motores</span>
+            <span>Impressao 3D</span><span>C/C++</span><span>Python</span><span>GitHub</span>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <strong>Cyber Capivaras</strong>
+      <span>IF Goiano - Campus Campos Belos</span>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

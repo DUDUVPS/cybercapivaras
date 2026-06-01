@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Area da Equipe | Cyber Capivaras</title>
+    <link rel="icon" type="image/png" href="imgs/apple-touch-icon.png" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-protected="true">
+    <header class="topbar">
+      <a class="brand" href="index.html">
+        <img src="imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png" alt="Logo Cyber Capivaras" />
+        <span>Cyber Capivaras</span>
+      </a>
+      <nav class="nav-links open-desktop" aria-label="Menu da area">
+        <a class="active" href="area-equipe.html">Area da equipe</a>
+        <a href="equipe.html">Equipe publica</a>
+        <a href="robos.html">Robos</a>
+      </nav>
+      <button class="login-link logout-button" type="button" id="logoutButton">Sair</button>
+    </header>
+
+    <main>
+      <section class="page-hero compact">
+        <p class="kicker">Area interna</p>
+        <h1>Painel da equipe</h1>
+        <p>Espaco para acompanhar tarefas, contatos recebidos e status dos projetos.</p>
+      </section>
+
+      <section class="section dashboard-grid">
+        <article class="dashboard-card">
+          <span class="card-number">3</span>
+          <h3>Projetos ativos</h3>
+          <p>Seguidor de linha, robo explorador e braco robotico.</p>
+        </article>
+        <article class="dashboard-card">
+          <span class="card-number">10</span>
+          <h3>Integrantes</h3>
+          <p>Equipe distribuida entre software, hardware, mecanica e divulgacao.</p>
+        </article>
+        <article class="dashboard-card">
+          <span class="card-number" id="apiState">...</span>
+          <h3>Backend</h3>
+          <p id="apiStateText">Verificando conexao com Railway e MySQL.</p>
+        </article>
+      </section>
+
+      <section class="section dark">
+        <div class="section-title">
+          <p class="kicker">Agenda tecnica</p>
+          <h2>Proximas acoes</h2>
+        </div>
+        <div class="task-list">
+          <article><strong>Revisar sensores</strong><span>Seguidor de linha</span></article>
+          <article><strong>Organizar fotos</strong><span>Galeria e redes sociais</span></article>
+          <article><strong>Documentar montagem</strong><span>Relatorio do prototipo</span></article>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

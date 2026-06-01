@@ -1,198 +1,128 @@
 const API_URL = window.location.origin;
 
-const team = [
+const members = [
   {
-    name: "Eduardo",
-    role: "Programação",
-    description: "Responsável pelo código, lógica dos robôs e integração com sensores.",
-    initials: "ED",
+    name: "Eduardo Souza",
+    role: "Estudante / Desenvolvedor",
+    generation: "1ª Geracao Fabrica",
+    photo: "imgs/post-1-fab.jpg",
+    instagram: "https://www.instagram.com/duduptid/",
   },
   {
-    name: "João",
-    role: "Mecânica",
-    description: "Cuida da estrutura, montagem, ajustes de chassi e testes de resistência.",
-    initials: "JO",
+    name: "Allen Sena",
+    role: "Estudante / Hardware",
+    generation: "3ª Geracao Fabrica",
+    photo: "imgs/fotos/ft-allem.png",
   },
   {
-    name: "Maria",
-    role: "Eletrônica",
-    description: "Trabalha com motores, placas, circuitos, alimentação e sensores.",
-    initials: "MA",
+    name: "Luiz Carlos",
+    role: "Estudante / Hardware",
+    generation: "3ª Geracao Fabrica",
+    photo: "imgs/fotos/ft-l-carlos.png",
   },
   {
-    name: "Ana",
-    role: "Design 3D",
-    description: "Modela peças, suportes e soluções para impressão 3D.",
-    initials: "AN",
+    name: "Alceu Neto",
+    role: "Estudante / Hardware",
+    generation: "3ª Geracao Fabrica",
+    photo: "imgs/fotos/ft-alceu.png",
   },
   {
-    name: "Lucas",
-    role: "Documentação",
-    description: "Registra decisões, resultados, diagramas e evolução dos projetos.",
-    initials: "LU",
+    name: "Allisson Beltrao",
+    role: "Estudante / Hardware",
+    generation: "3ª Geracao Fabrica",
+    photo: "imgs/fotos/ft-beltrao.png",
   },
   {
-    name: "Beatriz",
-    role: "Marketing",
-    description: "Organiza posts, fotos, identidade visual e comunicação do time.",
-    initials: "BE",
-  },
-];
-
-const projects = [
-  {
-    name: "Robô Seguidor de Linha",
-    tag: "Autônomo",
-    description: "Robô criado para seguir uma linha no chão usando sensores infravermelhos.",
-    objective: "Desenvolver navegação autônoma sem controle manual.",
-    result: "Protótipo funcional em fase de ajuste fino.",
-    tech: ["Arduino", "Sensor IR", "Motor DC", "Ponte H", "C/C++"],
-    initials: "SL",
+    name: "Ana Julia Maia",
+    role: "Estudante / Hardware",
+    generation: "3ª Geracao Fabrica",
+    photo: "imgs/fotos/ft-naju.png",
   },
   {
-    name: "Braço Robótico",
-    tag: "Controle",
-    description: "Sistema com servo motores para movimentação de garra e articulações.",
-    objective: "Aprender controle de movimento e precisão mecânica.",
-    result: "Controle por potenciômetros e testes com programação.",
-    tech: ["Servo", "Arduino", "PWM", "Impressão 3D"],
-    initials: "BR",
+    name: "Renata Miranda",
+    role: "Estudante / Hardware",
+    generation: "3ª Geracao Fabrica",
+    photo: "imgs/fotos/ft-renata.png",
   },
   {
-    name: "Robô Explorador",
-    tag: "Sensores",
-    description: "Protótipo móvel para desviar de obstáculos e mapear trajetos simples.",
-    objective: "Criar um robô capaz de tomar decisões com base no ambiente.",
-    result: "Testes de desvio e leitura de distância em andamento.",
-    tech: ["ESP32", "Ultrassônico", "Python", "Motores"],
-    initials: "EX",
+    name: "Isadorah Araujo",
+    role: "Estudante / Hardware",
+    generation: "3ª Geracao Fabrica",
+    photo: "imgs/fotos/ft-isadorah.png",
+  },
+  {
+    name: "Andre Wild",
+    role: "Estudante / Hardware",
+    generation: "3ª Geracao Fabrica",
+    photo: "imgs/fotos/ft-andre.png",
+  },
+  {
+    name: "Marcelo Brandao",
+    role: "Estudante / Hardware",
+    generation: "3ª Geracao Fabrica",
+    photo: "imgs/fotos/ft-marcelo.png",
   },
 ];
-
-const gallery = [
-  { title: "Montagem do chassi", category: "montagem", initials: "MC" },
-  { title: "Teste de sensores", category: "testes", initials: "TS" },
-  { title: "Feira de tecnologia", category: "eventos", initials: "FT" },
-  { title: "Protótipo inicial", category: "prototipos", initials: "PI" },
-  { title: "Bancada de eletrônica", category: "montagem", initials: "BE" },
-  { title: "Treino de percurso", category: "testes", initials: "TP" },
-  { title: "Apresentação do time", category: "eventos", initials: "AT" },
-  { title: "Peça impressa em 3D", category: "prototipos", initials: "3D" },
-];
-
-const technologies = [
-  "Arduino",
-  "ESP32",
-  "Sensores",
-  "Motores",
-  "Impressão 3D",
-  "Modelagem 3D",
-  "Eletrônica",
-  "C/C++",
-  "Python",
-  "HTML/CSS",
-  "JavaScript",
-  "Git/GitHub",
-];
-
-const menuToggle = document.querySelector(".menu-toggle");
-const nav = document.querySelector(".main-nav");
-const teamGrid = document.querySelector("#teamGrid");
-const projectGrid = document.querySelector("#projectGrid");
-const galleryGrid = document.querySelector("#galleryGrid");
-const techCloud = document.querySelector("#techCloud");
-const contactForm = document.querySelector("#contactForm");
-const formStatus = document.querySelector("#formStatus");
-
-function renderTeam() {
-  teamGrid.innerHTML = team
-    .map(
-      (member) => `
-        <article class="team-card">
-          <div class="avatar"><span>${member.initials}</span></div>
-          <div class="card-body">
-            <span class="role">${member.role}</span>
-            <h3>${member.name}</h3>
-            <p>${member.description}</p>
-          </div>
-        </article>
-      `
-    )
-    .join("");
-}
-
-function renderProjects() {
-  projectGrid.innerHTML = projects
-    .map(
-      (project) => `
-        <article class="project-card">
-          <div class="project-visual"><span>${project.initials}</span></div>
-          <div class="card-body">
-            <span class="tag">${project.tag}</span>
-            <h3>${project.name}</h3>
-            <p>${project.description}</p>
-            <p><strong>Objetivo:</strong> ${project.objective}</p>
-            <p><strong>Resultado:</strong> ${project.result}</p>
-            <ul class="tech-list">
-              ${project.tech.map((item) => `<li>${item}</li>`).join("")}
-            </ul>
-          </div>
-        </article>
-      `
-    )
-    .join("");
-}
-
-function renderGallery(category = "todos") {
-  const items = category === "todos" ? gallery : gallery.filter((item) => item.category === category);
-
-  galleryGrid.innerHTML = items
-    .map(
-      (item) => `
-        <article class="gallery-item" data-category="${item.category}">
-          <span>${item.initials}</span>
-          <strong>${item.title}</strong>
-        </article>
-      `
-    )
-    .join("");
-}
-
-function renderTechnologies() {
-  techCloud.innerHTML = technologies.map((technology) => `<span>${technology}</span>`).join("");
-}
 
 function setupMenu() {
-  menuToggle.addEventListener("click", () => {
-    const isOpen = nav.classList.toggle("open");
-    menuToggle.setAttribute("aria-expanded", String(isOpen));
-  });
+  const button = document.querySelector(".menu-toggle");
+  const nav = document.querySelector(".nav-links");
 
-  nav.addEventListener("click", (event) => {
-    if (event.target.tagName === "A") {
-      nav.classList.remove("open");
-      menuToggle.setAttribute("aria-expanded", "false");
-    }
+  if (!button || !nav) {
+    return;
+  }
+
+  button.addEventListener("click", () => {
+    const isOpen = nav.classList.toggle("open");
+    button.setAttribute("aria-expanded", String(isOpen));
   });
 }
 
-function setupGalleryFilters() {
-  document.querySelectorAll(".filter-button").forEach((button) => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll(".filter-button").forEach((item) => item.classList.remove("active"));
-      button.classList.add("active");
-      renderGallery(button.dataset.filter);
-    });
-  });
+function renderMembers() {
+  const grid = document.querySelector("#memberGrid");
+
+  if (!grid) {
+    return;
+  }
+
+  grid.innerHTML = members
+    .map(
+      (member) => `
+        <article class="member-card">
+          <img src="${member.photo}" alt="${member.name}" />
+          <div>
+            <h3>${member.name}</h3>
+            <p><strong>${member.role}</strong></p>
+            <p>${member.generation}</p>
+            <p>Status: <strong>ativo</strong></p>
+            <div class="socials">
+              <a href="${member.instagram || "#"}" aria-label="Instagram de ${member.name}">
+                <img src="imgs/instagram.png" alt="" />
+              </a>
+              <a href="#" aria-label="GitHub de ${member.name}">
+                <img src="imgs/github.png" alt="" />
+              </a>
+            </div>
+          </div>
+        </article>
+      `
+    )
+    .join("");
 }
 
 function setupContactForm() {
-  contactForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    formStatus.textContent = "Enviando...";
+  const form = document.querySelector("#contactForm");
+  const status = document.querySelector("#formStatus");
 
-    const formData = new FormData(contactForm);
-    const payload = Object.fromEntries(formData.entries());
+  if (!form || !status) {
+    return;
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    status.textContent = "Enviando...";
+
+    const payload = Object.fromEntries(new FormData(form).entries());
 
     try {
       const response = await fetch(`${API_URL}/api/contact`, {
@@ -204,21 +134,92 @@ function setupContactForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Não foi possível enviar a mensagem.");
+        throw new Error(data.error || "Erro ao enviar mensagem.");
       }
 
-      contactForm.reset();
-      formStatus.textContent = data.message;
+      form.reset();
+      status.textContent = data.message;
     } catch (error) {
-      formStatus.textContent = "Backend indisponível. Configure a URL do Railway ou rode o servidor local.";
+      status.textContent = "Nao foi possivel enviar agora.";
     }
   });
 }
 
-renderTeam();
-renderProjects();
-renderGallery();
-renderTechnologies();
+function setupLogin() {
+  const form = document.querySelector("#loginForm");
+  const status = document.querySelector("#loginStatus");
+
+  if (!form) {
+    return;
+  }
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const data = Object.fromEntries(new FormData(form).entries());
+
+    if (!data.email || !data.password) {
+      status.textContent = "Preencha e-mail e senha.";
+      return;
+    }
+
+    localStorage.setItem("cybercapivaras_logged", "true");
+    localStorage.setItem("cybercapivaras_user", data.email);
+    window.location.href = "area-equipe.html";
+  });
+}
+
+function protectInternalArea() {
+  const isProtected = document.body.dataset.protected === "true";
+
+  if (!isProtected) {
+    return;
+  }
+
+  if (localStorage.getItem("cybercapivaras_logged") !== "true") {
+    window.location.href = "login.html";
+  }
+}
+
+function setupLogout() {
+  const button = document.querySelector("#logoutButton");
+
+  if (!button) {
+    return;
+  }
+
+  button.addEventListener("click", () => {
+    localStorage.removeItem("cybercapivaras_logged");
+    localStorage.removeItem("cybercapivaras_user");
+    window.location.href = "login.html";
+  });
+}
+
+async function checkApiState() {
+  const state = document.querySelector("#apiState");
+  const text = document.querySelector("#apiStateText");
+
+  if (!state || !text) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/api/health`);
+    const data = await response.json();
+    const connected = data.database?.connected === true;
+
+    state.textContent = connected ? "OK" : "OFF";
+    text.textContent = connected ? "Railway e MySQL conectados." : "Banco indisponivel no momento.";
+  } catch (error) {
+    state.textContent = "OFF";
+    text.textContent = "Nao foi possivel verificar a API.";
+  }
+}
+
+protectInternalArea();
 setupMenu();
-setupGalleryFilters();
+renderMembers();
 setupContactForm();
+setupLogin();
+setupLogout();
+checkApiState();

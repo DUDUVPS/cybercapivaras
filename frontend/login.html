@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | Cyber Capivaras</title>
+    <link rel="icon" type="image/png" href="imgs/apple-touch-icon.png" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="login-page">
+    <main class="login-shell">
+      <a class="login-logo" href="index.html">
+        <img src="imgs/apple-touch-icon.png" alt="Cyber Capivaras" />
+      </a>
+      <section class="login-box">
+        <h1>Bem-vindo</h1>
+        <p>Acesso da equipe Cyber Capivaras</p>
+        <form id="loginForm" class="login-form">
+          <label>
+            E-mail
+            <input type="email" name="email" placeholder="seuemail@ifgoiano.edu.br" required />
+          </label>
+          <label>
+            Senha
+            <input type="password" name="password" placeholder="Digite sua senha" required />
+          </label>
+          <div class="form-row">
+            <label class="check-label">
+              <input type="checkbox" name="remember" />
+              Manter conectado
+            </label>
+            <a href="index.html">Voltar ao site</a>
+          </div>
+          <button class="btn btn-primary full" type="submit">Entrar</button>
+          <p class="form-status" id="loginStatus" role="status"></p>
+        </form>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
