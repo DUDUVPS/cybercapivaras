@@ -165,6 +165,24 @@ body::before {
   max-width: 740px;
 }
 
+.status-strip {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.status-strip span {
+  padding: 7px 10px;
+  border: 1px solid rgba(64, 242, 160, 0.32);
+  border-radius: 999px;
+  background: rgba(64, 242, 160, 0.08);
+  color: var(--green);
+  font-size: 0.78rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
 .kicker {
   margin: 0 0 12px;
   color: var(--green);
@@ -183,7 +201,7 @@ p {
 
 h1 {
   margin-bottom: 18px;
-  font-size: clamp(3rem, 9vw, 6.5rem);
+  font-size: clamp(3.4rem, 10vw, 7.2rem);
   line-height: 0.95;
 }
 
