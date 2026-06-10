@@ -16,6 +16,30 @@ const publicContent = {
   ],
 };
 
+const publicRoleProfiles = {
+  Administrador: ["N5", "Controle geral do app e do site."],
+  Capitao: ["N4", "Organiza estrategia, cronograma e prioridades."],
+  "Lider tecnico": ["N3", "Coordena testes, prototipos e decisao tecnica."],
+  Programacao: ["N2", "Cuida do codigo, sensores e automacao."],
+  Hardware: ["N2", "Cuida de circuitos, motores e componentes."],
+  Mecanica: ["N2", "Cuida da estrutura, montagem e manutencao."],
+  "Design 3D": ["N2", "Modela pecas e prototipos para impressao."],
+  Documentacao: ["N2", "Registra progresso, relatorios e evidencias."],
+  Marketing: ["N2", "Cuida da comunicacao visual e redes sociais."],
+  Membro: ["N1", "Participa das tarefas e apoio aos projetos."],
+};
+
+const publicTeam = [
+  ["Eduardo Souza", "Capitao", "imgs/fotos/ft-alceu.png"],
+  ["Allen Sena", "Lider tecnico", "imgs/fotos/ft-allem.png"],
+  ["Ana Julia Maia", "Documentacao", "imgs/fotos/ft-naju.png"],
+  ["Renata Miranda", "Marketing", "imgs/fotos/ft-renata.png"],
+  ["Andre Wild", "Programacao", "imgs/fotos/ft-andre.png"],
+  ["Allisson Beltrao", "Mecanica", "imgs/fotos/ft-beltrao.png"],
+  ["Isadorah Araujo", "Design 3D", "imgs/fotos/ft-isadorah.png"],
+  ["Marcelo Brandao", "Membro", "imgs/fotos/ft-marcelo.png"],
+];
+
 function getPublicContent() {
   return { ...publicContent, ...JSON.parse(localStorage.getItem("cyber_site_content") || "{}") };
 }
@@ -58,6 +82,36 @@ function renderPublicContent() {
       )
       .join("");
   }
+
+  renderPublicTeam();
+}
+
+function renderPublicTeam() {
+  const grids = document.querySelectorAll("#publicMembers, #memberGrid");
+  if (!grids.length) return;
+
+  const cards = publicTeam
+    .map(([name, role, image]) => {
+      const [level, description] = publicRoleProfiles[role] || publicRoleProfiles.Membro;
+      return `
+        <article class="member-card">
+          <div class="member-photo">
+            <img src="${image}" alt="${name}" />
+          </div>
+          <div class="member-info">
+            <span>${level}</span>
+            <h3>${name}</h3>
+            <strong>${role}</strong>
+            <p>${description}</p>
+          </div>
+        </article>
+      `;
+    })
+    .join("");
+
+  grids.forEach((grid) => {
+    grid.innerHTML = cards;
+  });
 }
 
 function setupMobileMenu() {
@@ -103,7 +157,7 @@ function setupActiveNav() {
 }
 
 function setupRevealAnimations() {
-  const items = document.querySelectorAll(".reveal, .feature-grid article, .project-showcase article");
+  const items = document.querySelectorAll(".reveal, .feature-grid article, .project-showcase article, .member-card");
   if (!items.length) return;
 
   items.forEach((item) => item.classList.add("reveal"));
