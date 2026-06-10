@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>App Cyber Capivara</title>
+    <link rel="icon" type="image/png" href="imgs/apple-touch-icon.png" />
+    <link rel="stylesheet" href="style.css?v=20260610-app" />
+  </head>
+  <body class="app-screen" data-protected="true">
+    <aside class="app-sidebar">
+      <a class="brand" href="index.html">
+        <img src="imgs/apple-touch-icon.png" alt="Cyber Capivaras" />
+        <span>Cyber App</span>
+      </a>
+      <nav class="app-menu">
+        <a href="#painel">Painel</a>
+        <a href="#site">Site</a>
+        <a href="#equipe">Equipe</a>
+        <a href="#tarefas">Tarefas</a>
+      </nav>
+      <button class="ghost-button" id="logoutButton" type="button">Sair</button>
+    </aside>
+
+    <main class="app-main">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Cyber Capivara</p>
+          <h1>Central do time</h1>
+          <p id="sessionLabel">Carregando acesso...</p>
+        </div>
+        <div class="access-badge" id="accessBadge">N2</div>
+      </header>
+
+      <section class="app-grid" id="painel">
+        <article class="app-card metric">
+          <span>3</span>
+          <h3>Projetos ativos</h3>
+          <p>Robos, testes e prototipos do time.</p>
+        </article>
+        <article class="app-card metric">
+          <span>10</span>
+          <h3>Integrantes</h3>
+          <p>Funcoes organizadas por hierarquia.</p>
+        </article>
+        <article class="app-card metric">
+          <span id="apiState">...</span>
+          <h3>Railway + MySQL</h3>
+          <p id="apiStateText">Verificando backend.</p>
+        </article>
+      </section>
+
+      <section class="app-section admin-only" id="site">
+        <div class="section-head">
+          <p class="eyebrow">Admin</p>
+          <h2>Editar pagina principal</h2>
+        </div>
+        <form class="app-form" id="siteEditorForm">
+          <label>Chamada <input type="text" name="heroLabel" /></label>
+          <label>Titulo <input type="text" name="heroTitle" /></label>
+          <label>Texto <textarea rows="4" name="heroText"></textarea></label>
+          <button class="button primary" type="submit">Salvar site</button>
+          <p class="form-status" id="siteEditorStatus" role="status"></p>
+        </form>
+      </section>
+
+      <section class="app-section" id="equipe">
+        <div class="section-head">
+          <p class="eyebrow">Equipe</p>
+          <h2>Funcoes e hierarquia</h2>
+        </div>
+        <div class="team-table" id="teamTable"></div>
+      </section>
+
+      <section class="app-section admin-only">
+        <div class="section-head">
+          <p class="eyebrow">Admin</p>
+          <h2>Definir funcao por e-mail</h2>
+        </div>
+        <form class="app-form" id="roleForm">
+          <label>Nome <input type="text" name="name" required /></label>
+          <label>E-mail Google <input type="email" name="email" required /></label>
+          <label>Funcao
+            <select name="role" required>
+              <option>Administrador</option>
+              <option>Capitao</option>
+              <option>Lider tecnico</option>
+              <option>Programacao</option>
+              <option>Hardware</option>
+              <option>Mecanica</option>
+              <option>Design 3D</option>
+              <option>Documentacao</option>
+              <option>Marketing</option>
+              <option>Membro</option>
+            </select>
+          </label>
+          <button class="button primary" type="submit">Salvar funcao</button>
+          <p class="form-status" id="roleStatus" role="status"></p>
+        </form>
+      </section>
+
+      <section class="app-section" id="tarefas">
+        <div class="section-head">
+          <p class="eyebrow">Operacao</p>
+          <h2>Tarefas da semana</h2>
+        </div>
+        <div class="task-board">
+          <article><strong>Calibrar sensores</strong><span>Seguidor de linha</span></article>
+          <article><strong>Revisar chassi</strong><span>Mecanica</span></article>
+          <article><strong>Publicar fotos</strong><span>Marketing</span></article>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js?v=20260610-app"></script>
+  </body>
+</html>

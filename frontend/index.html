@@ -3,98 +3,85 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Cyber Capivaras, time de robotica do IF Goiano Campus Campos Belos." />
-    <title>Cyber Capivaras</title>
+    <meta name="description" content="Site oficial do time de robotica Cyber Capivaras." />
+    <title>Cyber Capivaras | Time de Robotica</title>
     <link rel="icon" type="image/png" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260601-redesign2" />
+    <link rel="stylesheet" href="style.css?v=20260610-app" />
   </head>
   <body>
-    <header class="topbar">
+    <header class="public-nav">
       <a class="brand" href="index.html">
-        <img src="imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png" alt="Logo Cyber Capivaras" />
+        <img src="imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png" alt="Cyber Capivaras" />
         <span>Cyber Capivaras</span>
       </a>
-      <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-      <nav class="nav-links" aria-label="Menu principal">
-        <a class="active" href="index.html">Inicio</a>
-        <a href="equipe.html">Equipe</a>
-        <a href="conquistas.html">Conquistas</a>
-        <a href="robos.html">Robos</a>
-        <a href="mais.html">Mais</a>
+      <nav>
+        <a href="#equipe">Equipe</a>
+        <a href="#projetos">Projetos</a>
+        <a href="#contato">Contato</a>
+        <a class="nav-button" href="login.html">Entrar no app</a>
       </nav>
-      <a class="login-link" href="login.html">Fazer login</a>
     </header>
 
     <main>
-      <section class="hero home-hero">
+      <section class="landing-hero">
         <div class="hero-copy">
-          <div class="status-strip">
-            <span>Site oficial</span>
+          <p class="eyebrow" data-content="heroLabel">IF Goiano - Campus Campos Belos</p>
+          <h1 data-content="heroTitle">Cyber Capivaras</h1>
+          <p data-content="heroText">
+            Um time de robotica movido por tecnologia, competicao, pesquisa e trabalho em equipe.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#projetos">Ver projetos</a>
+            <a class="button secondary" href="login.html">Acessar app</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <img src="assets/hero-robotica.png" alt="Robo de competicao em laboratorio" />
+          <div class="signal-row">
+            <span>2024</span>
             <span>Robotica</span>
-            <span>IF Goiano</span>
-          </div>
-          <p class="kicker" data-site-field="heroKicker">IF Goiano - Campus Campos Belos</p>
-          <h1 data-site-field="heroTitle">Cyber Capivaras</h1>
-          <p data-site-field="heroText">
-            Inovacao, tecnologia e trabalho em equipe para transformar ideias em robos, projetos
-            e solucoes reais.
-          </p>
-          <div class="actions">
-            <a class="btn btn-primary" href="equipe.html">Conhecer equipe</a>
-            <a class="btn btn-outline" href="robos.html">Ver robos</a>
-          </div>
-        </div>
-        <div class="hero-card">
-          <img src="assets/hero-robotica.png" alt="Robo em laboratorio de robotica" />
-          <div class="hero-metrics">
-            <article><strong>2024</strong><span>em atividade</span></article>
-            <article><strong>10</strong><span>integrantes</span></article>
-            <article><strong>4</strong><span>frentes tecnicas</span></article>
+            <span>Inovacao</span>
           </div>
         </div>
       </section>
 
-      <section class="section dark">
-        <div class="section-title">
-          <p class="kicker">Ultimas noticias</p>
-          <h2 data-site-field="newsTitle">O time em movimento</h2>
+      <section class="section band" id="equipe">
+        <div class="section-head">
+          <p class="eyebrow">Equipe</p>
+          <h2>Areas que fazem o time funcionar</h2>
         </div>
-        <div class="news-grid" id="homeNewsGrid"></div>
+        <div class="feature-grid" id="publicAreas"></div>
       </section>
 
-      <section class="section split">
+      <section class="section" id="projetos">
+        <div class="section-head">
+          <p class="eyebrow">Projetos</p>
+          <h2>Robos e sistemas em desenvolvimento</h2>
+        </div>
+        <div class="project-showcase" id="publicProjects"></div>
+      </section>
+
+      <section class="section contact-strip" id="contato">
         <div>
-          <p class="kicker">Sobre nos</p>
-          <h2 data-site-field="aboutTitle">Robos, conhecimento e protagonismo estudantil</h2>
+          <p class="eyebrow">Contato</p>
+          <h2>Quer falar com o time?</h2>
+          <p>Envie uma mensagem para projetos, parcerias, competicoes ou apresentacoes.</p>
         </div>
-        <div class="text-panel">
-          <p data-site-field="aboutText">
-            Somos o Cyber Capivaras, time de robotica oficial do IF Goiano - Campus Campos Belos.
-            Nascemos da paixao por tecnologia, inovacao e trabalho em equipe.
-          </p>
-          <p>
-            Participamos de campeonatos, desenvolvemos projetos interdisciplinares e representamos
-            nosso campus com orgulho, sempre em busca de aprendizado e evolucao.
-          </p>
-        </div>
-      </section>
-
-      <section class="section dark">
-        <div class="section-title">
-          <p class="kicker">Frentes do time</p>
-          <h2>Como a Cyber Capivaras trabalha</h2>
-        </div>
-        <div class="focus-grid" id="homeFocusGrid"></div>
+        <form class="compact-form" id="contactForm">
+          <input type="text" name="name" placeholder="Nome" required />
+          <input type="email" name="email" placeholder="E-mail" required />
+          <textarea name="message" rows="3" placeholder="Mensagem" required></textarea>
+          <button class="button primary" type="submit">Enviar</button>
+          <p class="form-status" id="formStatus" role="status"></p>
+        </form>
       </section>
     </main>
 
     <footer class="footer">
-      <strong>Cyber Capivaras</strong>
+      <span>Cyber Capivaras</span>
       <span>IF Goiano - Campus Campos Belos</span>
     </footer>
 
-    <script src="app.js?v=20260601-redesign2"></script>
+    <script src="app.js?v=20260610-app"></script>
   </body>
 </html>

@@ -5,49 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login | Cyber Capivaras</title>
     <link rel="icon" type="image/png" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260601-redesign2" />
+    <link rel="stylesheet" href="style.css?v=20260610-app" />
   </head>
-  <body class="login-page">
-    <main class="login-shell">
-      <a class="login-logo" href="index.html">
-        <img src="imgs/apple-touch-icon.png" alt="Cyber Capivaras" />
-      </a>
-      <section class="login-box">
-        <h1>Bem-vindo</h1>
-        <p>Acesso da equipe Cyber Capivaras</p>
-        <form id="loginForm" class="login-form">
-          <div id="googleSignIn" class="google-signin-slot"></div>
-          <button class="google-demo-button" id="googleDemoButton" type="button">
-            <span>G</span>
-            Entrar com Google
-          </button>
-          <div class="login-divider"><span>admin</span></div>
-          <label>
-            E-mail do administrador
-            <input type="email" name="email" placeholder="admin@cybercapivaras.com" />
-          </label>
-          <label>
-            Senha do administrador
-            <input type="password" name="password" placeholder="Digite a senha do admin" />
-          </label>
-          <div class="form-row">
-            <label class="check-label">
-              <input type="checkbox" name="remember" />
-              Manter conectado
-            </label>
-            <a href="index.html">Voltar ao site</a>
-          </div>
-          <button class="btn btn-primary full" type="submit">Entrar como admin</button>
-          <p class="login-help">
-            E-mail e senha sao exclusivos do administrador. Demais usuarios entram com Google.
-          </p>
+  <body class="login-screen">
+    <main class="login-layout">
+      <section class="login-intro">
+        <a class="brand large" href="index.html">
+          <img src="imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png" alt="Cyber Capivaras" />
+          <span>Cyber Capivaras</span>
+        </a>
+        <h1>App interno do time</h1>
+        <p>Administra projetos, tarefas, equipe, conteudo publico e comunicados em um so lugar.</p>
+      </section>
+
+      <section class="login-panel">
+        <p class="eyebrow">Acesso</p>
+        <h2>Entrar no app</h2>
+        <button class="google-button" id="googleDemoButton" type="button">
+          <span>G</span>
+          Entrar com Google
+        </button>
+        <div id="googleSignIn"></div>
+
+        <form class="admin-login" id="adminLoginForm">
+          <div class="divider"><span>admin</span></div>
+          <label>E-mail <input type="email" name="email" placeholder="admin@cybercapivaras.com" /></label>
+          <label>Senha <input type="password" name="password" placeholder="Senha do administrador" /></label>
+          <button class="button primary" type="submit">Entrar como admin</button>
           <p class="form-status" id="loginStatus" role="status"></p>
         </form>
       </section>
     </main>
 
-    <script src="config.js?v=20260601-redesign2"></script>
+    <script src="config.js?v=20260610-app"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="app.js?v=20260601-redesign2"></script>
+    <script src="app.js?v=20260610-app"></script>
   </body>
 </html>
