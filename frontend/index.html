@@ -9,7 +9,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260610-ops-redesign" />
+    <link rel="stylesheet" href="style.css?v=20260610-full-admin" />
   </head>
   <body>
     <header class="public-nav">
@@ -98,7 +98,15 @@
         <form class="compact-form" id="contactForm">
           <input type="text" name="name" placeholder="Nome" required />
           <input type="email" name="email" placeholder="E-mail" required />
+          <select name="category" required>
+            <option value="Geral">Categoria: Geral</option>
+            <option value="Projeto">Projeto</option>
+            <option value="Parceria">Parceria</option>
+            <option value="Competicao">Competicao</option>
+            <option value="Suporte">Suporte</option>
+          </select>
           <textarea name="message" rows="3" placeholder="Mensagem" required></textarea>
+          <input type="file" name="attachment" accept="image/*,.pdf,.doc,.docx,.txt" />
           <button class="button primary" type="submit">Enviar</button>
           <p class="form-status" id="formStatus" role="status"></p>
         </form>
@@ -110,6 +118,6 @@
       <span>from LASTTRO.IO</span>
     </footer>
 
-    <script src="site.js?v=20260610-team-front"></script>
+    <script src="site.js?v=20260610-full-admin"></script>
   </body>
 </html>

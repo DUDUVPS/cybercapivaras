@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260610-ops-redesign" />
+    <link rel="stylesheet" href="style.css?v=20260610-full-admin" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <aside class="app-sidebar">
@@ -102,68 +102,146 @@
       </section>
 
       <section class="app-tab admin-only" id="site" data-tab-panel="site">
-        <article class="app-section">
-          <div class="section-head compact-head">
-            <div>
-              <p class="eyebrow">Admin</p>
-              <h2>Editar pagina principal</h2>
+        <div class="module-grid">
+          <article class="app-section">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Admin</p>
+                <h2>Editar pagina publica inteira</h2>
+              </div>
+              <span class="module-chip">Home</span>
             </div>
-            <span class="module-chip">Publico</span>
-          </div>
-          <form class="app-form editor-layout" id="siteEditorForm">
-            <label>Chamada <input type="text" name="heroLabel" /></label>
-            <label>Titulo <input type="text" name="heroTitle" /></label>
-            <label class="wide-field">Texto <textarea rows="4" name="heroText"></textarea></label>
-            <button class="button primary" type="submit">Salvar site</button>
-            <p class="form-status" id="siteEditorStatus" role="status"></p>
-          </form>
-        </article>
+            <form class="app-form editor-layout" id="siteEditorForm">
+              <label>Chamada <input type="text" name="heroLabel" /></label>
+              <label>Titulo <input type="text" name="heroTitle" /></label>
+              <label class="wide-field">Texto principal <textarea rows="4" name="heroText"></textarea></label>
+              <label class="wide-field">Areas do time <textarea rows="5" name="areasText" placeholder="Titulo | Descricao"></textarea></label>
+              <label class="wide-field">Projetos <textarea rows="5" name="projectsText" placeholder="Nome | Descricao | imagem"></textarea></label>
+              <button class="button primary" type="submit">Salvar pagina publica</button>
+              <p class="form-status" id="siteEditorStatus" role="status"></p>
+            </form>
+          </article>
+          <article class="app-section">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Preview</p>
+                <h2>Conteudo publicado</h2>
+              </div>
+              <span class="module-chip">Ao vivo</span>
+            </div>
+            <div class="ops-list" id="sitePreview"></div>
+          </article>
+        </div>
       </section>
 
       <section class="app-tab" id="tarefas" data-tab-panel="tarefas">
-        <article class="app-section">
-          <div class="section-head compact-head">
-            <div>
-              <p class="eyebrow">Operacao</p>
-              <h2>Tarefas da semana</h2>
+        <div class="module-grid task-layout">
+          <article class="app-section">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Trello</p>
+                <h2>Quadro de tarefas</h2>
+              </div>
+              <span class="module-chip">Mover status</span>
             </div>
-            <span class="module-chip">Equipe</span>
-          </div>
-          <div class="task-board" id="taskBoard"></div>
-          <form class="app-form admin-only inline-form" id="taskForm">
-            <input type="text" name="title" placeholder="Nova tarefa" required />
-            <input type="text" name="area" placeholder="Area" required />
-            <button class="button secondary" type="submit">Adicionar</button>
-          </form>
-        </article>
+            <div class="kanban-board" id="taskBoard"></div>
+          </article>
+          <article class="app-section">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Agenda</p>
+                <h2>Calendario</h2>
+              </div>
+              <span class="module-chip" id="calendarLabel">Mes</span>
+            </div>
+            <div class="calendar-controls">
+              <button class="ghost-button" type="button" id="prevMonth">Anterior</button>
+              <button class="ghost-button" type="button" id="nextMonth">Proximo</button>
+            </div>
+            <div class="calendar-grid" id="taskCalendar"></div>
+            <form class="app-form admin-only" id="taskForm">
+              <input type="text" name="title" placeholder="Nova tarefa" required />
+              <input type="text" name="area" placeholder="Area" required />
+              <input type="date" name="due" required />
+              <button class="button secondary" type="submit">Adicionar tarefa</button>
+            </form>
+          </article>
+        </div>
       </section>
 
       <section class="app-tab" id="equipe" data-tab-panel="equipe">
+        <div class="module-grid">
         <article class="app-section">
           <div class="section-head compact-head">
             <div>
               <p class="eyebrow">Equipe</p>
-              <h2>Funcoes e hierarquia</h2>
+              <h2>Front igual pagina publica</h2>
             </div>
             <span class="module-chip">Permissoes</span>
           </div>
-          <div class="team-table" id="teamTable"></div>
+          <div class="member-grid compact-members" id="teamTable"></div>
         </article>
+        <article class="app-section admin-only">
+          <div class="section-head compact-head">
+            <div>
+              <p class="eyebrow">Admin</p>
+              <h2>Editar integrante</h2>
+            </div>
+            <span class="module-chip">Fotos e funcoes</span>
+          </div>
+          <form class="app-form" id="memberForm">
+            <label>Nome <input type="text" name="name" required /></label>
+            <label>Funcao <input type="text" name="role" required /></label>
+            <label>Nivel <input type="text" name="level" placeholder="N2" required /></label>
+            <label>Foto/caminho <input type="text" name="image" placeholder="imgs/fotos/ft-naju.png" required /></label>
+            <label>Descricao <textarea rows="3" name="description" required></textarea></label>
+            <button class="button primary" type="submit">Adicionar integrante</button>
+          </form>
+          <div class="ops-list" id="memberAdminList"></div>
+        </article>
+        </div>
       </section>
 
       <section class="app-tab" id="chamados" data-tab-panel="chamados">
+        <div class="module-grid">
         <article class="app-section">
           <div class="section-head compact-head">
             <div>
               <p class="eyebrow">Contato</p>
-              <h2>Chamados recebidos pelo site</h2>
+              <h2>Chamados da equipe</h2>
             </div>
-            <span class="module-chip">Inbox</span>
+            <span class="module-chip">Todos podem enviar e ver</span>
           </div>
           <div class="ticket-list" id="ticketList">
             <article class="empty-state">Carregando chamados...</article>
           </div>
         </article>
+        <article class="app-section">
+          <div class="section-head compact-head">
+            <div>
+              <p class="eyebrow">Novo</p>
+              <h2>Abrir chamado</h2>
+            </div>
+            <span class="module-chip">Categoria + arquivo</span>
+          </div>
+          <form class="app-form" id="ticketForm">
+            <input type="text" name="name" placeholder="Nome" required />
+            <input type="email" name="email" placeholder="E-mail" required />
+            <select name="category" required>
+              <option>Geral</option>
+              <option>Robos</option>
+              <option>Site</option>
+              <option>Equipe</option>
+              <option>Processo seletivo</option>
+              <option>Suporte</option>
+            </select>
+            <textarea name="message" rows="4" placeholder="Descreva o chamado" required></textarea>
+            <input type="file" name="attachment" accept="image/*,.pdf,.doc,.docx,.txt" />
+            <button class="button primary" type="submit">Enviar chamado</button>
+            <p class="form-status" id="ticketStatus" role="status"></p>
+          </form>
+        </article>
+        </div>
       </section>
 
       <section class="app-tab" id="seletivo" data-tab-panel="seletivo">
@@ -178,13 +256,13 @@
             </div>
             <div class="candidate-list" id="candidateList"></div>
           </article>
-          <article class="app-section admin-only">
+          <article class="app-section admin-only interviewer-only">
             <div class="section-head compact-head">
               <div>
                 <p class="eyebrow">Admin</p>
                 <h2>Novo candidato</h2>
               </div>
-              <span class="module-chip">Selecao</span>
+              <span class="module-chip">Entrevistadores</span>
             </div>
             <form class="app-form" id="candidateForm">
               <label>Nome <input type="text" name="name" required /></label>
@@ -205,6 +283,7 @@
                   <option>Aprovado</option>
                 </select>
               </label>
+              <label>Entrevistador <input type="email" name="interviewer" placeholder="aluno@email.com" /></label>
               <button class="button primary" type="submit">Adicionar candidato</button>
             </form>
           </article>
@@ -217,9 +296,9 @@
             <div class="section-head compact-head">
               <div>
                 <p class="eyebrow">Admin</p>
-                <h2>Acessos por perfil</h2>
-              </div>
-              <span class="module-chip">Alunos e professores</span>
+              <h2>Acessos por pessoa</h2>
+            </div>
+              <span class="module-chip">E-mail individual</span>
             </div>
             <form class="permission-matrix" id="permissionForm"></form>
             <p class="form-status" id="permissionStatus" role="status"></p>
@@ -232,7 +311,7 @@
               </div>
               <span class="module-chip">Admin</span>
             </div>
-            <p>O administrador ve tudo. Alunos e professores recebem acesso conforme as abas marcadas aqui.</p>
+            <p>O administrador ve tudo. Cada aluno ou professor pode receber abas especificas, inclusive permissao para entrevistar candidatos.</p>
           </article>
         </div>
       </section>
@@ -298,10 +377,26 @@
             <p class="form-status" id="settingsStatus" role="status"></p>
           </form>
         </article>
+        <article class="app-section">
+          <div class="section-head compact-head">
+            <div>
+              <p class="eyebrow">Tudo</p>
+              <h2>Backup e controle geral</h2>
+            </div>
+            <span class="module-chip">Admin</span>
+          </div>
+          <div class="app-form">
+            <button class="button secondary" type="button" id="exportDataButton">Exportar dados</button>
+            <textarea rows="8" id="importDataBox" placeholder="Cole um backup JSON para importar"></textarea>
+            <button class="button primary" type="button" id="importDataButton">Importar dados</button>
+            <button class="ghost-button" type="button" id="resetDemoButton">Restaurar dados demo</button>
+            <p class="form-status" id="dataToolsStatus" role="status"></p>
+          </div>
+        </article>
         </div>
       </section>
     </main>
 
-    <script src="app.js?v=20260610-ops-redesign"></script>
+    <script src="app.js?v=20260610-full-admin"></script>
   </body>
 </html>

@@ -41,7 +41,10 @@ const publicTeam = [
 ];
 
 function getPublicContent() {
-  return { ...publicContent, ...JSON.parse(localStorage.getItem("cyber_site_content") || "{}") };
+  return { ...publicContent, members: publicTeam.map(([name, role, image]) => {
+    const [level, description] = publicRoleProfiles[role] || publicRoleProfiles.Membro;
+    return [name, role, level, image, description];
+  }), ...JSON.parse(localStorage.getItem("cyber_site_content") || "{}") };
 }
 
 function renderPublicContent() {
@@ -90,9 +93,8 @@ function renderPublicTeam() {
   const grids = document.querySelectorAll("#publicMembers, #memberGrid");
   if (!grids.length) return;
 
-  const cards = publicTeam
-    .map(([name, role, image]) => {
-      const [level, description] = publicRoleProfiles[role] || publicRoleProfiles.Membro;
+  const cards = getPublicContent().members
+    .map(([name, role, level, image, description]) => {
       return `
         <article class="member-card">
           <div class="member-photo">
@@ -206,8 +208,10 @@ function setupContactForm() {
     event.preventDefault();
     status.textContent = "Enviando chamado...";
     const payload = Object.fromEntries(new FormData(form).entries());
+    const file = form.elements.attachment?.files?.[0];
 
     try {
+      payload.attachment = await fileToAttachment(file);
       const response = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -220,6 +224,25 @@ function setupContactForm() {
     } catch (error) {
       status.textContent = "Nao foi possivel enviar agora.";
     }
+  });
+}
+
+function fileToAttachment(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      resolve(null);
+      return;
+    }
+
+    if (file.size > 4 * 1024 * 1024) {
+      reject(new Error("Arquivo muito grande. Envie ate 4 MB."));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => resolve({ name: file.name, type: file.type, data: reader.result });
+    reader.onerror = () => reject(new Error("Nao foi possivel ler o arquivo."));
+    reader.readAsDataURL(file);
   });
 }
 

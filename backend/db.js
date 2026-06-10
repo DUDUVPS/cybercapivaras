@@ -33,24 +33,38 @@ async function initDatabase() {
       id INT AUTO_INCREMENT PRIMARY KEY,
       name VARCHAR(120) NOT NULL,
       email VARCHAR(180) NOT NULL,
+      category VARCHAR(80) NOT NULL DEFAULT 'Geral',
       message TEXT NOT NULL,
+      attachment_name VARCHAR(180),
+      attachment_type VARCHAR(120),
+      attachment_data LONGTEXT,
       status VARCHAR(30) NOT NULL DEFAULT 'aberto',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
 
-  try {
-    await connectionPool.execute("ALTER TABLE contacts ADD COLUMN status VARCHAR(30) NOT NULL DEFAULT 'aberto'");
-  } catch (error) {
-    if (error.code !== "ER_DUP_FIELDNAME") {
-      throw error;
+  const migrations = [
+    "ALTER TABLE contacts ADD COLUMN status VARCHAR(30) NOT NULL DEFAULT 'aberto'",
+    "ALTER TABLE contacts ADD COLUMN category VARCHAR(80) NOT NULL DEFAULT 'Geral'",
+    "ALTER TABLE contacts ADD COLUMN attachment_name VARCHAR(180)",
+    "ALTER TABLE contacts ADD COLUMN attachment_type VARCHAR(120)",
+    "ALTER TABLE contacts ADD COLUMN attachment_data LONGTEXT",
+  ];
+
+  for (const migration of migrations) {
+    try {
+      await connectionPool.execute(migration);
+    } catch (error) {
+      if (error.code !== "ER_DUP_FIELDNAME") {
+        throw error;
+      }
     }
   }
 
   isReady = true;
 }
 
-async function saveContact({ name, email, message }) {
+async function saveContact({ name, email, category, message, attachment }) {
   const connectionPool = getPool();
 
   if (!connectionPool) {
@@ -60,8 +74,16 @@ async function saveContact({ name, email, message }) {
   await initDatabase();
 
   const [result] = await connectionPool.execute(
-    "INSERT INTO contacts (name, email, message) VALUES (?, ?, ?)",
-    [name, email, message]
+    "INSERT INTO contacts (name, email, category, message, attachment_name, attachment_type, attachment_data) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [
+      name,
+      email,
+      category || "Geral",
+      message,
+      attachment?.name || null,
+      attachment?.type || null,
+      attachment?.data || null,
+    ]
   );
 
   return result.insertId;
@@ -77,7 +99,7 @@ async function listContacts() {
   await initDatabase();
 
   const [rows] = await connectionPool.execute(
-    "SELECT id, name, email, message, status, created_at FROM contacts ORDER BY created_at DESC LIMIT 50"
+    "SELECT id, name, email, category, message, attachment_name, attachment_type, attachment_data, status, created_at FROM contacts ORDER BY created_at DESC LIMIT 80"
   );
 
   return rows;

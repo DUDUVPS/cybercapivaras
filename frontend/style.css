@@ -645,6 +645,9 @@ input, textarea, select {
 .team-table b {
   color: var(--green);
 }
+.compact-members {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
 .ops-list,
 .candidate-list {
   display: grid;
@@ -670,8 +673,99 @@ input, textarea, select {
 .candidate-card b {
   color: var(--green);
 }
+.candidate-card select {
+  min-width: 150px;
+}
 .candidate-card .task-remove {
   grid-column: 1 / -1;
+}
+.attachment-link {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--green);
+  background: rgba(60,242,155,.07);
+  font-weight: 800;
+}
+.task-layout {
+  grid-template-columns: minmax(0, 1.4fr) minmax(320px, .8fr);
+}
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.kanban-column {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 320px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(0,0,0,.2);
+}
+.kanban-column h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+.task-card {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255,255,255,.055);
+}
+.task-card.is-done {
+  opacity: .42;
+  filter: grayscale(.6);
+}
+.task-card small {
+  color: var(--muted);
+}
+.calendar-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.calendar-cell {
+  min-height: 82px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255,255,255,.035);
+}
+.calendar-cell.is-muted {
+  opacity: .25;
+}
+.calendar-cell strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--green);
+}
+.calendar-cell span {
+  display: block;
+  margin-top: 4px;
+  padding: 3px 5px;
+  border-radius: 6px;
+  background: rgba(24,199,255,.12);
+  font-size: .72rem;
+}
+.calendar-cell span.is-done {
+  opacity: .45;
+  text-decoration: line-through;
 }
 .permission-matrix {
   display: grid;
@@ -705,6 +799,22 @@ input, textarea, select {
 }
 .permission-matrix .button {
   grid-column: 1 / -1;
+}
+.permission-list {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 10px;
+}
+.permission-list article {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255,255,255,.035);
+}
+.permission-list span {
+  color: var(--muted);
 }
 .task-board {
   display: grid;
@@ -774,12 +884,13 @@ body[data-accent="red"] { --green: var(--red); }
   .team-lead { position: static; }
   .app-screen { grid-template-columns: 1fr; }
   .app-sidebar { position: static; height: auto; }
-  .module-grid, .inline-form, .editor-layout, .permission-matrix { grid-template-columns: 1fr; }
+  .module-grid, .inline-form, .editor-layout, .permission-matrix, .task-layout, .kanban-board, .compact-members { grid-template-columns: 1fr; }
   .workspace-header, .workspace-actions { align-items: stretch; flex-direction: column; }
   .app-main { padding: 18px; }
   .app-sidebar { padding: 18px; }
   .app-menu { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sidebar-account { margin-top: 0; }
+  .calendar-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ticket-actions { align-items: stretch; flex-direction: column; }
   .ticket-actions select { max-width: none; }
   .public-nav { align-items: flex-start; flex-direction: column; padding-block: 14px; }

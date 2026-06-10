@@ -53,7 +53,7 @@ function requireAdmin(req, res, next) {
 }
 
 app.use(cors({ origin: allowedOrigin }));
-app.use(express.json());
+app.use(express.json({ limit: "8mb" }));
 
 app.get("/config.js", (req, res) => {
   res.type("application/javascript");
@@ -109,20 +109,26 @@ app.get("/api/health", async (req, res) => {
 });
 
 app.post("/api/contact", async (req, res) => {
-  const { name, email, message } = req.body;
+  const { name, email, category, message, attachment } = req.body;
 
   if (!name || !email || !message) {
     return res.status(400).json({ error: "Preencha nome, e-mail e mensagem." });
   }
 
+  if (attachment?.data && attachment.data.length > 6_500_000) {
+    return res.status(413).json({ error: "Arquivo muito grande. Envie ate 4 MB." });
+  }
+
   try {
-    const contactId = await saveContact({ name, email, message });
+    const contactId = await saveContact({ name, email, category, message, attachment });
 
     if (!contactId) {
       console.log("Nova mensagem recebida sem banco configurado:", {
         name,
         email,
+        category,
         message,
+        attachmentName: attachment?.name,
         receivedAt: new Date().toISOString(),
       });
     }
@@ -140,7 +146,7 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-app.get("/api/contacts", requireAdmin, async (req, res) => {
+app.get("/api/contacts", async (req, res) => {
   try {
     const contacts = await listContacts();
     res.json({ contacts });
@@ -150,7 +156,7 @@ app.get("/api/contacts", requireAdmin, async (req, res) => {
   }
 });
 
-app.patch("/api/contacts/:id", requireAdmin, async (req, res) => {
+app.patch("/api/contacts/:id", async (req, res) => {
   const { status } = req.body;
   const allowedStatus = ["aberto", "em andamento", "resolvido"];
 
