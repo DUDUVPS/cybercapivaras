@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const crypto = require("crypto");
 const path = require("path");
 const { checkDatabase, hasDatabase, initDatabase, listContacts, saveContact, updateContactStatus } = require("./db");
 
@@ -7,7 +8,49 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const allowedOrigin = process.env.ALLOWED_ORIGIN || "*";
 const googleClientId = process.env.GOOGLE_CLIENT_ID || "";
+const adminEmail = process.env.ADMIN_EMAIL || "";
+const adminPassword = process.env.ADMIN_PASSWORD || "";
+const adminSessionSecret = process.env.ADMIN_SESSION_SECRET || "dev-admin-session-secret";
 const frontendPath = path.join(__dirname, "..", "frontend");
+
+function signAdminToken(email) {
+  const payload = Buffer.from(JSON.stringify({
+    email,
+    role: "Administrador",
+    exp: Date.now() + 1000 * 60 * 60 * 8,
+  })).toString("base64url");
+  const signature = crypto.createHmac("sha256", adminSessionSecret).update(payload).digest("base64url");
+  return `${payload}.${signature}`;
+}
+
+function verifyAdminToken(token) {
+  try {
+    if (!token || !token.includes(".")) return null;
+
+    const [payload, signature] = token.split(".");
+    const expected = crypto.createHmac("sha256", adminSessionSecret).update(payload).digest("base64url");
+    if (signature.length !== expected.length) return null;
+    if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return null;
+
+    const data = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+    if (Date.now() > data.exp || data.role !== "Administrador") return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function requireAdmin(req, res, next) {
+  const token = (req.headers.authorization || "").replace("Bearer ", "");
+  const session = verifyAdminToken(token);
+
+  if (!session) {
+    return res.status(401).json({ error: "Acesso de administrador necessario." });
+  }
+
+  req.admin = session;
+  next();
+}
 
 app.use(cors({ origin: allowedOrigin }));
 app.use(express.json());
@@ -25,7 +68,30 @@ app.get("/api", (req, res) => {
     name: "Cybercapivaras API",
     status: "online",
     database: hasDatabase() ? "configured" : "not configured",
-    endpoints: ["/api/health", "/api/contact", "/api/contacts"],
+    endpoints: ["/api/health", "/api/admin/login", "/api/contact", "/api/contacts"],
+  });
+});
+
+app.post("/api/admin/login", (req, res) => {
+  const { email, password } = req.body;
+
+  if (!adminEmail || !adminPassword) {
+    return res.status(503).json({ error: "Administrador ainda nao configurado no Railway." });
+  }
+
+  if (email !== adminEmail || password !== adminPassword) {
+    return res.status(401).json({ error: "Acesso de administrador invalido." });
+  }
+
+  res.json({
+    token: signAdminToken(email),
+    user: {
+      name: "Administrador",
+      email,
+      role: "Administrador",
+      level: "N5",
+      permission: "Controle total do app, site e funcoes.",
+    },
   });
 });
 
@@ -74,7 +140,7 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-app.get("/api/contacts", async (req, res) => {
+app.get("/api/contacts", requireAdmin, async (req, res) => {
   try {
     const contacts = await listContacts();
     res.json({ contacts });
@@ -84,7 +150,7 @@ app.get("/api/contacts", async (req, res) => {
   }
 });
 
-app.patch("/api/contacts/:id", async (req, res) => {
+app.patch("/api/contacts/:id", requireAdmin, async (req, res) => {
   const { status } = req.body;
   const allowedStatus = ["aberto", "em andamento", "resolvido"];
 

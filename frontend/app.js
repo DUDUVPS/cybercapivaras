@@ -85,6 +85,12 @@ function saveTasks(tasks) {
 }
 
 function startSession(user) {
+  if (user.token && user.role) {
+    localStorage.setItem("cyber_session", JSON.stringify(user));
+    window.location.href = "app.html";
+    return;
+  }
+
   const roles = getRoles();
   const saved = roles[user.email] || { name: user.name, email: user.email, role: "Membro" };
   const [level, permission] = roleProfiles[saved.role] || roleProfiles.Membro;
@@ -102,6 +108,11 @@ function startSession(user) {
 
 function getSession() {
   return JSON.parse(localStorage.getItem("cyber_session") || "null");
+}
+
+function getAuthHeaders() {
+  const session = getSession();
+  return session?.token ? { Authorization: `Bearer ${session.token}` } : {};
 }
 
 function renderPublicPage() {
@@ -208,16 +219,23 @@ function setupLogin() {
     startSession({ name: "Membro Google", email: "membro@cybercapivaras.com" });
   });
 
-  adminForm.addEventListener("submit", (event) => {
+  adminForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+    status.textContent = "Verificando administrador...";
     const data = Object.fromEntries(new FormData(adminForm).entries());
 
-    if (data.email !== "admin@cybercapivaras.com" || data.password !== "admin123") {
-      status.textContent = "Acesso de administrador invalido.";
-      return;
+    try {
+      const response = await fetch(`${API_URL}/api/admin/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error);
+      startSession({ ...result.user, token: result.token });
+    } catch (error) {
+      status.textContent = error.message || "Acesso de administrador invalido.";
     }
-
-    startSession({ name: "Administrador", email: data.email });
   });
 }
 
@@ -403,9 +421,17 @@ async function loadTickets() {
   const list = document.querySelector("#ticketList");
   if (!list) return;
 
+  if (!getSession()?.token) {
+    list.innerHTML = `<article class="empty-state">Chamados disponiveis apenas para administrador.</article>`;
+    return;
+  }
+
   try {
-    const response = await fetch(`${API_URL}/api/contacts`);
+    const response = await fetch(`${API_URL}/api/contacts`, {
+      headers: getAuthHeaders(),
+    });
     const data = await response.json();
+    if (!response.ok) throw new Error(data.error);
     const tickets = data.contacts || [];
 
     if (!tickets.length) {
@@ -439,7 +465,7 @@ async function loadTickets() {
       select.addEventListener("change", async () => {
         await fetch(`${API_URL}/api/contacts/${select.dataset.ticketId}`, {
           method: "PATCH",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", ...getAuthHeaders() },
           body: JSON.stringify({ status: select.value }),
         });
       });

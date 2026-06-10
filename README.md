@@ -101,6 +101,19 @@ O backend serve `/config.js` dinamicamente com essa variavel. Nao precisa editar
 Enquanto o Client ID estiver vazio, o site mostra um botao Google em modo demo/local.
 O login por e-mail e senha e exclusivo do administrador.
 
+## Login do administrador
+
+O administrador e validado pelo backend. Configure estas variaveis no Railway:
+
+```text
+ADMIN_EMAIL=seu-email-admin
+ADMIN_PASSWORD=sua-senha-forte
+ADMIN_SESSION_SECRET=um-texto-grande-e-aleatorio
+```
+
+O formulario de e-mail e senha fica oculto na tela de login e aparece apenas em `Acesso do administrador`.
+Os chamados recebidos pelo site so podem ser listados e atualizados por uma sessao de administrador.
+
 ## Endpoints
 
 ```text
