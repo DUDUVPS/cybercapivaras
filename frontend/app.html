@@ -8,9 +8,9 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260610-team-front" />
+    <link rel="stylesheet" href="style.css?v=20260610-ops-redesign" />
   </head>
-  <body class="app-screen" data-protected="true">
+  <body class="app-screen app-shell" data-protected="true">
     <aside class="app-sidebar">
       <a class="brand app-brand" href="index.html">
         <img src="imgs/apple-touch-icon.png" alt="Cyber Capivaras" />
@@ -21,21 +21,25 @@
       </a>
 
       <nav class="app-menu" aria-label="Menu do app">
-        <a class="active" href="#painel">Painel</a>
-        <a href="#site">Site publico</a>
-        <a href="#equipe">Equipe</a>
-        <a href="#chamados">Chamados</a>
-        <a href="#tarefas">Tarefas</a>
-        <a href="#ajustes">Ajustes</a>
+        <button class="active" type="button" data-tab-target="painel">Painel</button>
+        <button type="button" data-tab-target="site">Site publico</button>
+        <button type="button" data-tab-target="equipe">Equipe</button>
+        <button type="button" data-tab-target="chamados">Chamados</button>
+        <button type="button" data-tab-target="tarefas">Tarefas</button>
+        <button type="button" data-tab-target="seletivo">Processo seletivo</button>
+        <button class="admin-only" type="button" data-tab-target="permissoes">Permissoes</button>
+        <button class="admin-only" type="button" data-tab-target="ajustes">Ajustes</button>
       </nav>
 
-      <div class="sidebar-card">
-        <span class="mini-label">Sessao</span>
-        <strong id="sidebarUser">Carregando...</strong>
-        <small id="sidebarRole">Acesso</small>
+      <div class="sidebar-account">
+        <div class="account-avatar" id="accountAvatar">CC</div>
+        <div>
+          <span class="mini-label">Conta</span>
+          <strong id="sidebarUser">Carregando...</strong>
+          <small id="sidebarRole">Acesso</small>
+        </div>
+        <button class="ghost-button" id="logoutButton" type="button">Sair</button>
       </div>
-
-      <button class="ghost-button" id="logoutButton" type="button">Sair do app</button>
     </aside>
 
     <main class="app-main">
@@ -51,26 +55,54 @@
         </div>
       </header>
 
-      <section class="app-grid" id="painel">
-        <article class="app-card metric">
-          <span id="projectsCount">3</span>
-          <h3>Projetos ativos</h3>
-          <p>Robos, testes e prototipos acompanhados pela equipe.</p>
-        </article>
-        <article class="app-card metric">
-          <span id="teamCount">10</span>
-          <h3>Integrantes</h3>
-          <p>Funcoes, permissoes e hierarquia do time.</p>
-        </article>
-        <article class="app-card metric">
-          <span id="apiState">...</span>
-          <h3>Railway + MySQL</h3>
-          <p id="apiStateText">Verificando backend.</p>
-        </article>
+      <section class="app-tab is-active" id="painel" data-tab-panel="painel">
+        <div class="app-grid">
+          <article class="app-card metric">
+            <span id="projectsCount">3</span>
+            <h3>Projetos ativos</h3>
+            <p>Robos, testes e prototipos acompanhados pela equipe.</p>
+          </article>
+          <article class="app-card metric">
+            <span id="teamCount">10</span>
+            <h3>Integrantes</h3>
+            <p>Funcoes, permissoes e hierarquia do time.</p>
+          </article>
+          <article class="app-card metric">
+            <span id="apiState">...</span>
+            <h3>Railway + MySQL</h3>
+            <p id="apiStateText">Verificando backend.</p>
+          </article>
+        </div>
+        <div class="module-grid">
+          <article class="app-section">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Operacao</p>
+                <h2>Resumo da central</h2>
+              </div>
+              <span class="module-chip">Ao vivo</span>
+            </div>
+            <div class="ops-list">
+              <article><strong>Site publico</strong><span>Conteudo, contato e vitrine do time.</span></article>
+              <article><strong>Equipe</strong><span>Funcoes, hierarquia e permissoes.</span></article>
+              <article><strong>Processo seletivo</strong><span>Candidatos e etapas de entrada.</span></article>
+            </div>
+          </article>
+          <article class="app-section">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Acesso</p>
+                <h2>Meu nivel no app</h2>
+              </div>
+              <span class="module-chip" id="accessGroupChip">Equipe</span>
+            </div>
+            <p id="accessSummary">Carregando permissoes...</p>
+          </article>
+        </div>
       </section>
 
-      <section class="module-grid">
-        <article class="app-section admin-only" id="site">
+      <section class="app-tab admin-only" id="site" data-tab-panel="site">
+        <article class="app-section">
           <div class="section-head compact-head">
             <div>
               <p class="eyebrow">Admin</p>
@@ -86,8 +118,10 @@
             <p class="form-status" id="siteEditorStatus" role="status"></p>
           </form>
         </article>
+      </section>
 
-        <article class="app-section" id="tarefas">
+      <section class="app-tab" id="tarefas" data-tab-panel="tarefas">
+        <article class="app-section">
           <div class="section-head compact-head">
             <div>
               <p class="eyebrow">Operacao</p>
@@ -104,31 +138,107 @@
         </article>
       </section>
 
-      <section class="app-section" id="equipe">
-        <div class="section-head compact-head">
-          <div>
-            <p class="eyebrow">Equipe</p>
-            <h2>Funcoes e hierarquia</h2>
+      <section class="app-tab" id="equipe" data-tab-panel="equipe">
+        <article class="app-section">
+          <div class="section-head compact-head">
+            <div>
+              <p class="eyebrow">Equipe</p>
+              <h2>Funcoes e hierarquia</h2>
+            </div>
+            <span class="module-chip">Permissoes</span>
           </div>
-          <span class="module-chip">Permissoes</span>
-        </div>
-        <div class="team-table" id="teamTable"></div>
+          <div class="team-table" id="teamTable"></div>
+        </article>
       </section>
 
-      <section class="app-section" id="chamados">
-        <div class="section-head compact-head">
-          <div>
-            <p class="eyebrow">Contato</p>
-            <h2>Chamados recebidos pelo site</h2>
+      <section class="app-tab" id="chamados" data-tab-panel="chamados">
+        <article class="app-section">
+          <div class="section-head compact-head">
+            <div>
+              <p class="eyebrow">Contato</p>
+              <h2>Chamados recebidos pelo site</h2>
+            </div>
+            <span class="module-chip">Inbox</span>
           </div>
-          <span class="module-chip">Inbox</span>
-        </div>
-        <div class="ticket-list" id="ticketList">
-          <article class="empty-state">Carregando chamados...</article>
+          <div class="ticket-list" id="ticketList">
+            <article class="empty-state">Carregando chamados...</article>
+          </div>
+        </article>
+      </section>
+
+      <section class="app-tab" id="seletivo" data-tab-panel="seletivo">
+        <div class="module-grid">
+          <article class="app-section">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Entrada</p>
+                <h2>Processo seletivo</h2>
+              </div>
+              <span class="module-chip">Candidatos</span>
+            </div>
+            <div class="candidate-list" id="candidateList"></div>
+          </article>
+          <article class="app-section admin-only">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Admin</p>
+                <h2>Novo candidato</h2>
+              </div>
+              <span class="module-chip">Selecao</span>
+            </div>
+            <form class="app-form" id="candidateForm">
+              <label>Nome <input type="text" name="name" required /></label>
+              <label>Interesse
+                <select name="area" required>
+                  <option>Programacao</option>
+                  <option>Eletronica</option>
+                  <option>Mecanica</option>
+                  <option>Design 3D</option>
+                  <option>Marketing</option>
+                </select>
+              </label>
+              <label>Etapa
+                <select name="stage" required>
+                  <option>Inscricao</option>
+                  <option>Entrevista</option>
+                  <option>Teste pratico</option>
+                  <option>Aprovado</option>
+                </select>
+              </label>
+              <button class="button primary" type="submit">Adicionar candidato</button>
+            </form>
+          </article>
         </div>
       </section>
 
-      <section class="module-grid admin-only">
+      <section class="app-tab admin-only" id="permissoes" data-tab-panel="permissoes">
+        <div class="module-grid">
+          <article class="app-section">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Admin</p>
+                <h2>Acessos por perfil</h2>
+              </div>
+              <span class="module-chip">Alunos e professores</span>
+            </div>
+            <form class="permission-matrix" id="permissionForm"></form>
+            <p class="form-status" id="permissionStatus" role="status"></p>
+          </article>
+          <article class="app-section">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Regra</p>
+                <h2>Como funciona</h2>
+              </div>
+              <span class="module-chip">Admin</span>
+            </div>
+            <p>O administrador ve tudo. Alunos e professores recebem acesso conforme as abas marcadas aqui.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="app-tab admin-only" id="ajustes" data-tab-panel="ajustes">
+        <div class="module-grid">
         <article class="app-section">
           <div class="section-head compact-head">
             <div>
@@ -143,6 +253,8 @@
             <label>Funcao
               <select name="role" required>
                 <option>Administrador</option>
+                <option>Professor</option>
+                <option>Orientador</option>
                 <option>Capitao</option>
                 <option>Lider tecnico</option>
                 <option>Programacao</option>
@@ -186,9 +298,10 @@
             <p class="form-status" id="settingsStatus" role="status"></p>
           </form>
         </article>
+        </div>
       </section>
     </main>
 
-    <script src="app.js?v=20260610-admin-auth"></script>
+    <script src="app.js?v=20260610-ops-redesign"></script>
   </body>
 </html>

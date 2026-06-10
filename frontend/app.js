@@ -28,8 +28,31 @@ const defaultTasks = [
   ["Publicar fotos", "Marketing"],
 ];
 
+const appModules = {
+  painel: "Painel",
+  site: "Site publico",
+  equipe: "Equipe",
+  chamados: "Chamados",
+  tarefas: "Tarefas",
+  seletivo: "Processo seletivo",
+  ajustes: "Ajustes",
+};
+
+const defaultAccessRules = {
+  Aluno: ["painel", "equipe", "tarefas", "seletivo"],
+  Professor: ["painel", "site", "equipe", "chamados", "tarefas", "seletivo"],
+};
+
+const defaultCandidates = [
+  ["Livia Martins", "Programacao", "Entrevista"],
+  ["Carlos Henrique", "Mecanica", "Teste pratico"],
+  ["Beatriz Rocha", "Eletronica", "Inscricao"],
+];
+
 const roleProfiles = {
   Administrador: ["N5", "Controle total do app, site e funcoes."],
+  Professor: ["N5", "Acompanha equipe, aprova processos e orienta decisoes."],
+  Orientador: ["N5", "Orienta projetos, seguranca e organizacao pedagogica."],
   Capitao: ["N4", "Coordena projetos, tarefas e comunicados."],
   "Lider tecnico": ["N3", "Gerencia robos, testes e documentacao tecnica."],
   Programacao: ["N2", "Atualiza codigos, sensores e automacao."],
@@ -84,6 +107,22 @@ function saveTasks(tasks) {
   localStorage.setItem("cyber_tasks", JSON.stringify(tasks));
 }
 
+function getAccessRules() {
+  return { ...defaultAccessRules, ...JSON.parse(localStorage.getItem("cyber_access_rules") || "{}") };
+}
+
+function saveAccessRules(rules) {
+  localStorage.setItem("cyber_access_rules", JSON.stringify(rules));
+}
+
+function getCandidates() {
+  return JSON.parse(localStorage.getItem("cyber_candidates") || JSON.stringify(defaultCandidates));
+}
+
+function saveCandidates(candidates) {
+  localStorage.setItem("cyber_candidates", JSON.stringify(candidates));
+}
+
 function startSession(user) {
   if (user.token && user.role) {
     localStorage.setItem("cyber_session", JSON.stringify(user));
@@ -113,6 +152,19 @@ function getSession() {
 function getAuthHeaders() {
   const session = getSession();
   return session?.token ? { Authorization: `Bearer ${session.token}` } : {};
+}
+
+function getAccessGroup(session = getSession()) {
+  if (!session) return "Aluno";
+  if (session.role === "Administrador") return "Administrador";
+  if (["Professor", "Orientador", "Capitao", "Lider tecnico"].includes(session.role)) return "Professor";
+  return "Aluno";
+}
+
+function getAllowedTabs(session = getSession()) {
+  const group = getAccessGroup(session);
+  if (group === "Administrador") return [...Object.keys(appModules), "permissoes"];
+  return getAccessRules()[group] || defaultAccessRules.Aluno;
 }
 
 function renderPublicPage() {
@@ -255,7 +307,55 @@ function protectApp() {
   if (!getSession()) window.location.href = "login.html";
 }
 
+function showAppTab(tabId) {
+  const allowed = getAllowedTabs();
+  const target = allowed.includes(tabId) ? tabId : allowed[0] || "painel";
+
+  document.querySelectorAll("[data-tab-panel]").forEach((panel) => {
+    panel.classList.toggle("is-active", panel.dataset.tabPanel === target);
+  });
+
+  document.querySelectorAll("[data-tab-target]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.tabTarget === target);
+  });
+}
+
+function setupAppTabs() {
+  if (!document.body.classList.contains("app-shell")) return;
+
+  document.querySelectorAll("[data-tab-target]").forEach((button) => {
+    button.addEventListener("click", () => {
+      showAppTab(button.dataset.tabTarget);
+    });
+  });
+}
+
+function applyAccessRules() {
+  if (!document.body.classList.contains("app-shell")) return;
+  const session = getSession();
+  const allowed = getAllowedTabs(session);
+  const group = getAccessGroup(session);
+
+  document.querySelectorAll("[data-tab-target]").forEach((button) => {
+    button.hidden = !allowed.includes(button.dataset.tabTarget);
+  });
+
+  document.querySelectorAll("[data-tab-panel]").forEach((panel) => {
+    panel.hidden = !allowed.includes(panel.dataset.tabPanel);
+  });
+
+  const chip = document.querySelector("#accessGroupChip");
+  const summary = document.querySelector("#accessSummary");
+  if (chip) chip.textContent = group;
+  if (summary) summary.textContent = group === "Administrador"
+    ? "Voce controla todos os modulos, permissoes, conteudo publico e funcoes da equipe."
+    : `Seu perfil pode acessar: ${allowed.map((id) => appModules[id]).filter(Boolean).join(", ")}.`;
+
+  showAppTab(document.querySelector("[data-tab-target].active")?.dataset.tabTarget || "painel");
+}
+
 function renderApp() {
+  if (!document.body.classList.contains("app-shell")) return;
   const session = getSession();
   if (!session) return;
 
@@ -267,11 +367,14 @@ function renderApp() {
   document.querySelector("#appBrandName").textContent = settings.appName;
   document.querySelector("#sidebarUser").textContent = session.name;
   document.querySelector("#sidebarRole").textContent = `${session.role} - ${session.level}`;
+  const avatar = document.querySelector("#accountAvatar");
+  if (avatar) avatar.textContent = (session.name || "CC").split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase();
   document.body.dataset.density = settings.density;
   document.body.dataset.accent = settings.accent;
   document.querySelectorAll(".admin-only").forEach((node) => {
     node.hidden = !admin;
   });
+  applyAccessRules();
 
   const table = document.querySelector("#teamTable");
   if (table) {
@@ -293,6 +396,8 @@ function renderApp() {
   if (teamCount) teamCount.textContent = baseTeam.length + Object.values(getRoles()).filter((item) => item.email !== "admin@cybercapivaras.com").length;
 
   renderTasks();
+  renderCandidates();
+  renderPermissionMatrix();
   loadTickets();
 }
 
@@ -329,6 +434,8 @@ function setupAppForms() {
 
   setupTaskForm();
   setupSettingsForm();
+  setupPermissionForm();
+  setupCandidateForm();
 }
 
 function renderTasks() {
@@ -369,6 +476,109 @@ function setupTaskForm() {
     saveTasks(tasks);
     form.reset();
     renderTasks();
+  });
+}
+
+function renderCandidates() {
+  const list = document.querySelector("#candidateList");
+  if (!list) return;
+
+  const candidates = getCandidates();
+  if (!candidates.length) {
+    list.innerHTML = `<article class="empty-state">Nenhum candidato cadastrado.</article>`;
+    return;
+  }
+
+  list.innerHTML = candidates
+    .map(
+      ([name, area, stage], index) => `
+        <article class="candidate-card">
+          <div>
+            <strong>${name}</strong>
+            <span>${area}</span>
+          </div>
+          <b>${stage}</b>
+          <button class="task-remove admin-only" type="button" data-candidate-index="${index}">Remover</button>
+        </article>
+      `
+    )
+    .join("");
+
+  document.querySelectorAll("[data-candidate-index]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const next = getCandidates();
+      next.splice(Number(button.dataset.candidateIndex), 1);
+      saveCandidates(next);
+      renderCandidates();
+    });
+  });
+
+  document.querySelectorAll(".candidate-card .admin-only").forEach((node) => {
+    node.hidden = getSession()?.role !== "Administrador";
+  });
+}
+
+function setupCandidateForm() {
+  const form = document.querySelector("#candidateForm");
+  if (!form) return;
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    const candidates = getCandidates();
+    candidates.push([data.name, data.area, data.stage]);
+    saveCandidates(candidates);
+    form.reset();
+    renderCandidates();
+  });
+}
+
+function renderPermissionMatrix() {
+  const form = document.querySelector("#permissionForm");
+  if (!form) return;
+
+  const rules = getAccessRules();
+  const groups = ["Aluno", "Professor"];
+  const modules = Object.entries(appModules).filter(([id]) => id !== "ajustes");
+
+  form.innerHTML = groups
+    .map(
+      (group) => `
+        <fieldset>
+          <legend>${group}</legend>
+          ${modules
+            .map(([id, label]) => `
+              <label class="permission-row">
+                <input type="checkbox" name="${group}" value="${id}" ${rules[group]?.includes(id) ? "checked" : ""} />
+                <span>${label}</span>
+              </label>
+            `)
+            .join("")}
+        </fieldset>
+      `
+    )
+    .join("") + `<button class="button primary" type="submit">Salvar permissoes</button>`;
+}
+
+function setupPermissionForm() {
+  const form = document.querySelector("#permissionForm");
+  const status = document.querySelector("#permissionStatus");
+  if (!form) return;
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const data = new FormData(form);
+    const rules = {
+      Aluno: data.getAll("Aluno"),
+      Professor: data.getAll("Professor"),
+    };
+
+    if (!rules.Aluno.includes("painel")) rules.Aluno.unshift("painel");
+    if (!rules.Professor.includes("painel")) rules.Professor.unshift("painel");
+
+    saveAccessRules(rules);
+    if (status) status.textContent = "Permissoes atualizadas.";
+    applyAccessRules();
   });
 }
 
@@ -504,6 +714,7 @@ protectApp();
 renderPublicPage();
 setupRevealAnimations();
 setupLogin();
+setupAppTabs();
 renderApp();
 setupAppForms();
 setupContactForm();
