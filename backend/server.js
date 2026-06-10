@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const { checkDatabase, hasDatabase, initDatabase, saveContact } = require("./db");
+const { checkDatabase, hasDatabase, initDatabase, listContacts, saveContact, updateContactStatus } = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,7 +17,7 @@ app.get("/api", (req, res) => {
     name: "Cybercapivaras API",
     status: "online",
     database: hasDatabase() ? "configured" : "not configured",
-    endpoints: ["/api/health", "/api/contact"],
+    endpoints: ["/api/health", "/api/contact", "/api/contacts"],
   });
 });
 
@@ -55,7 +55,7 @@ app.post("/api/contact", async (req, res) => {
 
     return res.status(201).json({
       id: contactId,
-      message: "Mensagem enviada com sucesso! O time entrara em contato em breve.",
+      message: "Chamado enviado com sucesso! O time entrara em contato em breve.",
     });
   } catch (error) {
     console.error("Erro ao salvar contato:", error);
@@ -63,6 +63,38 @@ app.post("/api/contact", async (req, res) => {
     return res.status(500).json({
       error: "Nao foi possivel salvar a mensagem agora.",
     });
+  }
+});
+
+app.get("/api/contacts", async (req, res) => {
+  try {
+    const contacts = await listContacts();
+    res.json({ contacts });
+  } catch (error) {
+    console.error("Erro ao listar chamados:", error);
+    res.status(500).json({ error: "Nao foi possivel carregar os chamados." });
+  }
+});
+
+app.patch("/api/contacts/:id", async (req, res) => {
+  const { status } = req.body;
+  const allowedStatus = ["aberto", "em andamento", "resolvido"];
+
+  if (!allowedStatus.includes(status)) {
+    return res.status(400).json({ error: "Status invalido." });
+  }
+
+  try {
+    const updated = await updateContactStatus(req.params.id, status);
+
+    if (!updated) {
+      return res.status(404).json({ error: "Chamado nao encontrado." });
+    }
+
+    res.json({ message: "Chamado atualizado.", status });
+  } catch (error) {
+    console.error("Erro ao atualizar chamado:", error);
+    res.status(500).json({ error: "Nao foi possivel atualizar o chamado." });
   }
 });
 

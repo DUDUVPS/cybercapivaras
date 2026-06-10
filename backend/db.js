@@ -34,9 +34,18 @@ async function initDatabase() {
       name VARCHAR(120) NOT NULL,
       email VARCHAR(180) NOT NULL,
       message TEXT NOT NULL,
+      status VARCHAR(30) NOT NULL DEFAULT 'aberto',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  try {
+    await connectionPool.execute("ALTER TABLE contacts ADD COLUMN status VARCHAR(30) NOT NULL DEFAULT 'aberto'");
+  } catch (error) {
+    if (error.code !== "ER_DUP_FIELDNAME") {
+      throw error;
+    }
+  }
 
   isReady = true;
 }
@@ -58,6 +67,36 @@ async function saveContact({ name, email, message }) {
   return result.insertId;
 }
 
+async function listContacts() {
+  const connectionPool = getPool();
+
+  if (!connectionPool) {
+    return [];
+  }
+
+  await initDatabase();
+
+  const [rows] = await connectionPool.execute(
+    "SELECT id, name, email, message, status, created_at FROM contacts ORDER BY created_at DESC LIMIT 50"
+  );
+
+  return rows;
+}
+
+async function updateContactStatus(id, status) {
+  const connectionPool = getPool();
+
+  if (!connectionPool) {
+    return false;
+  }
+
+  await initDatabase();
+
+  const [result] = await connectionPool.execute("UPDATE contacts SET status = ? WHERE id = ?", [status, id]);
+
+  return result.affectedRows > 0;
+}
+
 async function checkDatabase() {
   const connectionPool = getPool();
 
@@ -75,5 +114,7 @@ module.exports = {
   checkDatabase,
   hasDatabase,
   initDatabase,
+  listContacts,
   saveContact,
+  updateContactStatus,
 };

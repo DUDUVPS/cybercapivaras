@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login | Cyber Capivaras</title>
     <link rel="icon" type="image/png" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260610-app" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#080a0f" />
+    <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
+    <link rel="stylesheet" href="style.css?v=20260610-pwa-tickets" />
   </head>
   <body class="login-screen">
     <main class="login-layout">
@@ -26,6 +29,7 @@
           Entrar com Google
         </button>
         <div id="googleSignIn"></div>
+        <p class="login-note" id="googleStatus">Configure o Google Client ID para ativar o login oficial.</p>
 
         <form class="admin-login" id="adminLoginForm">
           <div class="divider"><span>admin</span></div>
@@ -39,6 +43,8 @@
 
     <script src="config.js?v=20260610-app"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="app.js?v=20260610-app"></script>
+    <script src="config.js?v=20260610-pwa-tickets"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="app.js?v=20260610-pwa-tickets"></script>
   </body>
 </html>

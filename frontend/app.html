@@ -5,43 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>App Cyber Capivara</title>
     <link rel="icon" type="image/png" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260610-app" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#080a0f" />
+    <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
+    <link rel="stylesheet" href="style.css?v=20260610-pwa-tickets" />
   </head>
   <body class="app-screen" data-protected="true">
     <aside class="app-sidebar">
-      <a class="brand" href="index.html">
+      <a class="brand app-brand" href="index.html">
         <img src="imgs/apple-touch-icon.png" alt="Cyber Capivaras" />
-        <span>Cyber App</span>
+        <span>
+          <strong id="appBrandName">Cyber App</strong>
+          <small>central operacional</small>
+        </span>
       </a>
-      <nav class="app-menu">
-        <a href="#painel">Painel</a>
-        <a href="#site">Site</a>
+
+      <nav class="app-menu" aria-label="Menu do app">
+        <a class="active" href="#painel">Painel</a>
+        <a href="#site">Site publico</a>
         <a href="#equipe">Equipe</a>
+        <a href="#chamados">Chamados</a>
         <a href="#tarefas">Tarefas</a>
+        <a href="#ajustes">Ajustes</a>
       </nav>
-      <button class="ghost-button" id="logoutButton" type="button">Sair</button>
+
+      <div class="sidebar-card">
+        <span class="mini-label">Sessao</span>
+        <strong id="sidebarUser">Carregando...</strong>
+        <small id="sidebarRole">Acesso</small>
+      </div>
+
+      <button class="ghost-button" id="logoutButton" type="button">Sair do app</button>
     </aside>
 
     <main class="app-main">
-      <header class="app-header">
+      <header class="workspace-header">
         <div>
           <p class="eyebrow">Cyber Capivara</p>
-          <h1>Central do time</h1>
+          <h1 id="workspaceTitle">Central do time</h1>
           <p id="sessionLabel">Carregando acesso...</p>
         </div>
-        <div class="access-badge" id="accessBadge">N2</div>
+        <div class="workspace-actions">
+          <a class="ghost-button" href="index.html">Ver site</a>
+          <div class="access-badge" id="accessBadge">N2</div>
+        </div>
       </header>
 
       <section class="app-grid" id="painel">
         <article class="app-card metric">
-          <span>3</span>
+          <span id="projectsCount">3</span>
           <h3>Projetos ativos</h3>
-          <p>Robos, testes e prototipos do time.</p>
+          <p>Robos, testes e prototipos acompanhados pela equipe.</p>
         </article>
         <article class="app-card metric">
-          <span>10</span>
+          <span id="teamCount">10</span>
           <h3>Integrantes</h3>
-          <p>Funcoes organizadas por hierarquia.</p>
+          <p>Funcoes, permissoes e hierarquia do time.</p>
         </article>
         <article class="app-card metric">
           <span id="apiState">...</span>
@@ -50,68 +69,126 @@
         </article>
       </section>
 
-      <section class="app-section admin-only" id="site">
-        <div class="section-head">
-          <p class="eyebrow">Admin</p>
-          <h2>Editar pagina principal</h2>
-        </div>
-        <form class="app-form" id="siteEditorForm">
-          <label>Chamada <input type="text" name="heroLabel" /></label>
-          <label>Titulo <input type="text" name="heroTitle" /></label>
-          <label>Texto <textarea rows="4" name="heroText"></textarea></label>
-          <button class="button primary" type="submit">Salvar site</button>
-          <p class="form-status" id="siteEditorStatus" role="status"></p>
-        </form>
+      <section class="module-grid">
+        <article class="app-section admin-only" id="site">
+          <div class="section-head compact-head">
+            <div>
+              <p class="eyebrow">Admin</p>
+              <h2>Editar pagina principal</h2>
+            </div>
+            <span class="module-chip">Publico</span>
+          </div>
+          <form class="app-form editor-layout" id="siteEditorForm">
+            <label>Chamada <input type="text" name="heroLabel" /></label>
+            <label>Titulo <input type="text" name="heroTitle" /></label>
+            <label class="wide-field">Texto <textarea rows="4" name="heroText"></textarea></label>
+            <button class="button primary" type="submit">Salvar site</button>
+            <p class="form-status" id="siteEditorStatus" role="status"></p>
+          </form>
+        </article>
+
+        <article class="app-section" id="tarefas">
+          <div class="section-head compact-head">
+            <div>
+              <p class="eyebrow">Operacao</p>
+              <h2>Tarefas da semana</h2>
+            </div>
+            <span class="module-chip">Equipe</span>
+          </div>
+          <div class="task-board" id="taskBoard"></div>
+          <form class="app-form admin-only inline-form" id="taskForm">
+            <input type="text" name="title" placeholder="Nova tarefa" required />
+            <input type="text" name="area" placeholder="Area" required />
+            <button class="button secondary" type="submit">Adicionar</button>
+          </form>
+        </article>
       </section>
 
       <section class="app-section" id="equipe">
-        <div class="section-head">
-          <p class="eyebrow">Equipe</p>
-          <h2>Funcoes e hierarquia</h2>
+        <div class="section-head compact-head">
+          <div>
+            <p class="eyebrow">Equipe</p>
+            <h2>Funcoes e hierarquia</h2>
+          </div>
+          <span class="module-chip">Permissoes</span>
         </div>
         <div class="team-table" id="teamTable"></div>
       </section>
 
-      <section class="app-section admin-only">
-        <div class="section-head">
-          <p class="eyebrow">Admin</p>
-          <h2>Definir funcao por e-mail</h2>
+      <section class="app-section" id="chamados">
+        <div class="section-head compact-head">
+          <div>
+            <p class="eyebrow">Contato</p>
+            <h2>Chamados recebidos pelo site</h2>
+          </div>
+          <span class="module-chip">Inbox</span>
         </div>
-        <form class="app-form" id="roleForm">
-          <label>Nome <input type="text" name="name" required /></label>
-          <label>E-mail Google <input type="email" name="email" required /></label>
-          <label>Funcao
-            <select name="role" required>
-              <option>Administrador</option>
-              <option>Capitao</option>
-              <option>Lider tecnico</option>
-              <option>Programacao</option>
-              <option>Hardware</option>
-              <option>Mecanica</option>
-              <option>Design 3D</option>
-              <option>Documentacao</option>
-              <option>Marketing</option>
-              <option>Membro</option>
-            </select>
-          </label>
-          <button class="button primary" type="submit">Salvar funcao</button>
-          <p class="form-status" id="roleStatus" role="status"></p>
-        </form>
+        <div class="ticket-list" id="ticketList">
+          <article class="empty-state">Carregando chamados...</article>
+        </div>
       </section>
 
-      <section class="app-section" id="tarefas">
-        <div class="section-head">
-          <p class="eyebrow">Operacao</p>
-          <h2>Tarefas da semana</h2>
-        </div>
-        <div class="task-board">
-          <article><strong>Calibrar sensores</strong><span>Seguidor de linha</span></article>
-          <article><strong>Revisar chassi</strong><span>Mecanica</span></article>
-          <article><strong>Publicar fotos</strong><span>Marketing</span></article>
-        </div>
+      <section class="module-grid admin-only">
+        <article class="app-section">
+          <div class="section-head compact-head">
+            <div>
+              <p class="eyebrow">Admin</p>
+              <h2>Definir funcao por e-mail</h2>
+            </div>
+            <span class="module-chip">Google</span>
+          </div>
+          <form class="app-form" id="roleForm">
+            <label>Nome <input type="text" name="name" required /></label>
+            <label>E-mail Google <input type="email" name="email" required /></label>
+            <label>Funcao
+              <select name="role" required>
+                <option>Administrador</option>
+                <option>Capitao</option>
+                <option>Lider tecnico</option>
+                <option>Programacao</option>
+                <option>Hardware</option>
+                <option>Mecanica</option>
+                <option>Design 3D</option>
+                <option>Documentacao</option>
+                <option>Marketing</option>
+                <option>Membro</option>
+              </select>
+            </label>
+            <button class="button primary" type="submit">Salvar funcao</button>
+            <p class="form-status" id="roleStatus" role="status"></p>
+          </form>
+        </article>
+
+        <article class="app-section" id="ajustes">
+          <div class="section-head compact-head">
+            <div>
+              <p class="eyebrow">Ajustavel</p>
+              <h2>Configuracoes do app</h2>
+            </div>
+            <span class="module-chip">Visual</span>
+          </div>
+          <form class="app-form" id="settingsForm">
+            <label>Nome do app <input type="text" name="appName" placeholder="Cyber App" /></label>
+            <label>Densidade
+              <select name="density">
+                <option value="comfortable">Confortavel</option>
+                <option value="compact">Compacta</option>
+              </select>
+            </label>
+            <label>Cor de destaque
+              <select name="accent">
+                <option value="green">Verde tecnico</option>
+                <option value="cyan">Azul neon</option>
+                <option value="red">Vermelho cyber</option>
+              </select>
+            </label>
+            <button class="button primary" type="submit">Aplicar ajustes</button>
+            <p class="form-status" id="settingsStatus" role="status"></p>
+          </form>
+        </article>
       </section>
     </main>
 
-    <script src="app.js?v=20260610-app"></script>
+    <script src="app.js?v=20260610-pwa-tickets"></script>
   </body>
 </html>
