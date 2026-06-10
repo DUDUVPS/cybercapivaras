@@ -6,10 +6,18 @@ const { checkDatabase, hasDatabase, initDatabase, listContacts, saveContact, upd
 const app = express();
 const PORT = process.env.PORT || 3000;
 const allowedOrigin = process.env.ALLOWED_ORIGIN || "*";
+const googleClientId = process.env.GOOGLE_CLIENT_ID || "";
 const frontendPath = path.join(__dirname, "..", "frontend");
 
 app.use(cors({ origin: allowedOrigin }));
 app.use(express.json());
+
+app.get("/config.js", (req, res) => {
+  res.type("application/javascript");
+  res.set("Cache-Control", "no-store");
+  res.send(`window.GOOGLE_CLIENT_ID = ${JSON.stringify(googleClientId)};`);
+});
+
 app.use(express.static(frontendPath));
 
 app.get("/api", (req, res) => {

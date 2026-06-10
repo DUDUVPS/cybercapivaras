@@ -77,20 +77,28 @@ O backend cria automaticamente a tabela `contacts` quando iniciar.
 
 O frontend usa Google Identity Services. Para ativar o botao real do Google:
 
-1. Crie um OAuth Client ID do tipo `Web application` no Google Cloud.
-2. Adicione a origem autorizada:
+1. Abra a pagina `Clients` no Google Cloud Console e crie um OAuth Client ID do tipo `Web application`.
+2. Configure a tela de consentimento/branding do app.
+3. Adicione a origem autorizada:
 
 ```text
 https://cybercapivaras.up.railway.app
 ```
 
-3. Copie o Client ID e coloque em `frontend/config.js`:
+Para testar localmente, adicione tambem:
 
-```js
-window.GOOGLE_CLIENT_ID = "SEU_CLIENT_ID.apps.googleusercontent.com";
+```text
+http://localhost:3000
 ```
 
-Enquanto o Client ID estiver vazio, o site mostra um botao Google em modo demo.
+4. Copie o Client ID e coloque no Railway em `Variables`:
+
+```text
+GOOGLE_CLIENT_ID=SEU_CLIENT_ID.apps.googleusercontent.com
+```
+
+O backend serve `/config.js` dinamicamente com essa variavel. Nao precisa editar `frontend/config.js` em producao.
+Enquanto o Client ID estiver vazio, o site mostra um botao Google em modo demo/local.
 O login por e-mail e senha e exclusivo do administrador.
 
 ## Endpoints
