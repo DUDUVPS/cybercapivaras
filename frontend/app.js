@@ -98,6 +98,30 @@ function renderPublicPage() {
   }
 }
 
+function setupRevealAnimations() {
+  const items = document.querySelectorAll(".reveal, .feature-grid article, .project-showcase article");
+  if (!items.length) return;
+
+  items.forEach((item) => item.classList.add("reveal"));
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.18 }
+  );
+
+  items.forEach((item, index) => {
+    item.style.transitionDelay = `${Math.min(index * 70, 360)}ms`;
+    observer.observe(item);
+  });
+}
+
 function setupLogin() {
   const adminForm = document.querySelector("#adminLoginForm");
   const googleButton = document.querySelector("#googleDemoButton");
@@ -238,6 +262,7 @@ function setupLogout() {
 
 protectApp();
 renderPublicPage();
+setupRevealAnimations();
 setupLogin();
 renderApp();
 setupAppForms();

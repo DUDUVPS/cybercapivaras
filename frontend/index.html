@@ -6,7 +6,7 @@
     <meta name="description" content="Site oficial do time de robotica Cyber Capivaras." />
     <title>Cyber Capivaras | Time de Robotica</title>
     <link rel="icon" type="image/png" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260610-app" />
+    <link rel="stylesheet" href="style.css?v=20260610-animated" />
   </head>
   <body>
     <header class="public-nav">
@@ -23,8 +23,12 @@
     </header>
 
     <main>
-      <section class="landing-hero">
-        <div class="hero-copy">
+      <section class="landing-hero animated-hero">
+        <div class="motion-grid" aria-hidden="true"></div>
+        <div class="scan-beam" aria-hidden="true"></div>
+        <div class="orbital orbital-one" aria-hidden="true"></div>
+        <div class="orbital orbital-two" aria-hidden="true"></div>
+        <div class="hero-copy reveal">
           <p class="eyebrow" data-content="heroLabel">IF Goiano - Campus Campos Belos</p>
           <h1 data-content="heroTitle">Cyber Capivaras</h1>
           <p data-content="heroText">
@@ -35,8 +39,16 @@
             <a class="button secondary" href="login.html">Acessar app</a>
           </div>
         </div>
-        <div class="hero-visual">
+        <div class="hero-visual reveal">
           <img src="assets/hero-robotica.png" alt="Robo de competicao em laboratorio" />
+          <div class="telemetry-card telemetry-a">
+            <strong>87%</strong>
+            <span>sensores calibrados</span>
+          </div>
+          <div class="telemetry-card telemetry-b">
+            <strong>ON</strong>
+            <span>sistema autonomo</span>
+          </div>
           <div class="signal-row">
             <span>2024</span>
             <span>Robotica</span>
@@ -45,7 +57,7 @@
         </div>
       </section>
 
-      <section class="section band" id="equipe">
+      <section class="section band reveal" id="equipe">
         <div class="section-head">
           <p class="eyebrow">Equipe</p>
           <h2>Areas que fazem o time funcionar</h2>
@@ -53,7 +65,7 @@
         <div class="feature-grid" id="publicAreas"></div>
       </section>
 
-      <section class="section" id="projetos">
+      <section class="section reveal" id="projetos">
         <div class="section-head">
           <p class="eyebrow">Projetos</p>
           <h2>Robos e sistemas em desenvolvimento</h2>
@@ -61,7 +73,7 @@
         <div class="project-showcase" id="publicProjects"></div>
       </section>
 
-      <section class="section contact-strip" id="contato">
+      <section class="section contact-strip reveal" id="contato">
         <div>
           <p class="eyebrow">Contato</p>
           <h2>Quer falar com o time?</h2>
@@ -82,6 +94,6 @@
       <span>IF Goiano - Campus Campos Belos</span>
     </footer>
 
-    <script src="app.js?v=20260610-app"></script>
+    <script src="app.js?v=20260610-animated"></script>
   </body>
 </html>
