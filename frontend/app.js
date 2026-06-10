@@ -152,11 +152,21 @@ function setupRevealAnimations() {
 
 function setupLogin() {
   const adminForm = document.querySelector("#adminLoginForm");
+  const adminReveal = document.querySelector("#adminRevealButton");
   const googleButton = document.querySelector("#googleDemoButton");
   const status = document.querySelector("#loginStatus");
   const googleStatus = document.querySelector("#googleStatus");
 
   if (!adminForm || !googleButton) return;
+
+  if (adminReveal) {
+    adminReveal.addEventListener("click", () => {
+      const open = adminReveal.getAttribute("aria-expanded") === "true";
+      adminReveal.setAttribute("aria-expanded", String(!open));
+      adminForm.hidden = open;
+      if (!open) adminForm.querySelector("input")?.focus();
+    });
+  }
 
   window.handleGoogleCredential = (response) => {
     const payload = parseJwt(response.credential);
@@ -203,7 +213,7 @@ function setupLogin() {
     const data = Object.fromEntries(new FormData(adminForm).entries());
 
     if (data.email !== "admin@cybercapivaras.com" || data.password !== "admin123") {
-      status.textContent = "Credenciais de administrador invalidas.";
+      status.textContent = "Acesso de administrador invalido.";
       return;
     }
 

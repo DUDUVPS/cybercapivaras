@@ -8,22 +8,22 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260610-font" />
+    <link rel="stylesheet" href="style.css?v=20260610-login-redesign" />
   </head>
   <body class="login-screen">
     <main class="login-layout">
       <section class="login-intro">
-        <a class="brand large" href="index.html">
-          <img src="imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png" alt="Cyber Capivaras" />
-          <span>Cyber Capivaras</span>
-        </a>
         <h1>App interno do time</h1>
-        <p>Administra projetos, tarefas, equipe, conteudo publico e comunicados em um so lugar.</p>
+        <p>Entre para acompanhar tarefas, chamados, projetos e comunicados do Cyber Capivaras.</p>
       </section>
 
       <section class="login-panel">
-        <p class="eyebrow">Acesso</p>
-        <h2>Entrar no app</h2>
+        <a class="login-logo" href="index.html" aria-label="Voltar para o inicio">
+          <img src="imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png" alt="Cyber Capivaras" />
+          <span>Cyber Capivaras</span>
+        </a>
+        <p class="eyebrow">Acesso do time</p>
+        <h2>Entrar no Cyber App</h2>
         <button class="google-button" id="googleDemoButton" type="button">
           <span>G</span>
           Entrar com Google
@@ -31,20 +31,21 @@
         <div id="googleSignIn"></div>
         <p class="login-note" id="googleStatus">Configure o Google Client ID para ativar o login oficial.</p>
 
-        <form class="admin-login" id="adminLoginForm">
-          <div class="divider"><span>admin</span></div>
-          <label>E-mail <input type="email" name="email" placeholder="admin@cybercapivaras.com" /></label>
-          <label>Senha <input type="password" name="password" placeholder="Senha do administrador" /></label>
-          <button class="button primary" type="submit">Entrar como admin</button>
+        <button class="admin-reveal" id="adminRevealButton" type="button" aria-expanded="false" aria-controls="adminLoginForm">
+          Acesso do administrador
+        </button>
+
+        <form class="admin-login" id="adminLoginForm" hidden>
+          <label>E-mail do admin <input type="email" name="email" placeholder="admin@cybercapivaras.com" autocomplete="username" /></label>
+          <label>Senha <input type="password" name="password" placeholder="Senha oculta" autocomplete="current-password" /></label>
+          <button class="button primary" type="submit">Entrar</button>
           <p class="form-status" id="loginStatus" role="status"></p>
         </form>
       </section>
     </main>
 
-    <script src="config.js?v=20260610-app"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="config.js?v=20260610-pwa-tickets"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="app.js?v=20260610-pwa-tickets"></script>
+    <script src="app.js?v=20260610-login-redesign"></script>
   </body>
 </html>

@@ -1,12 +1,12 @@
-const CACHE_NAME = "cyber-capivaras-v4";
+const CACHE_NAME = "cyber-capivaras-v5";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
-  "/style.css?v=20260610-font",
+  "/style.css?v=20260610-login-redesign",
   "/site.js?v=20260610-site-js",
-  "/app.js?v=20260610-pwa-tickets",
+  "/app.js?v=20260610-login-redesign",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"
