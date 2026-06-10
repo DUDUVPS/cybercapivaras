@@ -4,6 +4,9 @@ const defaultContent = {
   heroLabel: "IF Goiano - Campus Campos Belos",
   heroTitle: "Cyber Capivaras",
   heroText: "Um time de robotica movido por tecnologia, competicao, pesquisa e trabalho em equipe.",
+  heroImage: "assets/hero-robotica.png",
+  contactTitle: "Quer falar com o time?",
+  contactText: "Envie uma mensagem para projetos, parcerias, competicoes ou apresentacoes.",
   areas: [
     ["Software", "Logica, sensores, automacao e codigo embarcado."],
     ["Hardware", "Circuitos, motores, placas e alimentacao."],
@@ -46,7 +49,6 @@ const appModules = {
   chamados: "Chamados",
   tarefas: "Tarefas",
   seletivo: "Processo seletivo",
-  permissoes: "Permissoes",
   ajustes: "Ajustes",
 };
 
@@ -404,6 +406,16 @@ function setupAppTabs() {
       showAppTab(button.dataset.tabTarget);
     });
   });
+
+  document.querySelectorAll("[data-subtab-target]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = button.dataset.subtabTarget;
+      document.querySelectorAll("[data-subtab-target]").forEach((item) => item.classList.toggle("active", item === button));
+      document.querySelectorAll("[data-subtab-panel]").forEach((panel) => {
+        panel.classList.toggle("is-active", panel.dataset.subtabPanel === target);
+      });
+    });
+  });
 }
 
 function applyAccessRules() {
@@ -498,6 +510,9 @@ function setupAppForms() {
     contentForm.elements.heroLabel.value = content.heroLabel;
     contentForm.elements.heroTitle.value = content.heroTitle;
     contentForm.elements.heroText.value = content.heroText;
+    contentForm.elements.heroImage.value = content.heroImage || "";
+    contentForm.elements.contactTitle.value = content.contactTitle || "";
+    contentForm.elements.contactText.value = content.contactText || "";
     contentForm.elements.areasText.value = rowsToLines(content.areas);
     contentForm.elements.projectsText.value = rowsToLines(content.projects);
 
@@ -509,6 +524,9 @@ function setupAppForms() {
         heroLabel: data.heroLabel,
         heroTitle: data.heroTitle,
         heroText: data.heroText,
+        heroImage: data.heroImage,
+        contactTitle: data.contactTitle,
+        contactText: data.contactText,
         areas: linesToRows(data.areasText, 2),
         projects: linesToRows(data.projectsText, 3),
       });
@@ -583,7 +601,7 @@ function renderTasks() {
           .map((task, index) => ({ ...task, index }))
           .filter((task) => task.status === status)
           .map((task) => `
-            <article class="task-card ${task.status === "concluida" ? "is-done" : ""}">
+            <article class="task-card ${task.status === "concluida" ? "is-done" : ""}" draggable="true" data-drag-task="${task.index}">
               <strong>${task.title}</strong>
               <span>${task.area}</span>
               <small>${new Date(`${task.due}T00:00:00`).toLocaleDateString("pt-BR")}</small>
@@ -615,6 +633,26 @@ function renderTasks() {
       tasks[Number(select.dataset.taskStatusIndex)].status = select.value;
       saveTasks(tasks);
       renderTasks();
+    });
+  });
+
+  document.querySelectorAll("[data-drag-task]").forEach((card) => {
+    card.addEventListener("dragstart", (event) => {
+      event.dataTransfer.setData("text/plain", card.dataset.dragTask);
+    });
+  });
+
+  document.querySelectorAll("[data-task-status]").forEach((column) => {
+    column.addEventListener("dragover", (event) => event.preventDefault());
+    column.addEventListener("drop", (event) => {
+      event.preventDefault();
+      const index = Number(event.dataTransfer.getData("text/plain"));
+      const tasks = getTasks();
+      if (!Number.isNaN(index) && tasks[index]) {
+        tasks[index].status = column.dataset.taskStatus;
+        saveTasks(tasks);
+        renderTasks();
+      }
     });
   });
 
@@ -763,7 +801,7 @@ function renderPermissionMatrix() {
   if (!form) return;
 
   const rules = getUserPermissions();
-  const modules = Object.entries(appModules).filter(([id]) => id !== "ajustes" && id !== "permissoes");
+  const modules = Object.entries(appModules).filter(([id]) => id !== "ajustes");
   const people = Object.entries(rules);
 
   form.innerHTML = `
@@ -887,6 +925,7 @@ function setupContactForm() {
     const file = form.elements.attachment?.files?.[0];
 
     try {
+      payload.source = "contato";
       payload.attachment = await fileToAttachment(file);
       const response = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
@@ -920,6 +959,7 @@ function setupTicketForm() {
     const payload = Object.fromEntries(new FormData(form).entries());
 
     try {
+      payload.source = "chamado";
       payload.attachment = await fileToAttachment(form.elements.attachment?.files?.[0]);
       const response = await fetch(`${API_URL}/api/contact`, {
         method: "POST",

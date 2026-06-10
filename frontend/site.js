@@ -4,6 +4,9 @@ const publicContent = {
   heroLabel: "IF Goiano - Campus Campos Belos",
   heroTitle: "Cyber Capivaras",
   heroText: "Um time de robotica movido por tecnologia, competicao, pesquisa e trabalho em equipe.",
+  heroImage: "assets/hero-robotica.png",
+  contactTitle: "Quer falar com o time?",
+  contactText: "Envie uma mensagem para projetos, parcerias, competicoes ou apresentacoes.",
   areas: [
     ["Software", "Logica, sensores, automacao e codigo embarcado."],
     ["Hardware", "Circuitos, motores, placas e alimentacao."],
@@ -52,6 +55,11 @@ function renderPublicContent() {
 
   document.querySelectorAll("[data-content]").forEach((node) => {
     node.textContent = content[node.dataset.content] || "";
+  });
+
+  document.querySelectorAll("[data-image-content]").forEach((node) => {
+    const value = content[node.dataset.imageContent];
+    if (value) node.src = value;
   });
 
   const areas = document.querySelector("#publicAreas");
@@ -208,10 +216,9 @@ function setupContactForm() {
     event.preventDefault();
     status.textContent = "Enviando chamado...";
     const payload = Object.fromEntries(new FormData(form).entries());
-    const file = form.elements.attachment?.files?.[0];
 
     try {
-      payload.attachment = await fileToAttachment(file);
+      payload.source = "contato";
       const response = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -220,7 +227,7 @@ function setupContactForm() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
       form.reset();
-      status.textContent = data.message || "Chamado enviado para o app.";
+      status.textContent = data.message || "Mensagem enviada.";
     } catch (error) {
       status.textContent = "Nao foi possivel enviar agora.";
     }

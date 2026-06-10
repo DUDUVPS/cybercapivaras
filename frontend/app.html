@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260610-full-admin" />
+    <link rel="stylesheet" href="style.css?v=20260610-central-v2" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <aside class="app-sidebar">
@@ -27,7 +27,6 @@
         <button type="button" data-tab-target="chamados">Chamados</button>
         <button type="button" data-tab-target="tarefas">Tarefas</button>
         <button type="button" data-tab-target="seletivo">Processo seletivo</button>
-        <button class="admin-only" type="button" data-tab-target="permissoes">Permissoes</button>
         <button class="admin-only" type="button" data-tab-target="ajustes">Ajustes</button>
       </nav>
 
@@ -114,7 +113,10 @@
             <form class="app-form editor-layout" id="siteEditorForm">
               <label>Chamada <input type="text" name="heroLabel" /></label>
               <label>Titulo <input type="text" name="heroTitle" /></label>
+              <label>Imagem principal <input type="text" name="heroImage" placeholder="assets/hero-robotica.png" /></label>
               <label class="wide-field">Texto principal <textarea rows="4" name="heroText"></textarea></label>
+              <label>Contato titulo <input type="text" name="contactTitle" /></label>
+              <label>Contato texto <input type="text" name="contactText" /></label>
               <label class="wide-field">Areas do time <textarea rows="5" name="areasText" placeholder="Titulo | Descricao"></textarea></label>
               <label class="wide-field">Projetos <textarea rows="5" name="projectsText" placeholder="Nome | Descricao | imagem"></textarea></label>
               <button class="button primary" type="submit">Salvar pagina publica</button>
@@ -135,18 +137,30 @@
       </section>
 
       <section class="app-tab" id="tarefas" data-tab-panel="tarefas">
-        <div class="module-grid task-layout">
-          <article class="app-section">
+        <div class="subtabs">
+          <button class="active" type="button" data-subtab-target="quadro">Quadro</button>
+          <button type="button" data-subtab-target="calendario">Calendario</button>
+        </div>
+        <div class="task-subtab is-active" data-subtab-panel="quadro">
+          <article class="app-section full-span">
             <div class="section-head compact-head">
               <div>
                 <p class="eyebrow">Trello</p>
                 <h2>Quadro de tarefas</h2>
               </div>
-              <span class="module-chip">Mover status</span>
+              <span class="module-chip">Segure e arraste</span>
             </div>
             <div class="kanban-board" id="taskBoard"></div>
+            <form class="app-form admin-only inline-form" id="taskForm">
+              <input type="text" name="title" placeholder="Nova tarefa" required />
+              <input type="text" name="area" placeholder="Area" required />
+              <input type="date" name="due" required />
+              <button class="button secondary" type="submit">Adicionar tarefa</button>
+            </form>
           </article>
-          <article class="app-section">
+        </div>
+        <div class="task-subtab" data-subtab-panel="calendario">
+          <article class="app-section full-span">
             <div class="section-head compact-head">
               <div>
                 <p class="eyebrow">Agenda</p>
@@ -159,12 +173,6 @@
               <button class="ghost-button" type="button" id="nextMonth">Proximo</button>
             </div>
             <div class="calendar-grid" id="taskCalendar"></div>
-            <form class="app-form admin-only" id="taskForm">
-              <input type="text" name="title" placeholder="Nova tarefa" required />
-              <input type="text" name="area" placeholder="Area" required />
-              <input type="date" name="due" required />
-              <button class="button secondary" type="submit">Adicionar tarefa</button>
-            </form>
           </article>
         </div>
       </section>
@@ -198,6 +206,17 @@
             <button class="button primary" type="submit">Adicionar integrante</button>
           </form>
           <div class="ops-list" id="memberAdminList"></div>
+        </article>
+        <article class="app-section admin-only">
+          <div class="section-head compact-head">
+            <div>
+              <p class="eyebrow">Permissoes</p>
+              <h2>Acessos por pessoa</h2>
+            </div>
+            <span class="module-chip">Editavel na equipe</span>
+          </div>
+          <form class="permission-matrix" id="permissionForm"></form>
+          <p class="form-status" id="permissionStatus" role="status"></p>
         </article>
         </div>
       </section>
@@ -290,32 +309,6 @@
         </div>
       </section>
 
-      <section class="app-tab admin-only" id="permissoes" data-tab-panel="permissoes">
-        <div class="module-grid">
-          <article class="app-section">
-            <div class="section-head compact-head">
-              <div>
-                <p class="eyebrow">Admin</p>
-              <h2>Acessos por pessoa</h2>
-            </div>
-              <span class="module-chip">E-mail individual</span>
-            </div>
-            <form class="permission-matrix" id="permissionForm"></form>
-            <p class="form-status" id="permissionStatus" role="status"></p>
-          </article>
-          <article class="app-section">
-            <div class="section-head compact-head">
-              <div>
-                <p class="eyebrow">Regra</p>
-                <h2>Como funciona</h2>
-              </div>
-              <span class="module-chip">Admin</span>
-            </div>
-            <p>O administrador ve tudo. Cada aluno ou professor pode receber abas especificas, inclusive permissao para entrevistar candidatos.</p>
-          </article>
-        </div>
-      </section>
-
       <section class="app-tab admin-only" id="ajustes" data-tab-panel="ajustes">
         <div class="module-grid">
         <article class="app-section">
@@ -397,6 +390,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260610-full-admin"></script>
+    <script src="app.js?v=20260610-central-v2"></script>
   </body>
 </html>

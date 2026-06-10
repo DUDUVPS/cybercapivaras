@@ -109,7 +109,7 @@ app.get("/api/health", async (req, res) => {
 });
 
 app.post("/api/contact", async (req, res) => {
-  const { name, email, category, message, attachment } = req.body;
+  const { name, email, category, source, message, attachment } = req.body;
 
   if (!name || !email || !message) {
     return res.status(400).json({ error: "Preencha nome, e-mail e mensagem." });
@@ -120,7 +120,7 @@ app.post("/api/contact", async (req, res) => {
   }
 
   try {
-    const contactId = await saveContact({ name, email, category, message, attachment });
+    const contactId = await saveContact({ name, email, category, source: source || "contato", message, attachment });
 
     if (!contactId) {
       console.log("Nova mensagem recebida sem banco configurado:", {
@@ -135,7 +135,7 @@ app.post("/api/contact", async (req, res) => {
 
     return res.status(201).json({
       id: contactId,
-      message: "Chamado enviado com sucesso! O time entrara em contato em breve.",
+      message: source === "chamado" ? "Chamado enviado com sucesso!" : "Mensagem enviada com sucesso!",
     });
   } catch (error) {
     console.error("Erro ao salvar contato:", error);
@@ -148,7 +148,7 @@ app.post("/api/contact", async (req, res) => {
 
 app.get("/api/contacts", async (req, res) => {
   try {
-    const contacts = await listContacts();
+    const contacts = await listContacts("chamado");
     res.json({ contacts });
   } catch (error) {
     console.error("Erro ao listar chamados:", error);

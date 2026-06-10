@@ -581,6 +581,39 @@ input, textarea, select {
 .app-tab[hidden] {
   display: none !important;
 }
+.subtabs {
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255,255,255,.035);
+}
+.subtabs button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.subtabs button.active {
+  color: #fff;
+  background: linear-gradient(135deg, rgba(255,48,69,.18), rgba(24,199,255,.14));
+}
+.task-subtab {
+  display: none;
+}
+.task-subtab.is-active {
+  display: block;
+}
+.full-span {
+  width: 100%;
+}
 .module-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(340px, .9fr);
