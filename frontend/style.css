@@ -46,6 +46,31 @@ img { display: block; max-width: 100%; }
 .brand img { width: 50px; height: 50px; object-fit: contain; border-radius: 8px; background: #0b0f17; }
 .brand.large img { width: 92px; height: 92px; }
 .public-nav nav { display: flex; align-items: center; gap: 14px; color: var(--muted); font-weight: 800; }
+.public-nav nav a { transition: color .2s ease, border-color .2s ease, background .2s ease; }
+.public-nav nav a:hover,
+.public-nav nav a.is-active { color: #fff; }
+.nav-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255,255,255,.055);
+  cursor: pointer;
+}
+.nav-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  margin: 3px 0;
+  border-radius: 999px;
+  background: #fff;
+  transition: transform .22s ease, opacity .22s ease;
+}
+.nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
 .nav-button, .button, .ghost-button {
   display: inline-flex;
   align-items: center;
@@ -541,22 +566,35 @@ body[data-accent="red"] { --green: var(--red); }
   .section { padding: 56px 18px; }
   .public-nav {
     min-height: auto;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 12px;
     padding: 12px 16px;
   }
   .brand {
-    width: 100%;
-    justify-content: space-between;
+    width: auto;
+    flex: 1;
+    justify-content: flex-start;
   }
   .brand img {
     width: 42px;
     height: 42px;
   }
+  .nav-toggle { display: grid; }
   .public-nav nav {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height .28s ease, opacity .2s ease;
+  }
+  .public-nav nav.is-open {
+    max-height: 260px;
+    opacity: 1;
   }
   .public-nav nav a {
     min-height: 38px;
