@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260611-team-reference" />
+    <link rel="stylesheet" href="style.css?v=20260611-team-editbox" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <aside class="app-sidebar">
@@ -178,73 +178,85 @@
       </section>
 
       <section class="app-tab" id="equipe" data-tab-panel="equipe">
-        <div class="team-workspace">
-        <article class="app-section team-preview-panel">
-          <div class="section-head compact-head">
-            <div>
-              <p class="eyebrow">Equipe</p>
-              <h2>Pagina publica igual ao modelo</h2>
+        <div class="team-control-board">
+          <article class="app-section team-preview-panel">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Pagina edicao</p>
+                <h2>Equipe do site publico</h2>
+              </div>
+              <span class="module-chip">Clique em editar</span>
             </div>
-            <span class="module-chip">Foto + status</span>
-          </div>
-          <div class="member-grid compact-members" id="teamTable"></div>
-        </article>
+            <div class="member-grid compact-members team-edit-grid" id="teamTable"></div>
+          </article>
 
-        <aside class="team-editor-stack admin-only">
-        <article class="app-section">
-          <div class="section-head compact-head">
-            <div>
-              <p class="eyebrow">Admin</p>
-              <h2>Editar pessoa da equipe</h2>
+          <article class="app-section team-edit-box admin-only" id="memberEditBox">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Caixa de edicao</p>
+                <h2 id="memberEditTitle">Novo integrante</h2>
+              </div>
+              <span class="module-chip" id="memberEditMode">Admin</span>
             </div>
-            <span class="module-chip">Tudo por integrante</span>
-          </div>
-          <form class="app-form" id="memberForm">
-            <input type="hidden" name="index" />
-            <label>Nome <input type="text" name="name" placeholder="Allen Sena" required /></label>
-            <label>Conta/e-mail <input type="email" name="email" placeholder="aluno@email.com" /></label>
-            <label>Funcao <input type="text" name="role" placeholder="Estudante / Arduino" required /></label>
-            <label>Hierarquia <input type="text" name="level" placeholder="N2" required /></label>
-            <label>Geracao <input type="text" name="generation" placeholder="1a Geracao Fabrica" required /></label>
-            <label>Status
-              <select name="status" required>
-                <option>Ativo</option>
-                <option>Em treinamento</option>
-                <option>Inativo</option>
-                <option>Convidado</option>
-              </select>
-            </label>
-            <label>Foto/caminho <input type="text" name="image" placeholder="imgs/fotos/ft-allem.png" required /></label>
-            <label>Detalhes <textarea rows="3" name="description" placeholder="Resumo que aparece ao clicar em Detalhes" required></textarea></label>
-            <fieldset class="member-permissions">
-              <legend>Acessos dessa pessoa</legend>
-              <label class="permission-row"><input type="checkbox" name="tabs" value="painel" checked /> Painel</label>
-              <label class="permission-row"><input type="checkbox" name="tabs" value="site" /> Site publico</label>
-              <label class="permission-row"><input type="checkbox" name="tabs" value="equipe" checked /> Equipe</label>
-              <label class="permission-row"><input type="checkbox" name="tabs" value="chamados" /> Chamados</label>
-              <label class="permission-row"><input type="checkbox" name="tabs" value="tarefas" checked /> Tarefas</label>
-              <label class="permission-row"><input type="checkbox" name="tabs" value="seletivo" /> Processo seletivo</label>
-              <label class="permission-row"><input type="checkbox" name="canInterview" value="true" /> Pode entrevistar candidatos</label>
-            </fieldset>
-            <div class="form-actions">
-              <button class="button primary" type="submit">Salvar integrante</button>
-              <button class="ghost-button" type="button" id="clearMemberForm">Novo</button>
-            </div>
-            <p class="form-status" id="memberStatus" role="status"></p>
-          </form>
-        </article>
 
-        <article class="app-section">
-          <div class="section-head compact-head">
-            <div>
-              <p class="eyebrow">Lista</p>
-              <h2>Editar rapidamente</h2>
+            <form class="app-form member-editor-form" id="memberForm">
+              <input type="hidden" name="index" />
+              <div class="edit-photo-panel">
+                <img id="memberImagePreview" src="imgs/apple-touch-icon.png" alt="Preview do integrante" />
+                <strong id="memberNamePreview">Nome</strong>
+                <span id="memberRolePreview">Funcao</span>
+                <small id="memberGenerationPreview">Geracao</small>
+              </div>
+
+              <div class="edit-form-grid">
+                <label>Nome <input type="text" name="name" placeholder="Allen Sena" required /></label>
+                <label>Conta/e-mail <input type="email" name="email" placeholder="aluno@email.com" /></label>
+                <label>Funcao <input type="text" name="role" placeholder="Estudante / Arduino" required /></label>
+                <label>Hierarquia <input type="text" name="level" placeholder="N2" required /></label>
+                <label>Geracao <input type="text" name="generation" placeholder="1a Geracao Fabrica" required /></label>
+                <label>Status
+                  <select name="status" required>
+                    <option>Ativo</option>
+                    <option>Em treinamento</option>
+                    <option>Inativo</option>
+                    <option>Convidado</option>
+                  </select>
+                </label>
+                <label class="wide-field">Foto/caminho <input type="text" name="image" placeholder="imgs/fotos/ft-allem.png" required /></label>
+                <label class="wide-field">Detalhes <textarea rows="3" name="description" placeholder="Resumo que aparece ao clicar em Detalhes" required></textarea></label>
+              </div>
+
+              <fieldset class="member-permissions">
+                <legend>Acessos dessa pessoa</legend>
+                <div class="permission-grid">
+                  <label class="permission-row"><input type="checkbox" name="tabs" value="painel" checked /> Painel</label>
+                  <label class="permission-row"><input type="checkbox" name="tabs" value="site" /> Site publico</label>
+                  <label class="permission-row"><input type="checkbox" name="tabs" value="equipe" checked /> Equipe</label>
+                  <label class="permission-row"><input type="checkbox" name="tabs" value="chamados" /> Chamados</label>
+                  <label class="permission-row"><input type="checkbox" name="tabs" value="tarefas" checked /> Tarefas</label>
+                  <label class="permission-row"><input type="checkbox" name="tabs" value="seletivo" /> Processo seletivo</label>
+                  <label class="permission-row permission-wide"><input type="checkbox" name="canInterview" value="true" /> Pode entrevistar candidatos</label>
+                </div>
+              </fieldset>
+
+              <div class="form-actions">
+                <button class="button primary" type="submit">Salvar integrante</button>
+                <button class="ghost-button" type="button" id="clearMemberForm">Novo integrante</button>
+              </div>
+              <p class="form-status" id="memberStatus" role="status"></p>
+            </form>
+          </article>
+
+          <article class="app-section admin-only team-admin-list-panel">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Lista completa</p>
+                <h2>Selecionar, editar ou remover</h2>
+              </div>
+              <span class="module-chip">Por pessoa</span>
             </div>
-            <span class="module-chip">Selecionar</span>
-          </div>
-          <div class="ops-list" id="memberAdminList"></div>
-        </article>
-        </aside>
+            <div class="ops-list" id="memberAdminList"></div>
+          </article>
         </div>
       </section>
 
@@ -417,6 +429,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260611-team-reference"></script>
+    <script src="app.js?v=20260611-team-editbox"></script>
   </body>
 </html>

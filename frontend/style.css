@@ -852,6 +852,10 @@ input, textarea, select {
 .compact-members {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
+.team-control-board {
+  display: grid;
+  gap: 18px;
+}
 .team-workspace {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(360px, .75fr);
@@ -864,6 +868,63 @@ input, textarea, select {
 }
 .team-preview-panel .member-card {
   min-height: 100%;
+}
+.team-edit-grid .team-person-card {
+  border-color: rgba(255,48,69,.36);
+}
+.team-edit-grid .team-person-card.is-selected {
+  border-color: rgba(64,242,155,.72);
+  box-shadow: 0 0 0 2px rgba(64,242,155,.16), 0 22px 70px rgba(0,0,0,.4);
+}
+.team-edit-box {
+  border-color: rgba(255,48,69,.34);
+  background:
+    linear-gradient(135deg, rgba(255,48,69,.12), rgba(24,199,255,.06)),
+    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025));
+}
+.member-editor-form {
+  grid-template-columns: minmax(210px, .35fr) minmax(0, 1fr);
+  align-items: start;
+}
+.edit-photo-panel {
+  position: sticky;
+  top: 20px;
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(255,48,69,.24);
+  border-radius: 8px;
+  background: rgba(0,0,0,.22);
+}
+.edit-photo-panel img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 8px;
+  background: #070a10;
+}
+.edit-photo-panel strong {
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  line-height: 1.1;
+}
+.edit-photo-panel span,
+.edit-photo-panel small {
+  color: var(--muted);
+}
+.edit-photo-panel small {
+  color: var(--cyan);
+  font-weight: 900;
+}
+.edit-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.edit-form-grid .wide-field {
+  grid-column: 1 / -1;
 }
 .member-permissions {
   display: grid;
@@ -878,6 +939,14 @@ input, textarea, select {
   padding: 0 8px;
   color: var(--green);
   font-weight: 800;
+}
+.permission-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.permission-wide {
+  grid-column: 1 / -1;
 }
 .form-actions {
   display: grid;
@@ -1137,7 +1206,10 @@ body[data-accent="red"] { --green: var(--red); }
   .team-lead { position: static; }
   .app-screen { grid-template-columns: 1fr; }
   .app-sidebar { position: static; height: auto; }
-  .module-grid, .inline-form, .editor-layout, .permission-matrix, .task-layout, .kanban-board, .compact-members, .team-workspace { grid-template-columns: 1fr; }
+  .module-grid, .inline-form, .editor-layout, .permission-matrix, .task-layout, .kanban-board, .compact-members, .team-workspace, .member-editor-form { grid-template-columns: 1fr; }
+  .edit-photo-panel { position: static; }
+  .edit-photo-panel img { max-height: 420px; }
+  .permission-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .workspace-header, .workspace-actions { align-items: stretch; flex-direction: column; }
   .app-main { padding: 18px; }
   .app-sidebar { padding: 18px; }
@@ -1294,6 +1366,13 @@ body[data-accent="red"] { --green: var(--red); }
   }
   .member-admin-row {
     grid-template-columns: 48px minmax(0, 1fr);
+  }
+  .edit-form-grid,
+  .permission-grid {
+    grid-template-columns: 1fr;
+  }
+  .permission-wide {
+    grid-column: auto;
   }
   .member-admin-row .ghost-button,
   .member-admin-row .task-remove {

@@ -507,6 +507,11 @@ function renderApp() {
     table.querySelectorAll("[data-edit-member]").forEach((button) => {
       button.addEventListener("click", () => fillMemberForm(Number(button.dataset.editMember)));
     });
+
+    const selectedIndex = document.querySelector("#memberForm")?.elements.index.value;
+    table.querySelectorAll(".team-person-card").forEach((card, index) => {
+      card.classList.toggle("is-selected", selectedIndex !== "" && Number(selectedIndex) === index);
+    });
   }
 
   const memberAdminList = document.querySelector("#memberAdminList");
@@ -614,12 +619,19 @@ function setupAppForms() {
       clearButton.addEventListener("click", () => {
         memberForm.reset();
         memberForm.elements.index.value = "";
+        memberForm.elements.level.value = "N1";
+        memberForm.elements.generation.value = "1a Geracao Fabrica";
+        memberForm.elements.status.value = "Ativo";
         memberForm.querySelectorAll('[name="tabs"]').forEach((input) => {
           input.checked = ["painel", "equipe", "tarefas"].includes(input.value);
         });
         memberForm.elements.canInterview.checked = false;
+        updateMemberEditPreview();
       });
     }
+
+    memberForm.addEventListener("input", updateMemberEditPreview);
+    memberForm.addEventListener("change", updateMemberEditPreview);
 
     memberForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -663,6 +675,8 @@ function setupAppForms() {
       saveContent(content);
       document.querySelector("#memberStatus").textContent = "Integrante salvo.";
       memberForm.reset();
+      memberForm.elements.index.value = "";
+      updateMemberEditPreview();
       renderApp();
     });
   }
@@ -695,7 +709,38 @@ function fillMemberForm(index) {
     input.checked = rule?.tabs?.includes(input.value) || (!rule && ["painel", "equipe", "tarefas"].includes(input.value));
   });
   form.elements.canInterview.checked = Boolean(rule?.canInterview);
+  updateMemberEditPreview();
+  document.querySelectorAll("#teamTable .team-person-card").forEach((card, cardIndex) => {
+    card.classList.toggle("is-selected", cardIndex === index);
+  });
+  document.querySelector("#memberEditBox")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  form.elements.name.focus();
   document.querySelector("#memberStatus").textContent = "Editando integrante selecionado.";
+}
+
+function updateMemberEditPreview() {
+  const form = document.querySelector("#memberForm");
+  if (!form) return;
+
+  const name = form.elements.name.value || "Nome";
+  const role = form.elements.role.value || "Funcao";
+  const generation = form.elements.generation.value || "Geracao";
+  const image = form.elements.image.value || "imgs/apple-touch-icon.png";
+  const editIndex = form.elements.index.value;
+
+  const previewImage = document.querySelector("#memberImagePreview");
+  const previewName = document.querySelector("#memberNamePreview");
+  const previewRole = document.querySelector("#memberRolePreview");
+  const previewGeneration = document.querySelector("#memberGenerationPreview");
+  const title = document.querySelector("#memberEditTitle");
+  const mode = document.querySelector("#memberEditMode");
+
+  if (previewImage) previewImage.src = image;
+  if (previewName) previewName.textContent = name;
+  if (previewRole) previewRole.textContent = role;
+  if (previewGeneration) previewGeneration.textContent = generation;
+  if (title) title.textContent = editIndex === "" ? "Novo integrante" : `Editando ${name}`;
+  if (mode) mode.textContent = editIndex === "" ? "Novo" : "Editando";
 }
 
 function renderSitePreview() {
