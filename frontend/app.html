@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260611-team-editbox" />
+    <link rel="stylesheet" href="style.css?v=20260611-team-photo-fix" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <aside class="app-sidebar">
@@ -212,7 +212,6 @@
                 <label>Nome <input type="text" name="name" placeholder="Allen Sena" required /></label>
                 <label>Conta/e-mail <input type="email" name="email" placeholder="aluno@email.com" /></label>
                 <label>Funcao <input type="text" name="role" placeholder="Estudante / Arduino" required /></label>
-                <label>Hierarquia <input type="text" name="level" placeholder="N2" required /></label>
                 <label>Geracao <input type="text" name="generation" placeholder="1a Geracao Fabrica" required /></label>
                 <label>Status
                   <select name="status" required>
@@ -222,7 +221,12 @@
                     <option>Convidado</option>
                   </select>
                 </label>
-                <label class="wide-field">Foto/caminho <input type="text" name="image" placeholder="imgs/fotos/ft-allem.png" required /></label>
+                <label class="wide-field">Foto
+                  <div class="photo-picker">
+                    <input type="text" name="image" placeholder="Cole uma URL/caminho ou escolha um arquivo" required />
+                    <input type="file" id="memberPhotoFile" accept="image/*" />
+                  </div>
+                </label>
                 <label class="wide-field">Detalhes <textarea rows="3" name="description" placeholder="Resumo que aparece ao clicar em Detalhes" required></textarea></label>
               </div>
 
@@ -429,6 +433,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260611-team-editbox"></script>
+    <script src="app.js?v=20260611-team-photo-fix"></script>
   </body>
 </html>

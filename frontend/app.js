@@ -126,13 +126,17 @@ function memberToRow(member) {
   return [
     member.name,
     member.role,
-    member.level || "N1",
+    member.level || getRoleLevel(member.role),
     member.image,
     member.description,
     member.email || "",
     member.generation || "1a Geracao Fabrica",
     member.status || "Ativo",
   ];
+}
+
+function getRoleLevel(role) {
+  return (roleProfiles[role] || roleProfiles.Membro)[0];
 }
 
 function renderMemberCard(memberRow, index, editable = false) {
@@ -619,7 +623,6 @@ function setupAppForms() {
       clearButton.addEventListener("click", () => {
         memberForm.reset();
         memberForm.elements.index.value = "";
-        memberForm.elements.level.value = "N1";
         memberForm.elements.generation.value = "1a Geracao Fabrica";
         memberForm.elements.status.value = "Ativo";
         memberForm.querySelectorAll('[name="tabs"]').forEach((input) => {
@@ -633,6 +636,27 @@ function setupAppForms() {
     memberForm.addEventListener("input", updateMemberEditPreview);
     memberForm.addEventListener("change", updateMemberEditPreview);
 
+    document.querySelector("#memberPhotoFile")?.addEventListener("change", (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      if (file.size > 2.5 * 1024 * 1024) {
+        document.querySelector("#memberStatus").textContent = "Escolha uma imagem menor que 2,5 MB.";
+        event.target.value = "";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        memberForm.elements.image.value = reader.result;
+        updateMemberEditPreview();
+        document.querySelector("#memberStatus").textContent = "Foto carregada. Clique em salvar integrante.";
+      };
+      reader.onerror = () => {
+        document.querySelector("#memberStatus").textContent = "Nao foi possivel carregar a foto.";
+      };
+      reader.readAsDataURL(file);
+    });
+
     memberForm.addEventListener("submit", (event) => {
       event.preventDefault();
       const formData = new FormData(memberForm);
@@ -642,7 +666,7 @@ function setupAppForms() {
         name: data.name,
         email: data.email,
         role: data.role,
-        level: data.level,
+        level: getRoleLevel(data.role),
         image: data.image,
         description: data.description,
         generation: data.generation,
@@ -700,7 +724,6 @@ function fillMemberForm(index) {
   form.elements.name.value = member.name;
   form.elements.email.value = member.email;
   form.elements.role.value = member.role;
-  form.elements.level.value = member.level;
   form.elements.generation.value = member.generation;
   form.elements.status.value = member.status;
   form.elements.image.value = member.image;

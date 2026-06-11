@@ -887,8 +887,7 @@ input, textarea, select {
   align-items: start;
 }
 .edit-photo-panel {
-  position: sticky;
-  top: 20px;
+  position: relative;
   display: grid;
   gap: 10px;
   padding: 14px;
@@ -926,7 +925,14 @@ input, textarea, select {
 .edit-form-grid .wide-field {
   grid-column: 1 / -1;
 }
+.photo-picker {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(190px, .45fr);
+  gap: 10px;
+  align-items: center;
+}
 .member-permissions {
+  grid-column: 1 / -1;
   display: grid;
   gap: 8px;
   margin: 0;
@@ -945,13 +951,34 @@ input, textarea, select {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
+.permission-row {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  background: rgba(0,0,0,.18);
+  line-height: 1.2;
+}
+.permission-row input {
+  width: 18px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0;
+}
 .permission-wide {
   grid-column: 1 / -1;
 }
 .form-actions {
+  grid-column: 1 / -1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
+}
+.member-editor-form .form-status {
+  grid-column: 1 / -1;
 }
 .member-admin-row {
   display: grid !important;
@@ -1207,7 +1234,6 @@ body[data-accent="red"] { --green: var(--red); }
   .app-screen { grid-template-columns: 1fr; }
   .app-sidebar { position: static; height: auto; }
   .module-grid, .inline-form, .editor-layout, .permission-matrix, .task-layout, .kanban-board, .compact-members, .team-workspace, .member-editor-form { grid-template-columns: 1fr; }
-  .edit-photo-panel { position: static; }
   .edit-photo-panel img { max-height: 420px; }
   .permission-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .workspace-header, .workspace-actions { align-items: stretch; flex-direction: column; }
@@ -1368,7 +1394,8 @@ body[data-accent="red"] { --green: var(--red); }
     grid-template-columns: 48px minmax(0, 1fr);
   }
   .edit-form-grid,
-  .permission-grid {
+  .permission-grid,
+  .photo-picker {
     grid-template-columns: 1fr;
   }
   .permission-wide {

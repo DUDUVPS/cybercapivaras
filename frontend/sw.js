@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v13-team-editbox";
+const CACHE_NAME = "cyber-capivaras-v14-team-photo-fix";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260611-team-editbox",
+  "/style.css?v=20260611-team-photo-fix",
   "/site.js?v=20260611-team-reference",
-  "/app.js?v=20260611-team-editbox",
+  "/app.js?v=20260611-team-photo-fix",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"
