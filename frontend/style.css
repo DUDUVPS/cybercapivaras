@@ -312,6 +312,177 @@ h2 { font-size: clamp(1.9rem, 4vw, 3.1rem); line-height: 1.08; }
   font-size: .88rem;
   line-height: 1.45;
 }
+.team-page {
+  background:
+    linear-gradient(180deg, rgba(8,10,15,.96), rgba(8,10,15,.9)),
+    radial-gradient(circle at 50% 0%, rgba(255,48,69,.18), transparent 38%);
+}
+.team-page-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  min-height: 76px;
+  padding: 0 5vw;
+  border-bottom: 1px solid rgba(255,48,69,.24);
+  background: rgba(5, 7, 11, .92);
+  backdrop-filter: blur(16px);
+}
+.team-page-nav nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.team-page-nav nav a {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--muted);
+  font-weight: 900;
+}
+.team-page-nav nav a:hover,
+.team-page-nav nav a.is-active {
+  color: #fff;
+  border-color: rgba(255,48,69,.34);
+  background: rgba(255,48,69,.08);
+}
+.team-page-hero {
+  min-height: 260px;
+  display: grid;
+  align-content: end;
+  gap: 8px;
+  padding: 72px 5vw 42px;
+  border-bottom: 1px solid var(--line);
+  background:
+    linear-gradient(90deg, rgba(8,10,15,.98), rgba(8,10,15,.76)),
+    url("imgs/bg-site.png") center/cover;
+}
+.team-page-hero p {
+  margin: 0;
+  color: var(--red);
+  font-weight: 950;
+  text-transform: uppercase;
+}
+.team-page-hero h1 {
+  margin: 0;
+  max-width: 980px;
+  color: #fff;
+  font-size: clamp(3rem, 9vw, 6.4rem);
+}
+.team-page-list {
+  padding: 42px 5vw 84px;
+}
+.team-reference-grid {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+.team-person-card {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-color: rgba(255,48,69,.26);
+  background:
+    linear-gradient(180deg, rgba(18, 22, 31, .98), rgba(8, 10, 15, .98));
+}
+.team-person-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, var(--red), var(--cyan));
+}
+.team-person-photo {
+  aspect-ratio: 4 / 5;
+  background:
+    linear-gradient(180deg, rgba(255,48,69,.12), transparent),
+    #06080d;
+}
+.team-person-photo img {
+  filter: saturate(1.05) contrast(1.03);
+}
+.team-person-info {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 16px;
+}
+.team-person-info h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.18rem;
+  line-height: 1.08;
+}
+.team-person-info strong {
+  margin: 0;
+  color: #f0f4fb;
+  font-size: .92rem;
+}
+.team-person-info .person-generation {
+  display: inline-flex;
+  justify-self: start;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  margin: 2px 0 0;
+  padding: 0 10px;
+  border: 1px solid rgba(24,199,255,.3);
+  border-radius: 999px;
+  color: var(--cyan);
+  background: rgba(24,199,255,.08);
+  font-size: .78rem;
+  font-weight: 900;
+}
+.person-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: .88rem;
+}
+.person-status b {
+  color: var(--green);
+}
+.team-person-info details {
+  margin-top: 4px;
+}
+.team-person-info summary,
+.team-edit-button {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 8px;
+  color: #fff;
+  background: rgba(255,255,255,.06);
+  font-size: .82rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+.team-person-info details[open] summary {
+  border-color: rgba(64,242,155,.38);
+  color: var(--green);
+}
+.team-person-info details p {
+  margin: 10px 0 0;
+  font-size: .86rem;
+}
+.team-person-info small {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.team-edit-button {
+  margin-top: 4px;
+  border-color: rgba(255,48,69,.35);
+  background: rgba(255,48,69,.12);
+}
 .contact-strip { display: grid; grid-template-columns: minmax(0, .8fr) minmax(320px, 1fr); gap: 28px; align-items: start; }
 .compact-form, .admin-login, .app-form { display: grid; gap: 14px; }
 input, textarea, select {
@@ -962,6 +1133,7 @@ body[data-accent="red"] { --green: var(--red); }
 @media (max-width: 900px) {
   .landing-hero, .contact-strip, .login-layout, .app-grid, .feature-grid, .project-showcase, .team-table, .team-showcase { grid-template-columns: 1fr; }
   .member-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .team-reference-grid, .compact-members { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .team-lead { position: static; }
   .app-screen { grid-template-columns: 1fr; }
   .app-sidebar { position: static; height: auto; }
@@ -976,6 +1148,15 @@ body[data-accent="red"] { --green: var(--red); }
   .ticket-actions select { max-width: none; }
   .public-nav { align-items: flex-start; flex-direction: column; padding-block: 14px; }
   .public-nav nav { flex-wrap: wrap; }
+  .team-page-nav {
+    align-items: flex-start;
+    flex-direction: column;
+    padding-block: 14px;
+  }
+  .team-page-nav nav {
+    width: 100%;
+    flex-wrap: wrap;
+  }
   .landing-hero {
     min-height: auto;
     gap: 30px;
@@ -1067,6 +1248,26 @@ body[data-accent="red"] { --green: var(--red); }
     font-size: .88rem;
   }
   .public-nav .nav-button { grid-column: 1 / -1; }
+  .team-page-nav {
+    gap: 12px;
+    padding: 12px 16px;
+  }
+  .team-page-nav nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .team-page-nav nav a {
+    padding: 0 8px;
+    font-size: .84rem;
+  }
+  .team-page-hero {
+    min-height: 220px;
+    padding: 46px 18px 30px;
+  }
+  .team-page-list {
+    padding: 24px 18px 56px;
+  }
   .hero-copy p { font-size: 1rem; }
   .hero-actions { margin-top: 22px; }
   .hero-actions .button { width: 100%; }
@@ -1076,6 +1277,20 @@ body[data-accent="red"] { --green: var(--red); }
   .member-card {
     display: grid;
     grid-template-columns: 112px minmax(0, 1fr);
+  }
+  .team-person-card {
+    grid-template-columns: minmax(0, 104px) minmax(0, 1fr);
+    grid-template-rows: auto;
+  }
+  .team-person-photo {
+    aspect-ratio: auto;
+    min-height: 100%;
+  }
+  .team-person-info {
+    padding: 14px;
+  }
+  .team-person-info h3 {
+    font-size: 1rem;
   }
   .member-admin-row {
     grid-template-columns: 48px minmax(0, 1fr);

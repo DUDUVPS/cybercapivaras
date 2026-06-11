@@ -5,44 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Equipe | Cyber Capivaras</title>
     <link rel="icon" type="image/png" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260610-team-editor" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#080a0f" />
+    <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
+    <link rel="stylesheet" href="style.css?v=20260611-team-reference" />
   </head>
-  <body>
-    <header class="topbar">
+  <body class="team-page">
+    <header class="team-page-nav">
       <a class="brand" href="index.html">
-        <img src="imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png" alt="Logo Cyber Capivaras" />
+        <img src="imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png" alt="Cyber Capivaras" />
         <span>Cyber Capivaras</span>
       </a>
-      <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-      <nav class="nav-links" aria-label="Menu principal">
-        <a href="index.html">Inicio</a>
-        <a class="active" href="equipe.html">Equipe</a>
-        <a href="conquistas.html">Conquistas</a>
-        <a href="robos.html">Robos</a>
-        <a href="mais.html">Mais</a>
+      <nav aria-label="Menu da equipe">
+        <a href="index.html">Home</a>
+        <a href="index.html#contato">Contato</a>
+        <a class="is-active" href="equipe.html">Equipe</a>
       </nav>
-      <a class="login-link" href="login.html">Fazer login</a>
     </header>
 
     <main>
-      <section class="page-hero compact">
-        <p class="kicker">Equipe</p>
-        <h1>Integrantes Cyber Capivaras</h1>
-        <p>Estudantes organizados por areas de desenvolvimento, pesquisa e comunicacao.</p>
+      <section class="team-page-hero">
+        <p>EQUIPE</p>
+        <h1>Cyber Capivaras</h1>
       </section>
 
-      <section class="section dark">
-        <div class="member-grid" id="memberGrid"></div>
+      <section class="team-page-list">
+        <div class="member-grid team-reference-grid" id="memberGrid"></div>
       </section>
     </main>
 
     <footer class="footer">
-      <strong>&copy; 2026 Cyber Capivara</strong>
+      <span>&copy; 2026 Cyber Capivara</span>
       <span>from LASTTRO.IO</span>
     </footer>
 
-    <script src="site.js?v=20260610-team-editor"></script>
+    <script src="site.js?v=20260611-team-reference"></script>
   </body>
 </html>

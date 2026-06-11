@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260610-team-editor" />
+    <link rel="stylesheet" href="style.css?v=20260611-team-reference" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <aside class="app-sidebar">
@@ -183,9 +183,9 @@
           <div class="section-head compact-head">
             <div>
               <p class="eyebrow">Equipe</p>
-              <h2>Integrantes no front publico</h2>
+              <h2>Pagina publica igual ao modelo</h2>
             </div>
-            <span class="module-chip">Cards reais</span>
+            <span class="module-chip">Foto + status</span>
           </div>
           <div class="member-grid compact-members" id="teamTable"></div>
         </article>
@@ -201,12 +201,21 @@
           </div>
           <form class="app-form" id="memberForm">
             <input type="hidden" name="index" />
-            <label>Nome <input type="text" name="name" required /></label>
-            <label>E-mail Google <input type="email" name="email" placeholder="aluno@email.com" /></label>
-            <label>Funcao <input type="text" name="role" required /></label>
-            <label>Nivel <input type="text" name="level" placeholder="N2" required /></label>
-            <label>Foto/caminho <input type="text" name="image" placeholder="imgs/fotos/ft-naju.png" required /></label>
-            <label>Descricao <textarea rows="3" name="description" required></textarea></label>
+            <label>Nome <input type="text" name="name" placeholder="Allen Sena" required /></label>
+            <label>Conta/e-mail <input type="email" name="email" placeholder="aluno@email.com" /></label>
+            <label>Funcao <input type="text" name="role" placeholder="Estudante / Arduino" required /></label>
+            <label>Hierarquia <input type="text" name="level" placeholder="N2" required /></label>
+            <label>Geracao <input type="text" name="generation" placeholder="1a Geracao Fabrica" required /></label>
+            <label>Status
+              <select name="status" required>
+                <option>Ativo</option>
+                <option>Em treinamento</option>
+                <option>Inativo</option>
+                <option>Convidado</option>
+              </select>
+            </label>
+            <label>Foto/caminho <input type="text" name="image" placeholder="imgs/fotos/ft-allem.png" required /></label>
+            <label>Detalhes <textarea rows="3" name="description" placeholder="Resumo que aparece ao clicar em Detalhes" required></textarea></label>
             <fieldset class="member-permissions">
               <legend>Acessos dessa pessoa</legend>
               <label class="permission-row"><input type="checkbox" name="tabs" value="painel" checked /> Painel</label>
@@ -408,6 +417,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260610-team-editor"></script>
+    <script src="app.js?v=20260611-team-reference"></script>
   </body>
 </html>

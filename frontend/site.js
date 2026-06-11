@@ -33,21 +33,32 @@ const publicRoleProfiles = {
 };
 
 const publicTeam = [
-  ["Eduardo Souza", "Capitao", "imgs/fotos/ft-alceu.png"],
-  ["Allen Sena", "Lider tecnico", "imgs/fotos/ft-allem.png"],
-  ["Ana Julia Maia", "Documentacao", "imgs/fotos/ft-naju.png"],
-  ["Renata Miranda", "Marketing", "imgs/fotos/ft-renata.png"],
-  ["Andre Wild", "Programacao", "imgs/fotos/ft-andre.png"],
-  ["Allisson Beltrao", "Mecanica", "imgs/fotos/ft-beltrao.png"],
-  ["Isadorah Araujo", "Design 3D", "imgs/fotos/ft-isadorah.png"],
-  ["Marcelo Brandao", "Membro", "imgs/fotos/ft-marcelo.png"],
+  ["Eduardo Souza", "Capitao", "N4", "imgs/fotos/ft-alceu.png", "Organiza estrategia, cronograma e prioridades.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Allen Sena", "Estudante / Arduino", "N3", "imgs/fotos/ft-allem.png", "Atua nos testes com Arduino, sensores e prototipos.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Ana Julia Maia", "Documentacao", "N2", "imgs/fotos/ft-naju.png", "Registra progresso, relatorios e evidencias.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Renata Miranda", "Marketing", "N2", "imgs/fotos/ft-renata.png", "Cuida da comunicacao visual e redes sociais.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Andre Wild", "Programacao", "N2", "imgs/fotos/ft-andre.png", "Cuida do codigo, sensores e automacao.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Allisson Beltrao", "Mecanica", "N2", "imgs/fotos/ft-beltrao.png", "Cuida da estrutura, montagem e manutencao.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Isadorah Araujo", "Design 3D", "N2", "imgs/fotos/ft-isadorah.png", "Modela pecas e prototipos para impressao.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Marcelo Brandao", "Membro", "N1", "imgs/fotos/ft-marcelo.png", "Participa das tarefas e apoio aos projetos.", "membro@cybercapivaras.com", "1a Geracao Fabrica", "Ativo"],
 ];
 
 function getPublicContent() {
-  return { ...publicContent, members: publicTeam.map(([name, role, image]) => {
-    const [level, description] = publicRoleProfiles[role] || publicRoleProfiles.Membro;
-    return [name, role, level, image, description];
-  }), ...JSON.parse(localStorage.getItem("cyber_site_content") || "{}") };
+  return { ...publicContent, members: publicTeam, ...JSON.parse(localStorage.getItem("cyber_site_content") || "{}") };
+}
+
+function normalizePublicMember(member) {
+  const roleProfile = publicRoleProfiles[member[1]] || publicRoleProfiles.Membro;
+  return {
+    name: member[0] || "",
+    role: member[1] || "Membro",
+    level: member[2] || roleProfile[0],
+    image: member[3] || "imgs/apple-touch-icon.png",
+    details: member[4] || roleProfile[1],
+    email: member[5] || "",
+    generation: member[6] || "1a Geracao Fabrica",
+    status: member[7] || "Ativo",
+  };
 }
 
 function renderPublicContent() {
@@ -102,17 +113,22 @@ function renderPublicTeam() {
   if (!grids.length) return;
 
   const cards = getPublicContent().members
-    .map(([name, role, level, image, description]) => {
+    .map((row) => {
+      const member = normalizePublicMember(row);
       return `
-        <article class="member-card">
-          <div class="member-photo">
-            <img src="${image}" alt="${name}" />
+        <article class="member-card team-person-card">
+          <div class="member-photo team-person-photo">
+            <img src="${member.image}" alt="${member.name}" />
           </div>
-          <div class="member-info">
-            <span>${level}</span>
-            <h3>${name}</h3>
-            <strong>${role}</strong>
-            <p>${description}</p>
+          <div class="member-info team-person-info">
+            <h3>${member.name}</h3>
+            <strong>${member.role}</strong>
+            <span class="person-generation">${member.generation}</span>
+            <p class="person-status">Status: <b>${member.status}</b></p>
+            <details>
+              <summary>Detalhes</summary>
+              <p>${member.details}</p>
+            </details>
           </div>
         </article>
       `;

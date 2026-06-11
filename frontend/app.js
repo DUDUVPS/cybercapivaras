@@ -20,14 +20,14 @@ const defaultContent = {
 };
 
 const defaultMembers = [
-  ["Eduardo Souza", "Capitao", "N4", "imgs/fotos/ft-alceu.png", "Organiza estrategia, cronograma e prioridades.", ""],
-  ["Allen Sena", "Lider tecnico", "N3", "imgs/fotos/ft-allem.png", "Coordena testes, prototipos e decisao tecnica.", ""],
-  ["Ana Julia Maia", "Documentacao", "N2", "imgs/fotos/ft-naju.png", "Registra progresso, relatorios e evidencias.", ""],
-  ["Renata Miranda", "Marketing", "N2", "imgs/fotos/ft-renata.png", "Cuida da comunicacao visual e redes sociais.", ""],
-  ["Andre Wild", "Programacao", "N2", "imgs/fotos/ft-andre.png", "Cuida do codigo, sensores e automacao.", ""],
-  ["Allisson Beltrao", "Mecanica", "N2", "imgs/fotos/ft-beltrao.png", "Cuida da estrutura, montagem e manutencao.", ""],
-  ["Isadorah Araujo", "Design 3D", "N2", "imgs/fotos/ft-isadorah.png", "Modela pecas e prototipos para impressao.", ""],
-  ["Marcelo Brandao", "Membro", "N1", "imgs/fotos/ft-marcelo.png", "Participa das tarefas e apoio aos projetos.", "membro@cybercapivaras.com"],
+  ["Eduardo Souza", "Capitao", "N4", "imgs/fotos/ft-alceu.png", "Organiza estrategia, cronograma e prioridades.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Allen Sena", "Estudante / Arduino", "N3", "imgs/fotos/ft-allem.png", "Atua nos testes com Arduino, sensores e prototipos.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Ana Julia Maia", "Documentacao", "N2", "imgs/fotos/ft-naju.png", "Registra progresso, relatorios e evidencias.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Renata Miranda", "Marketing", "N2", "imgs/fotos/ft-renata.png", "Cuida da comunicacao visual e redes sociais.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Andre Wild", "Programacao", "N2", "imgs/fotos/ft-andre.png", "Cuida do codigo, sensores e automacao.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Allisson Beltrao", "Mecanica", "N2", "imgs/fotos/ft-beltrao.png", "Cuida da estrutura, montagem e manutencao.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Isadorah Araujo", "Design 3D", "N2", "imgs/fotos/ft-isadorah.png", "Modela pecas e prototipos para impressao.", "", "1a Geracao Fabrica", "Ativo"],
+  ["Marcelo Brandao", "Membro", "N1", "imgs/fotos/ft-marcelo.png", "Participa das tarefas e apoio aos projetos.", "membro@cybercapivaras.com", "1a Geracao Fabrica", "Ativo"],
 ];
 
 const defaultAppSettings = {
@@ -117,25 +117,40 @@ function normalizeMember(member) {
     image: member[3] || "imgs/apple-touch-icon.png",
     description: member[4] || "",
     email: member[5] || "",
+    generation: member[6] || "1a Geracao Fabrica",
+    status: member[7] || "Ativo",
   };
 }
 
 function memberToRow(member) {
-  return [member.name, member.role, member.level, member.image, member.description, member.email || ""];
+  return [
+    member.name,
+    member.role,
+    member.level || "N1",
+    member.image,
+    member.description,
+    member.email || "",
+    member.generation || "1a Geracao Fabrica",
+    member.status || "Ativo",
+  ];
 }
 
 function renderMemberCard(memberRow, index, editable = false) {
   const member = normalizeMember(memberRow);
   return `
-    <article class="member-card">
-      <div class="member-photo"><img src="${member.image}" alt="${member.name}" /></div>
-      <div class="member-info">
-        <span>${member.level}</span>
+    <article class="member-card team-person-card">
+      <div class="member-photo team-person-photo"><img src="${member.image}" alt="${member.name}" /></div>
+      <div class="member-info team-person-info">
         <h3>${member.name}</h3>
         <strong>${member.role}</strong>
-        <p>${member.description}</p>
+        <span class="person-generation">${member.generation}</span>
+        <p class="person-status">Status: <b>${member.status}</b></p>
+        <details>
+          <summary>Detalhes</summary>
+          <p>${member.description}</p>
+        </details>
         ${member.email ? `<small>${member.email}</small>` : ""}
-        ${editable ? `<button class="task-remove" type="button" data-edit-member="${index}">Editar</button>` : ""}
+        ${editable ? `<button class="team-edit-button" type="button" data-edit-member="${index}">Editar</button>` : ""}
       </div>
     </article>
   `;
@@ -504,7 +519,8 @@ function renderApp() {
             <img src="${member.image}" alt="${member.name}" />
             <div>
               <strong>${member.name}</strong>
-              <span>${member.role} - ${member.level}</span>
+              <span>${member.role} - ${member.generation}</span>
+              <span>Status: ${member.status}</span>
               <small>${member.email || "sem e-mail vinculado"}</small>
             </div>
             <button class="ghost-button" type="button" data-edit-member="${index}">Editar</button>
@@ -617,6 +633,8 @@ function setupAppForms() {
         level: data.level,
         image: data.image,
         description: data.description,
+        generation: data.generation,
+        status: data.status,
       };
       const row = memberToRow(member);
       const editIndex = data.index === "" ? -1 : Number(data.index);
@@ -669,6 +687,8 @@ function fillMemberForm(index) {
   form.elements.email.value = member.email;
   form.elements.role.value = member.role;
   form.elements.level.value = member.level;
+  form.elements.generation.value = member.generation;
+  form.elements.status.value = member.status;
   form.elements.image.value = member.image;
   form.elements.description.value = member.description;
   form.querySelectorAll('[name="tabs"]').forEach((input) => {
