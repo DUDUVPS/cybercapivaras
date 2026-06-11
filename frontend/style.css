@@ -681,6 +681,54 @@ input, textarea, select {
 .compact-members {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
+.team-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(360px, .75fr);
+  gap: 18px;
+  align-items: start;
+}
+.team-editor-stack {
+  display: grid;
+  gap: 18px;
+}
+.team-preview-panel .member-card {
+  min-height: 100%;
+}
+.member-permissions {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255,255,255,.035);
+}
+.member-permissions legend {
+  padding: 0 8px;
+  color: var(--green);
+  font-weight: 800;
+}
+.form-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+.member-admin-row {
+  display: grid !important;
+  grid-template-columns: 52px minmax(0, 1fr) auto auto;
+  align-items: center;
+}
+.member-admin-row img {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #0b0f17;
+}
+.member-info small,
+.member-admin-row small {
+  color: var(--muted);
+}
 .ops-list,
 .candidate-list {
   display: grid;
@@ -917,7 +965,7 @@ body[data-accent="red"] { --green: var(--red); }
   .team-lead { position: static; }
   .app-screen { grid-template-columns: 1fr; }
   .app-sidebar { position: static; height: auto; }
-  .module-grid, .inline-form, .editor-layout, .permission-matrix, .task-layout, .kanban-board, .compact-members { grid-template-columns: 1fr; }
+  .module-grid, .inline-form, .editor-layout, .permission-matrix, .task-layout, .kanban-board, .compact-members, .team-workspace { grid-template-columns: 1fr; }
   .workspace-header, .workspace-actions { align-items: stretch; flex-direction: column; }
   .app-main { padding: 18px; }
   .app-sidebar { padding: 18px; }
@@ -1028,6 +1076,16 @@ body[data-accent="red"] { --green: var(--red); }
   .member-card {
     display: grid;
     grid-template-columns: 112px minmax(0, 1fr);
+  }
+  .member-admin-row {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+  .member-admin-row .ghost-button,
+  .member-admin-row .task-remove {
+    grid-column: 1 / -1;
+  }
+  .form-actions {
+    grid-template-columns: 1fr;
   }
   .member-photo { aspect-ratio: auto; min-height: 100%; }
   .signal-row span {

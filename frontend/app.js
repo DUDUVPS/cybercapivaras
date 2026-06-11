@@ -20,14 +20,14 @@ const defaultContent = {
 };
 
 const defaultMembers = [
-  ["Eduardo Souza", "Capitao", "N4", "imgs/fotos/ft-alceu.png", "Organiza estrategia, cronograma e prioridades."],
-  ["Allen Sena", "Lider tecnico", "N3", "imgs/fotos/ft-allem.png", "Coordena testes, prototipos e decisao tecnica."],
-  ["Ana Julia Maia", "Documentacao", "N2", "imgs/fotos/ft-naju.png", "Registra progresso, relatorios e evidencias."],
-  ["Renata Miranda", "Marketing", "N2", "imgs/fotos/ft-renata.png", "Cuida da comunicacao visual e redes sociais."],
-  ["Andre Wild", "Programacao", "N2", "imgs/fotos/ft-andre.png", "Cuida do codigo, sensores e automacao."],
-  ["Allisson Beltrao", "Mecanica", "N2", "imgs/fotos/ft-beltrao.png", "Cuida da estrutura, montagem e manutencao."],
-  ["Isadorah Araujo", "Design 3D", "N2", "imgs/fotos/ft-isadorah.png", "Modela pecas e prototipos para impressao."],
-  ["Marcelo Brandao", "Membro", "N1", "imgs/fotos/ft-marcelo.png", "Participa das tarefas e apoio aos projetos."],
+  ["Eduardo Souza", "Capitao", "N4", "imgs/fotos/ft-alceu.png", "Organiza estrategia, cronograma e prioridades.", ""],
+  ["Allen Sena", "Lider tecnico", "N3", "imgs/fotos/ft-allem.png", "Coordena testes, prototipos e decisao tecnica.", ""],
+  ["Ana Julia Maia", "Documentacao", "N2", "imgs/fotos/ft-naju.png", "Registra progresso, relatorios e evidencias.", ""],
+  ["Renata Miranda", "Marketing", "N2", "imgs/fotos/ft-renata.png", "Cuida da comunicacao visual e redes sociais.", ""],
+  ["Andre Wild", "Programacao", "N2", "imgs/fotos/ft-andre.png", "Cuida do codigo, sensores e automacao.", ""],
+  ["Allisson Beltrao", "Mecanica", "N2", "imgs/fotos/ft-beltrao.png", "Cuida da estrutura, montagem e manutencao.", ""],
+  ["Isadorah Araujo", "Design 3D", "N2", "imgs/fotos/ft-isadorah.png", "Modela pecas e prototipos para impressao.", ""],
+  ["Marcelo Brandao", "Membro", "N1", "imgs/fotos/ft-marcelo.png", "Participa das tarefas e apoio aos projetos.", "membro@cybercapivaras.com"],
 ];
 
 const defaultAppSettings = {
@@ -109,16 +109,33 @@ function rowsToLines(rows) {
   return rows.map((row) => row.join(" | ")).join("\n");
 }
 
-function renderMemberCard([name, role, level, image, description], index, removable = false) {
+function normalizeMember(member) {
+  return {
+    name: member[0] || "",
+    role: member[1] || "Membro",
+    level: member[2] || "N1",
+    image: member[3] || "imgs/apple-touch-icon.png",
+    description: member[4] || "",
+    email: member[5] || "",
+  };
+}
+
+function memberToRow(member) {
+  return [member.name, member.role, member.level, member.image, member.description, member.email || ""];
+}
+
+function renderMemberCard(memberRow, index, editable = false) {
+  const member = normalizeMember(memberRow);
   return `
     <article class="member-card">
-      <div class="member-photo"><img src="${image}" alt="${name}" /></div>
+      <div class="member-photo"><img src="${member.image}" alt="${member.name}" /></div>
       <div class="member-info">
-        <span>${level}</span>
-        <h3>${name}</h3>
-        <strong>${role}</strong>
-        <p>${description}</p>
-        ${removable ? `<button class="task-remove" type="button" data-member-index="${index}">Remover</button>` : ""}
+        <span>${member.level}</span>
+        <h3>${member.name}</h3>
+        <strong>${member.role}</strong>
+        <p>${member.description}</p>
+        ${member.email ? `<small>${member.email}</small>` : ""}
+        ${editable ? `<button class="task-remove" type="button" data-edit-member="${index}">Editar</button>` : ""}
       </div>
     </article>
   `;
@@ -470,19 +487,47 @@ function renderApp() {
 
   const table = document.querySelector("#teamTable");
   if (table) {
-    table.innerHTML = getContent().members.map((member, index) => renderMemberCard(member, index)).join("");
+    table.innerHTML = getContent().members.map((member, index) => renderMemberCard(member, index, admin)).join("");
+
+    table.querySelectorAll("[data-edit-member]").forEach((button) => {
+      button.addEventListener("click", () => fillMemberForm(Number(button.dataset.editMember)));
+    });
   }
 
   const memberAdminList = document.querySelector("#memberAdminList");
   if (memberAdminList) {
     memberAdminList.innerHTML = getContent().members
-      .map(([name, role], index) => `<article><strong>${name}</strong><span>${role}</span><button class="task-remove" type="button" data-member-index="${index}">Remover</button></article>`)
+      .map((row, index) => {
+        const member = normalizeMember(row);
+        return `
+          <article class="member-admin-row">
+            <img src="${member.image}" alt="${member.name}" />
+            <div>
+              <strong>${member.name}</strong>
+              <span>${member.role} - ${member.level}</span>
+              <small>${member.email || "sem e-mail vinculado"}</small>
+            </div>
+            <button class="ghost-button" type="button" data-edit-member="${index}">Editar</button>
+            <button class="task-remove" type="button" data-member-index="${index}">Remover</button>
+          </article>
+        `;
+      })
       .join("");
+
+    memberAdminList.querySelectorAll("[data-edit-member]").forEach((button) => {
+      button.addEventListener("click", () => fillMemberForm(Number(button.dataset.editMember)));
+    });
 
     memberAdminList.querySelectorAll("[data-member-index]").forEach((button) => {
       button.addEventListener("click", () => {
         const content = getContent();
-        content.members.splice(Number(button.dataset.memberIndex), 1);
+        const [removed] = content.members.splice(Number(button.dataset.memberIndex), 1);
+        const removedEmail = normalizeMember(removed).email;
+        if (removedEmail) {
+          const permissions = getUserPermissions();
+          delete permissions[removedEmail];
+          saveUserPermissions(permissions);
+        }
         saveContent(content);
         renderApp();
       });
@@ -496,7 +541,6 @@ function renderApp() {
 
   renderTasks();
   renderCandidates();
-  renderPermissionMatrix();
   loadTickets();
 }
 
@@ -549,12 +593,57 @@ function setupAppForms() {
   }
 
   if (memberForm) {
+    const clearButton = document.querySelector("#clearMemberForm");
+    if (clearButton) {
+      clearButton.addEventListener("click", () => {
+        memberForm.reset();
+        memberForm.elements.index.value = "";
+        memberForm.querySelectorAll('[name="tabs"]').forEach((input) => {
+          input.checked = ["painel", "equipe", "tarefas"].includes(input.value);
+        });
+        memberForm.elements.canInterview.checked = false;
+      });
+    }
+
     memberForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      const data = Object.fromEntries(new FormData(memberForm).entries());
+      const formData = new FormData(memberForm);
+      const data = Object.fromEntries(formData.entries());
       const content = getContent();
-      content.members.push([data.name, data.role, data.level, data.image, data.description]);
+      const member = {
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        level: data.level,
+        image: data.image,
+        description: data.description,
+      };
+      const row = memberToRow(member);
+      const editIndex = data.index === "" ? -1 : Number(data.index);
+
+      if (editIndex >= 0) {
+        content.members[editIndex] = row;
+      } else {
+        content.members.push(row);
+      }
+
+      if (member.email) {
+        const permissions = getUserPermissions();
+        const tabs = formData.getAll("tabs");
+        if (!tabs.includes("painel")) tabs.unshift("painel");
+        permissions[member.email] = {
+          tabs,
+          canInterview: formData.get("canInterview") === "true",
+        };
+        saveUserPermissions(permissions);
+
+        const roles = getRoles();
+        roles[member.email] = { name: member.name, email: member.email, role: member.role };
+        saveRoles(roles);
+      }
+
       saveContent(content);
+      document.querySelector("#memberStatus").textContent = "Integrante salvo.";
       memberForm.reset();
       renderApp();
     });
@@ -562,12 +651,31 @@ function setupAppForms() {
 
   setupTaskForm();
   setupSettingsForm();
-  setupPermissionForm();
   setupCandidateForm();
   setupTicketForm();
   setupCalendarControls();
   setupDataTools();
   renderSitePreview();
+}
+
+function fillMemberForm(index) {
+  const form = document.querySelector("#memberForm");
+  if (!form) return;
+  const member = normalizeMember(getContent().members[index]);
+  const rule = member.email ? getUserPermissions()[member.email] : null;
+
+  form.elements.index.value = index;
+  form.elements.name.value = member.name;
+  form.elements.email.value = member.email;
+  form.elements.role.value = member.role;
+  form.elements.level.value = member.level;
+  form.elements.image.value = member.image;
+  form.elements.description.value = member.description;
+  form.querySelectorAll('[name="tabs"]').forEach((input) => {
+    input.checked = rule?.tabs?.includes(input.value) || (!rule && ["painel", "equipe", "tarefas"].includes(input.value));
+  });
+  form.elements.canInterview.checked = Boolean(rule?.canInterview);
+  document.querySelector("#memberStatus").textContent = "Editando integrante selecionado.";
 }
 
 function renderSitePreview() {
@@ -793,65 +901,6 @@ function setupCandidateForm() {
     saveCandidates(candidates);
     form.reset();
     renderCandidates();
-  });
-}
-
-function renderPermissionMatrix() {
-  const form = document.querySelector("#permissionForm");
-  if (!form) return;
-
-  const rules = getUserPermissions();
-  const modules = Object.entries(appModules).filter(([id]) => id !== "ajustes");
-  const people = Object.entries(rules);
-
-  form.innerHTML = `
-    <fieldset>
-      <legend>Pessoa</legend>
-      <label>E-mail <input type="email" name="email" placeholder="aluno@email.com" required /></label>
-      <label class="permission-row">
-        <input type="checkbox" name="canInterview" value="true" />
-        <span>Pode fazer entrevista no processo seletivo</span>
-      </label>
-    </fieldset>
-    <fieldset>
-      <legend>Abas liberadas</legend>
-      ${modules
-        .map(([id, label]) => `
-          <label class="permission-row">
-            <input type="checkbox" name="tabs" value="${id}" ${id === "painel" ? "checked" : ""} />
-            <span>${label}</span>
-          </label>
-        `)
-        .join("")}
-    </fieldset>
-    <button class="button primary" type="submit">Salvar acesso da pessoa</button>
-    <div class="permission-list">
-      ${people.map(([email, rule]) => `<article><strong>${email}</strong><span>${(rule.tabs || []).map((id) => appModules[id]).join(", ")}</span><b>${rule.canInterview ? "Entrevistador" : "Acesso comum"}</b></article>`).join("")}
-    </div>
-  `;
-}
-
-function setupPermissionForm() {
-  const form = document.querySelector("#permissionForm");
-  const status = document.querySelector("#permissionStatus");
-  if (!form) return;
-
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const data = new FormData(form);
-    const email = data.get("email");
-    const tabs = data.getAll("tabs");
-    if (!tabs.includes("painel")) tabs.unshift("painel");
-    const rules = getUserPermissions();
-    rules[email] = {
-      tabs,
-      canInterview: data.get("canInterview") === "true",
-    };
-
-    saveUserPermissions(rules);
-    if (status) status.textContent = "Permissoes atualizadas.";
-    renderPermissionMatrix();
-    applyAccessRules();
   });
 }
 

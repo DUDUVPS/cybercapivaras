@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260610-central-v2" />
+    <link rel="stylesheet" href="style.css?v=20260610-team-editor" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <aside class="app-sidebar">
@@ -178,46 +178,64 @@
       </section>
 
       <section class="app-tab" id="equipe" data-tab-panel="equipe">
-        <div class="module-grid">
-        <article class="app-section">
+        <div class="team-workspace">
+        <article class="app-section team-preview-panel">
           <div class="section-head compact-head">
             <div>
               <p class="eyebrow">Equipe</p>
-              <h2>Front igual pagina publica</h2>
+              <h2>Integrantes no front publico</h2>
             </div>
-            <span class="module-chip">Permissoes</span>
+            <span class="module-chip">Cards reais</span>
           </div>
           <div class="member-grid compact-members" id="teamTable"></div>
         </article>
-        <article class="app-section admin-only">
+
+        <aside class="team-editor-stack admin-only">
+        <article class="app-section">
           <div class="section-head compact-head">
             <div>
               <p class="eyebrow">Admin</p>
-              <h2>Editar integrante</h2>
+              <h2>Editar pessoa da equipe</h2>
             </div>
-            <span class="module-chip">Fotos e funcoes</span>
+            <span class="module-chip">Tudo por integrante</span>
           </div>
           <form class="app-form" id="memberForm">
+            <input type="hidden" name="index" />
             <label>Nome <input type="text" name="name" required /></label>
+            <label>E-mail Google <input type="email" name="email" placeholder="aluno@email.com" /></label>
             <label>Funcao <input type="text" name="role" required /></label>
             <label>Nivel <input type="text" name="level" placeholder="N2" required /></label>
             <label>Foto/caminho <input type="text" name="image" placeholder="imgs/fotos/ft-naju.png" required /></label>
             <label>Descricao <textarea rows="3" name="description" required></textarea></label>
-            <button class="button primary" type="submit">Adicionar integrante</button>
+            <fieldset class="member-permissions">
+              <legend>Acessos dessa pessoa</legend>
+              <label class="permission-row"><input type="checkbox" name="tabs" value="painel" checked /> Painel</label>
+              <label class="permission-row"><input type="checkbox" name="tabs" value="site" /> Site publico</label>
+              <label class="permission-row"><input type="checkbox" name="tabs" value="equipe" checked /> Equipe</label>
+              <label class="permission-row"><input type="checkbox" name="tabs" value="chamados" /> Chamados</label>
+              <label class="permission-row"><input type="checkbox" name="tabs" value="tarefas" checked /> Tarefas</label>
+              <label class="permission-row"><input type="checkbox" name="tabs" value="seletivo" /> Processo seletivo</label>
+              <label class="permission-row"><input type="checkbox" name="canInterview" value="true" /> Pode entrevistar candidatos</label>
+            </fieldset>
+            <div class="form-actions">
+              <button class="button primary" type="submit">Salvar integrante</button>
+              <button class="ghost-button" type="button" id="clearMemberForm">Novo</button>
+            </div>
+            <p class="form-status" id="memberStatus" role="status"></p>
           </form>
-          <div class="ops-list" id="memberAdminList"></div>
         </article>
-        <article class="app-section admin-only">
+
+        <article class="app-section">
           <div class="section-head compact-head">
             <div>
-              <p class="eyebrow">Permissoes</p>
-              <h2>Acessos por pessoa</h2>
+              <p class="eyebrow">Lista</p>
+              <h2>Editar rapidamente</h2>
             </div>
-            <span class="module-chip">Editavel na equipe</span>
+            <span class="module-chip">Selecionar</span>
           </div>
-          <form class="permission-matrix" id="permissionForm"></form>
-          <p class="form-status" id="permissionStatus" role="status"></p>
+          <div class="ops-list" id="memberAdminList"></div>
         </article>
+        </aside>
         </div>
       </section>
 
@@ -390,6 +408,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260610-central-v2"></script>
+    <script src="app.js?v=20260610-team-editor"></script>
   </body>
 </html>
