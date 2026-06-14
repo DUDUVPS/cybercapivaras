@@ -133,40 +133,34 @@ img { display: block; max-width: 100%; }
   border: 1px solid rgba(255,255,255,.13);
   border-radius: 8px;
   background: rgba(255,255,255,.055);
+  color: #fff;
+  transition: border-color .2s ease, background .2s ease, transform .2s ease;
 }
-.account-entry {
-  position: relative;
+.account-entry:hover,
+.header-menu-button:hover {
+  border-color: rgba(24,199,255,.45);
+  background: rgba(24,199,255,.12);
+  transform: translateY(-1px);
 }
-.account-entry span {
-  position: relative;
-  width: 18px;
-  height: 18px;
+.account-entry svg,
+.header-menu-button svg {
+  width: 22px;
+  height: 22px;
   display: block;
-  border: 2px solid #fff;
-  border-radius: 999px;
 }
-.account-entry span::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -13px;
-  width: 24px;
-  height: 14px;
-  border: 2px solid #fff;
-  border-bottom: 0;
-  border-radius: 999px 999px 0 0;
-  transform: translateX(-50%);
+.account-entry svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.header-menu-button svg {
+  fill: currentColor;
 }
 .header-menu-button {
   padding: 0;
   cursor: pointer;
-}
-.header-menu-button span {
-  width: 5px;
-  height: 5px;
-  display: block;
-  border-radius: 999px;
-  background: #fff;
 }
 .header-menu-button[aria-expanded="true"] {
   border-color: rgba(255,48,69,.48);
