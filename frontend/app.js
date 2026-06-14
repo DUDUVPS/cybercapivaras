@@ -244,6 +244,7 @@ function startSession(user) {
   localStorage.setItem("cyber_session", JSON.stringify({
     name: saved.name || user.name,
     email: user.email,
+    picture: user.picture || saved.picture || "",
     role: saved.role,
     level,
     permission,

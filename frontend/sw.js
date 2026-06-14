@@ -1,12 +1,12 @@
-const CACHE_NAME = "cyber-capivaras-v20-header-icons";
+const CACHE_NAME = "cyber-capivaras-v21-google-avatar-header";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260614-header-icons",
-  "/site.js?v=20260614-header-icons",
+  "/style.css?v=20260614-google-avatar-header",
+  "/site.js?v=20260614-google-avatar-header",
   "/app.js?v=20260611-team-photo-fix",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",

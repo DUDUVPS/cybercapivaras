@@ -168,6 +168,20 @@ function setupMobileMenu() {
   });
 }
 
+function setupAccountPhoto() {
+  const entry = document.querySelector(".account-entry");
+  const image = document.querySelector("#accountPhoto");
+  if (!entry || !image) return;
+
+  const session = JSON.parse(localStorage.getItem("cyber_session") || "null");
+  if (!session?.picture) return;
+
+  image.src = session.picture;
+  image.hidden = false;
+  entry.classList.add("has-photo");
+  entry.setAttribute("aria-label", `Conta de ${session.name || session.email || "usuario"}`);
+}
+
 function setupActiveNav() {
   const links = [...document.querySelectorAll(".site-nav a[href^='#'], .public-nav nav a[href^='#']")];
   const sections = links
@@ -288,6 +302,7 @@ function registerServiceWorker() {
 document.body.classList.add("js-ready");
 renderPublicContent();
 setupMobileMenu();
+setupAccountPhoto();
 setupActiveNav();
 setupRevealAnimations();
 setupHeroMotion();
