@@ -1,12 +1,12 @@
-const CACHE_NAME = "cyber-capivaras-v16-public-topbar-open";
+const CACHE_NAME = "cyber-capivaras-v17-header-redesign";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260614-public-topbar-open",
-  "/site.js?v=20260614-public-topbar-open",
+  "/style.css?v=20260614-header-redesign",
+  "/site.js?v=20260614-header-redesign",
   "/app.js?v=20260611-team-photo-fix",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",

@@ -9,25 +9,23 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260614-public-topbar-open" />
+    <link rel="stylesheet" href="style.css?v=20260614-header-redesign" />
   </head>
   <body>
-    <header class="public-nav">
-      <a class="brand" href="index.html">
+    <header class="public-header">
+      <a class="site-brand" href="index.html">
         <img src="imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png" alt="Cyber Capivaras" />
-        <span>Cyber Capivaras</span>
+        <span>
+          <strong>Cyber Capivaras</strong>
+          <small>IF Goiano</small>
+        </span>
       </a>
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="publicMenu" aria-label="Abrir menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-      <nav id="publicMenu">
+      <nav class="site-nav" id="publicMenu" aria-label="Menu principal">
         <a href="equipe.html">Equipe</a>
         <a href="#projetos">Projetos</a>
         <a href="#contato">Contato</a>
-        <a class="nav-button" href="login.html">Entrar no app</a>
       </nav>
+      <a class="app-entry" href="login.html">Entrar no app</a>
     </header>
 
     <main>
@@ -102,6 +100,6 @@
       <span>from LASTTRO.IO</span>
     </footer>
 
-    <script src="site.js?v=20260614-public-topbar-open"></script>
+    <script src="site.js?v=20260614-header-redesign"></script>
   </body>
 </html>

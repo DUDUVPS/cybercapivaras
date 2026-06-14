@@ -160,7 +160,7 @@ function setupMobileMenu() {
 }
 
 function setupActiveNav() {
-  const links = [...document.querySelectorAll(".public-nav nav a[href^='#']")];
+  const links = [...document.querySelectorAll(".site-nav a[href^='#'], .public-nav nav a[href^='#']")];
   const sections = links
     .map((link) => document.querySelector(link.getAttribute("href")))
     .filter(Boolean);
