@@ -1,12 +1,12 @@
-const CACHE_NAME = "cyber-capivaras-v14-team-photo-fix";
+const CACHE_NAME = "cyber-capivaras-v15-mobile-nav";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260611-team-photo-fix",
-  "/site.js?v=20260611-team-reference",
+  "/style.css?v=20260614-mobile-nav",
+  "/site.js?v=20260614-mobile-nav",
   "/app.js?v=20260611-team-photo-fix",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",

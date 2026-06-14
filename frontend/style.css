@@ -1244,7 +1244,7 @@ body[data-accent="red"] { --green: var(--red); }
   .calendar-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ticket-actions { align-items: stretch; flex-direction: column; }
   .ticket-actions select { max-width: none; }
-  .public-nav { align-items: flex-start; flex-direction: column; padding-block: 14px; }
+  .public-nav { padding-inline: 24px; }
   .public-nav nav { flex-wrap: wrap; }
   .team-page-nav {
     align-items: flex-start;
@@ -1305,45 +1305,74 @@ body[data-accent="red"] { --green: var(--red); }
   .landing-hero { padding: 42px 18px 56px; }
   .section { padding: 56px 18px; }
   .public-nav {
-    min-height: auto;
+    min-height: 64px;
     align-items: center;
     flex-direction: row;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 12px 16px;
+    flex-wrap: nowrap;
+    gap: 10px;
+    padding: 8px 14px;
+    background: rgba(6, 8, 12, .96);
   }
   .brand {
+    min-width: 0;
     width: auto;
     flex: 1;
     justify-content: flex-start;
+    gap: 9px;
+    font-size: .9rem;
   }
   .brand img {
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 auto;
+  }
+  .brand span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .nav-toggle { display: grid; }
+  .nav-toggle {
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    background: rgba(255,255,255,.075);
+  }
   .public-nav nav {
-    width: 100%;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 14px;
+    right: 14px;
+    width: auto;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    gap: 10px;
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    transition: max-height .28s ease, opacity .2s ease;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: rgba(9, 12, 18, .98);
+    box-shadow: 0 18px 50px rgba(0,0,0,.38);
+    transition: max-height .28s ease, opacity .2s ease, padding .2s ease, border-color .2s ease;
   }
   .public-nav nav.is-open {
     max-height: 260px;
     opacity: 1;
+    padding: 10px;
+    border-color: var(--line);
   }
   .public-nav nav a {
-    min-height: 38px;
+    min-height: 42px;
     justify-content: center;
     padding: 0 10px;
     border: 1px solid var(--line);
     border-radius: 8px;
     background: rgba(255,255,255,.055);
-    font-size: .88rem;
+    font-size: .86rem;
+    text-align: center;
   }
   .public-nav .nav-button { grid-column: 1 / -1; }
   .team-page-nav {
