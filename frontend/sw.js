@@ -1,12 +1,12 @@
-const CACHE_NAME = "cyber-capivaras-v18-team-card-match";
+const CACHE_NAME = "cyber-capivaras-v19-dots-account-header";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260614-team-card-match",
-  "/site.js?v=20260614-team-card-match",
+  "/style.css?v=20260614-dots-account-header",
+  "/site.js?v=20260614-dots-account-header",
   "/app.js?v=20260611-team-photo-fix",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",

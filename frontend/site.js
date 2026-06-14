@@ -144,7 +144,7 @@ function renderPublicTeam() {
 }
 
 function setupMobileMenu() {
-  const button = document.querySelector(".nav-toggle");
+  const button = document.querySelector(".header-menu-button, .nav-toggle");
   const menu = document.querySelector("#publicMenu");
   if (!button || !menu) return;
 
@@ -159,6 +159,12 @@ function setupMobileMenu() {
       button.setAttribute("aria-expanded", "false");
       menu.classList.remove("is-open");
     });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (button.contains(event.target) || menu.contains(event.target)) return;
+    button.setAttribute("aria-expanded", "false");
+    menu.classList.remove("is-open");
   });
 }
 
