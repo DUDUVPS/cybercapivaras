@@ -119,6 +119,8 @@ function normalizeMember(member) {
     email: member[5] || "",
     generation: member[6] || "1a Geracao Fabrica",
     status: member[7] || "Ativo",
+    instagram: member[8] || "",
+    github: member[9] || "",
   };
 }
 
@@ -132,6 +134,8 @@ function memberToRow(member) {
     member.email || "",
     member.generation || "1a Geracao Fabrica",
     member.status || "Ativo",
+    member.instagram || "",
+    member.github || "",
   ];
 }
 
@@ -149,10 +153,13 @@ function renderMemberCard(memberRow, index, editable = false) {
         <strong>${member.role}</strong>
         <span class="person-generation">${member.generation}</span>
         <p class="person-status">Status: <b>${member.status}</b></p>
-        <details>
-          <summary>Detalhes</summary>
-          <p>${member.description}</p>
-        </details>
+        <div class="person-actions">
+          <div class="person-socials" aria-label="Redes sociais">
+            <a class="${member.instagram ? "" : "is-disabled"}" href="${member.instagram || "#"}" aria-label="Instagram de ${member.name}"><img src="imgs/instagram.png" alt="" /></a>
+            <a class="${member.github ? "" : "is-disabled"}" href="${member.github || "#"}" aria-label="GitHub de ${member.name}"><img src="imgs/github.png" alt="" /></a>
+          </div>
+          <span class="person-details">Detalhes</span>
+        </div>
         ${member.email ? `<small>${member.email}</small>` : ""}
         ${editable ? `<button class="team-edit-button" type="button" data-edit-member="${index}">Editar</button>` : ""}
       </div>
@@ -672,6 +679,8 @@ function setupAppForms() {
         description: data.description,
         generation: data.generation,
         status: data.status,
+        instagram: data.instagram,
+        github: data.github,
       };
       const row = memberToRow(member);
       const editIndex = data.index === "" ? -1 : Number(data.index);
@@ -729,6 +738,8 @@ function fillMemberForm(index) {
   form.elements.status.value = member.status;
   form.elements.image.value = member.image;
   form.elements.description.value = member.description;
+  form.elements.instagram.value = member.instagram;
+  form.elements.github.value = member.github;
   form.querySelectorAll('[name="tabs"]').forEach((input) => {
     input.checked = rule?.tabs?.includes(input.value) || (!rule && ["painel", "equipe", "tarefas"].includes(input.value));
   });

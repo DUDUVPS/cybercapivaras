@@ -58,6 +58,8 @@ function normalizePublicMember(member) {
     email: member[5] || "",
     generation: member[6] || "1a Geracao Fabrica",
     status: member[7] || "Ativo",
+    instagram: member[8] || "",
+    github: member[9] || "",
   };
 }
 
@@ -127,8 +129,8 @@ function renderPublicTeam() {
             <p class="person-status">Status: <b>${member.status}</b></p>
             <div class="person-actions">
               <div class="person-socials" aria-label="Redes sociais">
-                <a href="#" aria-label="Instagram de ${member.name}"><img src="imgs/instagram.png" alt="" /></a>
-                <a href="#" aria-label="GitHub de ${member.name}"><img src="imgs/github.png" alt="" /></a>
+                <a class="${member.instagram ? "" : "is-disabled"}" href="${member.instagram || "#"}" aria-label="Instagram de ${member.name}"><img src="imgs/instagram.png" alt="" /></a>
+                <a class="${member.github ? "" : "is-disabled"}" href="${member.github || "#"}" aria-label="GitHub de ${member.name}"><img src="imgs/github.png" alt="" /></a>
               </div>
               <a class="person-details" href="mais.html">Detalhes</a>
             </div>

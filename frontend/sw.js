@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v22-social-icons-red";
+const CACHE_NAME = "cyber-capivaras-v23-team-social-fields";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260614-social-icons-red",
-  "/site.js?v=20260614-social-icons-red",
-  "/app.js?v=20260611-team-photo-fix",
+  "/style.css?v=20260614-team-social-fields",
+  "/site.js?v=20260614-team-social-fields",
+  "/app.js?v=20260614-team-social-fields",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"
