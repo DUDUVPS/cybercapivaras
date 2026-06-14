@@ -14,8 +14,15 @@ const publicContent = {
     ["Comunicacao", "Fotos, noticias, redes sociais e documentacao."],
   ],
   projects: [
-    ["Robo Seguidor de Linha", "Autonomo com sensores infravermelhos e controle de motores.", "imgs/20250618_104600.jpg"],
-    ["Robo Explorador", "Prototipo movel para desvio de obstaculos e testes de ambiente.", "assets/hero-robotica.png"],
+    ["Robo Seguidor de Linha", "Robo autonomo com sensores infravermelhos para seguir trajetos com precisao.", "imgs/20250618_104600.jpg", "Arduino, C/C++, sensores IR, ponte H", "Autonomia e controle de percurso", "Em testes"],
+    ["Robo Explorador", "Prototipo movel para desvio de obstaculos e leitura de ambiente.", "assets/hero-robotica.png", "ESP32, sensores ultrassonicos, motores DC", "Navegacao em ambiente fechado", "Prototipo"],
+    ["Painel de Telemetria", "Interface para acompanhar estado, sensores e registros dos prototipos.", "imgs/bg-site.png", "HTML, CSS, JavaScript, GitHub", "Visualizar dados do time e projetos", "Em desenvolvimento"],
+    ["Pecas 3D", "Modelagem e impressao de suportes, carenagens e estruturas para robos.", "imgs/fotos/ft-isadorah.png", "Modelagem 3D, impressao 3D, prototipagem", "Acelerar montagem e manutencao", "Ativo"],
+  ],
+  events: [
+    ["Torneio Interno de Robotica", "2026", "Campos Belos", "1o lugar", "Competicao de prototipos autonomos e apresentacao tecnica."],
+    ["Feira de Tecnologia", "2026", "IF Goiano", "Participacao", "Exposicao de projetos, testes de robo e demonstracao para visitantes."],
+    ["Mostra de Projetos", "2025", "Campus Campos Belos", "Apresentacao", "Apresentacao dos primeiros prototipos e organizacao da equipe."],
   ],
 };
 
@@ -94,13 +101,37 @@ function renderPublicContent() {
   if (projects) {
     projects.innerHTML = content.projects
       .map(
-        ([title, text, image]) => `
+        ([title, text, image, tech = "Robotica educacional", goal = "Pesquisa e desenvolvimento", status = "Ativo"]) => `
           <article>
             <img src="${image}" alt="${title}" />
-            <div>
+            <div class="project-body">
+              <span class="project-status">${status}</span>
               <h3>${title}</h3>
               <p>${text}</p>
+              <dl>
+                <div><dt>Tecnologias</dt><dd>${tech}</dd></div>
+                <div><dt>Objetivo</dt><dd>${goal}</dd></div>
+              </dl>
             </div>
+          </article>
+        `
+      )
+      .join("");
+  }
+
+  const events = document.querySelector("#publicEvents");
+  if (events) {
+    events.innerHTML = (content.events || [])
+      .map(
+        ([name, date, place, result, text]) => `
+          <article class="event-card">
+            <div>
+              <span>${date}</span>
+              <strong>${result}</strong>
+            </div>
+            <h3>${name}</h3>
+            <small>${place}</small>
+            <p>${text}</p>
           </article>
         `
       )

@@ -1,12 +1,12 @@
-const CACHE_NAME = "cyber-capivaras-v23-team-social-fields";
+const CACHE_NAME = "cyber-capivaras-v25-index-projects-events";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260614-team-social-fields",
-  "/site.js?v=20260614-team-social-fields",
+  "/style.css?v=20260614-index-projects-events",
+  "/site.js?v=20260614-index-projects-events",
   "/app.js?v=20260614-team-social-fields",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
