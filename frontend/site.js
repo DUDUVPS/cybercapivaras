@@ -125,10 +125,13 @@ function renderPublicTeam() {
             <strong>${member.role}</strong>
             <span class="person-generation">${member.generation}</span>
             <p class="person-status">Status: <b>${member.status}</b></p>
-            <details>
-              <summary>Detalhes</summary>
-              <p>${member.details}</p>
-            </details>
+            <div class="person-actions">
+              <div class="person-socials" aria-label="Redes sociais">
+                <a href="#" aria-label="Instagram de ${member.name}"><img src="imgs/instagram.png" alt="" /></a>
+                <a href="#" aria-label="GitHub de ${member.name}"><img src="imgs/github.png" alt="" /></a>
+              </div>
+              <a class="person-details" href="mais.html">Detalhes</a>
+            </div>
           </div>
         </article>
       `;

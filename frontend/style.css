@@ -474,99 +474,118 @@ h2 { font-size: clamp(1.9rem, 4vw, 3.1rem); line-height: 1.08; }
   padding: 42px 5vw 84px;
 }
 .team-reference-grid {
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 180px));
+  justify-content: center;
+  align-items: stretch;
+  gap: 18px;
 }
 .team-person-card {
   position: relative;
   min-width: 0;
   display: grid;
   grid-template-rows: auto 1fr;
-  border-color: rgba(255,48,69,.26);
-  background:
-    linear-gradient(180deg, rgba(18, 22, 31, .98), rgba(8, 10, 15, .98));
+  padding: 8px 8px 12px;
+  border: 1px solid var(--red);
+  border-radius: 8px;
+  background: #05070b;
+  box-shadow: 0 14px 34px rgba(0,0,0,.38);
 }
 .team-person-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 3px;
-  background: linear-gradient(90deg, var(--red), var(--cyan));
+  display: none;
 }
 .team-person-photo {
   aspect-ratio: 4 / 5;
-  background:
-    linear-gradient(180deg, rgba(255,48,69,.12), transparent),
-    #06080d;
+  overflow: hidden;
+  border: 1px solid var(--red);
+  border-radius: 8px;
+  background: #06080d;
 }
 .team-person-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
   filter: saturate(1.05) contrast(1.03);
 }
 .team-person-info {
   display: grid;
   align-content: start;
-  gap: 8px;
-  padding: 16px;
+  justify-items: center;
+  gap: 7px;
+  padding: 12px 4px 0;
+  text-align: center;
 }
 .team-person-info h3 {
   margin: 0;
-  color: #fff;
-  font-size: 1.18rem;
+  color: var(--red);
+  font-size: 1.1rem;
   line-height: 1.08;
 }
 .team-person-info strong {
   margin: 0;
   color: #f0f4fb;
-  font-size: .92rem;
+  font-size: .66rem;
+  line-height: 1.2;
 }
 .team-person-info .person-generation {
-  display: inline-flex;
-  justify-self: start;
-  align-items: center;
-  justify-content: center;
-  min-height: 30px;
-  margin: 2px 0 0;
-  padding: 0 10px;
-  border: 1px solid rgba(24,199,255,.3);
-  border-radius: 999px;
-  color: var(--cyan);
-  background: rgba(24,199,255,.08);
-  font-size: .78rem;
-  font-weight: 900;
+  display: block;
+  min-height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: #aeb8c7;
+  background: transparent;
+  font-size: .68rem;
+  font-weight: 800;
 }
 .person-status {
   margin: 0;
-  color: var(--muted);
-  font-size: .88rem;
+  color: #b7bfca;
+  font-size: .7rem;
 }
 .person-status b {
   color: var(--green);
 }
-.team-person-info details {
+.person-actions {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
   margin-top: 4px;
 }
-.team-person-info summary,
+.person-socials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.person-socials a {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  opacity: .68;
+}
+.person-socials img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+.person-details,
 .team-edit-button {
-  min-height: 36px;
+  min-height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: fit-content;
   padding: 0 12px;
-  border: 1px solid rgba(255,255,255,.14);
+  border: 1px solid var(--red);
   border-radius: 8px;
   color: #fff;
-  background: rgba(255,255,255,.06);
-  font-size: .82rem;
+  background: var(--red);
+  font-size: .68rem;
   font-weight: 900;
   cursor: pointer;
-}
-.team-person-info details[open] summary {
-  border-color: rgba(64,242,155,.38);
-  color: var(--green);
-}
-.team-person-info details p {
-  margin: 10px 0 0;
-  font-size: .86rem;
 }
 .team-person-info small {
   color: var(--muted);
@@ -1470,19 +1489,64 @@ body[data-accent="red"] { --green: var(--red); }
     display: grid;
     grid-template-columns: 112px minmax(0, 1fr);
   }
+  .team-reference-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
   .team-person-card {
-    grid-template-columns: minmax(0, 104px) minmax(0, 1fr);
+    grid-template-columns: 88px minmax(0, 1fr);
     grid-template-rows: auto;
+    align-items: center;
+    min-height: 96px;
+    padding: 8px;
   }
   .team-person-photo {
-    aspect-ratio: auto;
-    min-height: 100%;
+    aspect-ratio: 1 / 1;
+    min-height: auto;
   }
   .team-person-info {
-    padding: 14px;
+    position: relative;
+    min-height: 80px;
+    justify-items: start;
+    gap: 4px;
+    padding: 2px 0 0 12px;
+    text-align: left;
   }
   .team-person-info h3 {
-    font-size: 1rem;
+    padding-right: 42px;
+    font-size: 1.12rem;
+  }
+  .team-person-info strong {
+    max-width: 130px;
+    font-size: .6rem;
+  }
+  .team-person-info .person-generation,
+  .person-status {
+    font-size: .58rem;
+  }
+  .person-actions {
+    display: contents;
+  }
+  .person-socials {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: grid;
+    gap: 7px;
+  }
+  .person-socials a,
+  .person-socials img {
+    width: 22px;
+    height: 22px;
+  }
+  .person-details {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    min-height: 25px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: .6rem;
   }
   .member-admin-row {
     grid-template-columns: 48px minmax(0, 1fr);
