@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v26-site-public-tabs";
+const CACHE_NAME = "cyber-capivaras-v27-fabrica-icon";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260614-site-public-tabs",
-  "/site.js?v=20260614-site-public-tabs",
-  "/app.js?v=20260614-site-public-tabs",
+  "/style.css?v=20260614-fabrica-icon",
+  "/site.js?v=20260614-fabrica-icon",
+  "/app.js?v=20260614-fabrica-icon",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"

@@ -868,28 +868,31 @@ input, textarea, select {
   color: #c6ceda;
 }
 .footer-affiliation {
-  width: min(100%, 360px);
-  display: grid;
-  gap: 10px;
-  padding: 14px;
+  width: fit-content;
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
   border: 1px solid rgba(255,255,255,.12);
   border-radius: 8px;
   background: rgba(255,255,255,.045);
 }
 .footer-affiliation span {
   color: var(--green);
-  font-size: .72rem;
+  font-size: .78rem;
   font-weight: 950;
   text-transform: uppercase;
 }
 .footer-affiliation img {
-  width: min(100%, 250px);
-  max-height: 82px;
+  width: 38px;
+  height: 38px;
   object-fit: contain;
-  object-position: left center;
-  padding: 8px 10px;
-  border-radius: 6px;
-  background: #fff;
+  flex: 0 0 auto;
+  padding: 5px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(255,255,255,.95);
 }
 .footer-socials {
   display: flex;
