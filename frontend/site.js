@@ -7,6 +7,10 @@ const publicContent = {
   heroImage: "assets/hero-robotica.png",
   contactTitle: "Quer falar com o time?",
   contactText: "Envie uma mensagem para projetos, parcerias, competicoes ou apresentacoes.",
+  footerText: "O Cyber Capivaras faz parte da Fabrica da Ciencia, unindo robotica, competicoes, tecnologia educacional e prototipos criativos.",
+  footerAffiliation: "Projeto integrante da Fabrica da Ciencia",
+  footerCredit: "LASTTRO.IO",
+  footerCreditUrl: "https://lasttro.app.br",
   areas: [
     ["Software", "Logica, sensores, automacao e codigo embarcado."],
     ["Hardware", "Circuitos, motores, placas e alimentacao."],
@@ -67,6 +71,7 @@ function normalizePublicMember(member) {
     status: member[7] || "Ativo",
     instagram: member[8] || "",
     github: member[9] || "",
+    mainArea: member[10] || "",
   };
 }
 
@@ -80,6 +85,11 @@ function renderPublicContent() {
   document.querySelectorAll("[data-image-content]").forEach((node) => {
     const value = content[node.dataset.imageContent];
     if (value) node.src = value;
+  });
+
+  document.querySelectorAll("[data-link-content]").forEach((node) => {
+    const value = content[node.dataset.linkContent];
+    if (value) node.href = value;
   });
 
   const areas = document.querySelector("#publicAreas");
@@ -156,6 +166,7 @@ function renderPublicTeam() {
           <div class="member-info team-person-info">
             <h3>${member.name}</h3>
             <strong>${member.role}</strong>
+            ${member.mainArea ? `<span class="person-area">${member.mainArea}</span>` : ""}
             <span class="person-generation">${member.generation}</span>
             <p class="person-status">Status: <b>${member.status}</b></p>
             <div class="person-actions">

@@ -8,9 +8,11 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260614-fabrica-icon" />
+    <link rel="stylesheet" href="style.css?v=20260614-public-editor-blocks" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
+    <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+
     <aside class="app-sidebar">
       <a class="brand app-brand" href="index.html">
         <img src="imgs/apple-touch-icon.png" alt="Cyber Capivaras" />
@@ -133,7 +135,13 @@
               </div>
               <span class="module-chip">Areas</span>
             </div>
-              <label class="wide-field">Areas do time <textarea rows="8" name="areasText" placeholder="Titulo | Descricao"></textarea></label>
+              <div class="block-editor wide-field" data-block-editor="areas">
+                <div class="block-editor-head">
+                  <span>Caixas da equipe</span>
+                  <button class="ghost-button" type="button" data-add-block="areas">Nova caixa</button>
+                </div>
+                <div class="block-list" data-block-list="areas"></div>
+              </div>
           </article>
 
           <article class="app-section site-editor-panel" data-subtab-panel="site-projetos" data-subtab-group="site-publico">
@@ -144,7 +152,13 @@
               </div>
               <span class="module-chip">Vitrine</span>
             </div>
-              <label class="wide-field">Projetos <textarea rows="10" name="projectsText" placeholder="Nome | Descricao | imagem | tecnologias | objetivo | status"></textarea></label>
+              <div class="block-editor wide-field" data-block-editor="projects">
+                <div class="block-editor-head">
+                  <span>Caixas de projetos</span>
+                  <button class="ghost-button" type="button" data-add-block="projects">Novo projeto</button>
+                </div>
+                <div class="block-list" data-block-list="projects"></div>
+              </div>
           </article>
 
           <article class="app-section site-editor-panel" data-subtab-panel="site-eventos" data-subtab-group="site-publico">
@@ -155,7 +169,13 @@
               </div>
               <span class="module-chip">Historico</span>
             </div>
-              <label class="wide-field">Eventos <textarea rows="10" name="eventsText" placeholder="Nome | Ano | Local | Resultado | Descricao"></textarea></label>
+              <div class="block-editor wide-field" data-block-editor="events">
+                <div class="block-editor-head">
+                  <span>Caixas de eventos</span>
+                  <button class="ghost-button" type="button" data-add-block="events">Novo evento</button>
+                </div>
+                <div class="block-list" data-block-list="events"></div>
+              </div>
           </article>
 
           <article class="app-section site-editor-panel" data-subtab-panel="site-contato" data-subtab-group="site-publico">
@@ -178,7 +198,10 @@
               </div>
               <span class="module-chip">Identidade</span>
             </div>
-              <p class="editor-note">O footer mostra Cyber Capivaras, Fabrica da Ciencia e o link da LASTTRO.</p>
+              <label class="wide-field">Texto do footer <textarea rows="3" name="footerText"></textarea></label>
+              <label>Texto da parceria <input type="text" name="footerAffiliation" /></label>
+              <label>Texto do credito <input type="text" name="footerCredit" /></label>
+              <label>Link da LASTTRO <input type="url" name="footerCreditUrl" /></label>
           </article>
             <div class="site-editor-actions">
               <button class="button primary" type="submit">Salvar pagina publica</button>
@@ -275,6 +298,7 @@
                 <label>Conta/e-mail <input type="email" name="email" placeholder="aluno@email.com" /></label>
                 <label>Funcao <input type="text" name="role" placeholder="Estudante / Arduino" required /></label>
                 <label>Geracao <input type="text" name="generation" placeholder="1a Geracao Fabrica" required /></label>
+                <label>Area principal <input type="text" name="mainArea" placeholder="Arduino, Hardware, Marketing..." /></label>
                 <label>Status
                   <select name="status" required>
                     <option>Ativo</option>
@@ -487,6 +511,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260614-fabrica-icon"></script>
+    <script src="app.js?v=20260614-public-editor-blocks"></script>
   </body>
 </html>

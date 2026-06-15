@@ -7,6 +7,10 @@ const defaultContent = {
   heroImage: "assets/hero-robotica.png",
   contactTitle: "Quer falar com o time?",
   contactText: "Envie uma mensagem para projetos, parcerias, competicoes ou apresentacoes.",
+  footerText: "O Cyber Capivaras faz parte da Fabrica da Ciencia, unindo robotica, competicoes, tecnologia educacional e prototipos criativos.",
+  footerAffiliation: "Projeto integrante da Fabrica da Ciencia",
+  footerCredit: "LASTTRO.IO",
+  footerCreditUrl: "https://lasttro.app.br",
   areas: [
     ["Software", "Logica, sensores, automacao e codigo embarcado."],
     ["Hardware", "Circuitos, motores, placas e alimentacao."],
@@ -70,6 +74,7 @@ const defaultUserPermissions = {
 };
 
 let calendarDate = new Date();
+let lastDraftToast = 0;
 
 const roleProfiles = {
   Administrador: ["N5", "Controle total do app, site e funcoes."],
@@ -116,6 +121,101 @@ function rowsToLines(rows) {
   return rows.map((row) => row.join(" | ")).join("\n");
 }
 
+const blockSchemas = {
+  areas: [
+    ["Titulo", "Ex.: Software"],
+    ["Descricao", "O que aparece nessa caixa"],
+  ],
+  projects: [
+    ["Nome", "Robo Seguidor de Linha"],
+    ["Descricao", "Resumo do projeto"],
+    ["Imagem", "imgs/projeto.png"],
+    ["Tecnologias", "Arduino, sensores, motores"],
+    ["Objetivo", "Objetivo do projeto"],
+    ["Status", "Ativo"],
+  ],
+  events: [
+    ["Nome", "Feira de Tecnologia"],
+    ["Ano", "2026"],
+    ["Local", "IF Goiano"],
+    ["Resultado", "Participacao"],
+    ["Descricao", "Resumo do evento"],
+  ],
+};
+
+function showToast(message, type = "success") {
+  const stack = document.querySelector("#toastStack");
+  if (!stack) return;
+  const toast = document.createElement("div");
+  toast.className = `app-toast ${type}`;
+  toast.textContent = message;
+  stack.appendChild(toast);
+  setTimeout(() => toast.classList.add("is-leaving"), 2600);
+  setTimeout(() => toast.remove(), 3200);
+}
+
+function showDraftToast(message = "Alteracao detectada. Salve para publicar.") {
+  const now = Date.now();
+  if (now - lastDraftToast < 5000) return;
+  lastDraftToast = now;
+  showToast(message, "warning");
+}
+
+function escapeHtml(value = "") {
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[char]);
+}
+
+function createBlockRow(type, values = []) {
+  const schema = blockSchemas[type] || [];
+  return schema.map(([, placeholder], index) => values[index] || (index === 0 ? `Novo ${type}` : ""));
+}
+
+function renderBlockEditors(content) {
+  Object.entries(blockSchemas).forEach(([type, schema]) => {
+    const list = document.querySelector(`[data-block-list="${type}"]`);
+    if (!list) return;
+    const rows = content[type] || [];
+    list.innerHTML = rows
+      .map(
+        (row, rowIndex) => `
+          <article class="editable-block" data-block-row="${type}" data-row-index="${rowIndex}">
+            <div class="editable-block-head">
+              <strong>${escapeHtml(row[0] || "Sem titulo")}</strong>
+              <button class="ghost-button" type="button" data-remove-block="${type}" data-row-index="${rowIndex}">Remover</button>
+            </div>
+            <div class="editable-block-grid">
+              ${schema
+                .map(
+                  ([label, placeholder], fieldIndex) => `
+                    <label>${label}
+                      ${fieldIndex === 1 || fieldIndex === 4 ? `<textarea rows="3" data-block-field="${fieldIndex}" placeholder="${escapeHtml(placeholder)}">${escapeHtml(row[fieldIndex] || "")}</textarea>` : `<input type="text" data-block-field="${fieldIndex}" value="${escapeHtml(row[fieldIndex] || "")}" placeholder="${escapeHtml(placeholder)}" />`}
+                    </label>
+                  `
+                )
+                .join("")}
+            </div>
+          </article>
+        `
+      )
+      .join("");
+  });
+}
+
+function collectBlockRows(type) {
+  const schema = blockSchemas[type] || [];
+  return [...document.querySelectorAll(`[data-block-row="${type}"]`)]
+    .map((block) =>
+      schema.map((_, index) => block.querySelector(`[data-block-field="${index}"]`)?.value.trim() || "")
+    )
+    .filter((row) => row[0]);
+}
+
 function normalizeMember(member) {
   return {
     name: member[0] || "",
@@ -128,6 +228,7 @@ function normalizeMember(member) {
     status: member[7] || "Ativo",
     instagram: member[8] || "",
     github: member[9] || "",
+    mainArea: member[10] || "",
   };
 }
 
@@ -143,6 +244,7 @@ function memberToRow(member) {
     member.status || "Ativo",
     member.instagram || "",
     member.github || "",
+    member.mainArea || "",
   ];
 }
 
@@ -158,6 +260,7 @@ function renderMemberCard(memberRow, index, editable = false) {
       <div class="member-info team-person-info">
         <h3>${member.name}</h3>
         <strong>${member.role}</strong>
+        ${member.mainArea ? `<span class="person-area">${member.mainArea}</span>` : ""}
         <span class="person-generation">${member.generation}</span>
         <p class="person-status">Status: <b>${member.status}</b></p>
         <div class="person-actions">
@@ -570,6 +673,7 @@ function renderApp() {
           saveUserPermissions(permissions);
         }
         saveContent(content);
+        showToast("Integrante removido da equipe.", "warning");
         renderApp();
       });
     });
@@ -598,9 +702,37 @@ function setupAppForms() {
     contentForm.elements.heroImage.value = content.heroImage || "";
     contentForm.elements.contactTitle.value = content.contactTitle || "";
     contentForm.elements.contactText.value = content.contactText || "";
-    contentForm.elements.areasText.value = rowsToLines(content.areas);
-    contentForm.elements.projectsText.value = rowsToLines(content.projects);
-    if (contentForm.elements.eventsText) contentForm.elements.eventsText.value = rowsToLines(content.events || []);
+    contentForm.elements.footerText.value = content.footerText || "";
+    contentForm.elements.footerAffiliation.value = content.footerAffiliation || "";
+    contentForm.elements.footerCredit.value = content.footerCredit || "";
+    contentForm.elements.footerCreditUrl.value = content.footerCreditUrl || "";
+    renderBlockEditors(content);
+    contentForm.addEventListener("input", () => showDraftToast());
+    contentForm.addEventListener("change", () => showDraftToast());
+
+    contentForm.addEventListener("click", (event) => {
+      const addButton = event.target.closest("[data-add-block]");
+      const removeButton = event.target.closest("[data-remove-block]");
+
+      if (addButton) {
+        const type = addButton.dataset.addBlock;
+        const nextContent = {
+          ...getContent(),
+          areas: collectBlockRows("areas"),
+          projects: collectBlockRows("projects"),
+          events: collectBlockRows("events"),
+        };
+        nextContent[type] = [...(nextContent[type] || []), createBlockRow(type)];
+        renderBlockEditors(nextContent);
+        showToast("Nova caixa adicionada. Salve para publicar.");
+      }
+
+      if (removeButton) {
+        const type = removeButton.dataset.removeBlock;
+        removeButton.closest("[data-block-row]")?.remove();
+        showToast("Caixa removida. Salve para publicar.", "warning");
+      }
+    });
 
     contentForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -613,11 +745,16 @@ function setupAppForms() {
         heroImage: data.heroImage,
         contactTitle: data.contactTitle,
         contactText: data.contactText,
-        areas: linesToRows(data.areasText, 2),
-        projects: linesToRows(data.projectsText, 6),
-        events: linesToRows(data.eventsText, 5),
+        footerText: data.footerText,
+        footerAffiliation: data.footerAffiliation,
+        footerCredit: data.footerCredit,
+        footerCreditUrl: data.footerCreditUrl,
+        areas: collectBlockRows("areas"),
+        projects: collectBlockRows("projects"),
+        events: collectBlockRows("events"),
       });
       document.querySelector("#siteEditorStatus").textContent = "Pagina principal atualizada.";
+      showToast("Pagina publica atualizada.");
       renderSitePreview();
     });
   }
@@ -630,6 +767,7 @@ function setupAppForms() {
       roles[data.email] = data;
       saveRoles(roles);
       document.querySelector("#roleStatus").textContent = "Funcao salva.";
+      showToast("Funcao e acesso salvos.");
       roleForm.reset();
       renderApp();
     });
@@ -652,7 +790,9 @@ function setupAppForms() {
     }
 
     memberForm.addEventListener("input", updateMemberEditPreview);
+    memberForm.addEventListener("input", () => showDraftToast("Alteracao na equipe detectada. Salve o integrante."));
     memberForm.addEventListener("change", updateMemberEditPreview);
+    memberForm.addEventListener("change", () => showDraftToast("Alteracao na equipe detectada. Salve o integrante."));
 
     document.querySelector("#memberPhotoFile")?.addEventListener("change", (event) => {
       const file = event.target.files?.[0];
@@ -668,9 +808,11 @@ function setupAppForms() {
         memberForm.elements.image.value = reader.result;
         updateMemberEditPreview();
         document.querySelector("#memberStatus").textContent = "Foto carregada. Clique em salvar integrante.";
+        showToast("Foto carregada na caixa de edicao.");
       };
       reader.onerror = () => {
         document.querySelector("#memberStatus").textContent = "Nao foi possivel carregar a foto.";
+        showToast("Nao foi possivel carregar a foto.", "error");
       };
       reader.readAsDataURL(file);
     });
@@ -691,6 +833,7 @@ function setupAppForms() {
         status: data.status,
         instagram: data.instagram,
         github: data.github,
+        mainArea: data.mainArea,
       };
       const row = memberToRow(member);
       const editIndex = data.index === "" ? -1 : Number(data.index);
@@ -718,6 +861,7 @@ function setupAppForms() {
 
       saveContent(content);
       document.querySelector("#memberStatus").textContent = "Integrante salvo.";
+      showToast(editIndex >= 0 ? "Integrante atualizado." : "Novo integrante criado.");
       memberForm.reset();
       memberForm.elements.index.value = "";
       updateMemberEditPreview();
@@ -745,6 +889,7 @@ function fillMemberForm(index) {
   form.elements.email.value = member.email;
   form.elements.role.value = member.role;
   form.elements.generation.value = member.generation;
+  if (form.elements.mainArea) form.elements.mainArea.value = member.mainArea || "";
   form.elements.status.value = member.status;
   form.elements.image.value = member.image;
   form.elements.description.value = member.description;
@@ -761,6 +906,7 @@ function fillMemberForm(index) {
   document.querySelector("#memberEditBox")?.scrollIntoView({ behavior: "smooth", block: "start" });
   form.elements.name.focus();
   document.querySelector("#memberStatus").textContent = "Editando integrante selecionado.";
+  showToast(`Editando ${member.name}.`);
 }
 
 function updateMemberEditPreview() {
@@ -842,6 +988,7 @@ function renderTasks() {
       const tasks = getTasks();
       tasks.splice(Number(button.dataset.taskIndex), 1);
       saveTasks(tasks);
+      showToast("Tarefa removida.", "warning");
       renderTasks();
     });
   });
@@ -851,6 +998,7 @@ function renderTasks() {
       const tasks = getTasks();
       tasks[Number(select.dataset.taskStatusIndex)].status = select.value;
       saveTasks(tasks);
+      showToast("Status da tarefa atualizado.");
       renderTasks();
     });
   });
@@ -870,6 +1018,7 @@ function renderTasks() {
       if (!Number.isNaN(index) && tasks[index]) {
         tasks[index].status = column.dataset.taskStatus;
         saveTasks(tasks);
+        showToast("Tarefa movida no quadro.");
         renderTasks();
       }
     });
@@ -893,6 +1042,7 @@ function setupTaskForm() {
     tasks.push({ title: data.title, area: data.area, due: data.due, status: "afazer" });
     saveTasks(tasks);
     form.reset();
+    showToast("Nova tarefa criada.");
     renderTasks();
   });
 }
@@ -981,6 +1131,7 @@ function renderCandidates() {
       const next = getCandidates();
       next.splice(Number(button.dataset.candidateIndex), 1);
       saveCandidates(next);
+      showToast("Candidato removido.", "warning");
       renderCandidates();
     });
   });
@@ -995,6 +1146,7 @@ function renderCandidates() {
       const next = getCandidates();
       next[Number(select.dataset.candidateStage)].stage = select.value;
       saveCandidates(next);
+      showToast("Etapa do candidato atualizada.");
       renderCandidates();
     });
   });
@@ -1011,6 +1163,7 @@ function setupCandidateForm() {
     candidates.push({ name: data.name, area: data.area, stage: data.stage, interviewer: data.interviewer, notes: "" });
     saveCandidates(candidates);
     form.reset();
+    showToast("Candidato cadastrado.");
     renderCandidates();
   });
 }
@@ -1030,6 +1183,7 @@ function setupSettingsForm() {
     const next = Object.fromEntries(new FormData(form).entries());
     saveAppSettings(next);
     status.textContent = "Ajustes aplicados.";
+    showToast("Ajustes aplicados.");
     renderApp();
   });
 }
@@ -1051,6 +1205,7 @@ function setupDataTools() {
     });
     box.value = JSON.stringify(data, null, 2);
     if (status) status.textContent = "Backup gerado.";
+    showToast("Backup gerado.");
   });
 
   importButton.addEventListener("click", () => {
@@ -1060,15 +1215,18 @@ function setupDataTools() {
         if (key in data) localStorage.setItem(key, JSON.stringify(data[key]));
       });
       if (status) status.textContent = "Dados importados.";
+      showToast("Dados importados.");
       renderApp();
     } catch {
       if (status) status.textContent = "JSON invalido.";
+      showToast("JSON invalido.", "error");
     }
   });
 
   resetButton.addEventListener("click", () => {
     keys.forEach((key) => localStorage.removeItem(key));
     if (status) status.textContent = "Dados demo restaurados.";
+    showToast("Dados demo restaurados.", "warning");
     renderApp();
   });
 }
@@ -1135,8 +1293,10 @@ function setupTicketForm() {
         form.elements.email.value = session.email || "";
       }
       loadTickets();
+      showToast("Chamado enviado.");
     } catch (error) {
       status.textContent = error.message || "Nao foi possivel enviar.";
+      showToast("Nao foi possivel enviar o chamado.", "error");
     }
   });
 }
