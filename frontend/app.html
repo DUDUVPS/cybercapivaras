@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260614-public-editor-blocks" />
+    <link rel="stylesheet" href="style.css?v=20260614-free-section-editor" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
@@ -108,6 +108,7 @@
           <button type="button" data-subtab-target="site-equipe">Equipe</button>
           <button type="button" data-subtab-target="site-projetos">Projetos</button>
           <button type="button" data-subtab-target="site-eventos">Eventos</button>
+          <button type="button" data-subtab-target="site-livre">Livre</button>
           <button type="button" data-subtab-target="site-contato">Contato</button>
           <button type="button" data-subtab-target="site-footer">Footer</button>
         </div>
@@ -178,6 +179,26 @@
               </div>
           </article>
 
+          <article class="app-section site-editor-panel" data-subtab-panel="site-livre" data-subtab-group="site-publico">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Livre</p>
+                <h2>Secao customizavel</h2>
+              </div>
+              <span class="module-chip">Criar e apagar</span>
+            </div>
+              <label>Titulo da secao <input type="text" name="customSectionTitle" /></label>
+              <label>Etiqueta da secao <input type="text" name="customSectionLabel" /></label>
+              <label class="wide-field">Texto da secao <textarea rows="3" name="customSectionText"></textarea></label>
+              <div class="block-editor wide-field" data-block-editor="customBlocks">
+                <div class="block-editor-head">
+                  <span>Caixas livres</span>
+                  <button class="ghost-button" type="button" data-add-block="customBlocks">Nova caixa livre</button>
+                </div>
+                <div class="block-list" data-block-list="customBlocks"></div>
+              </div>
+          </article>
+
           <article class="app-section site-editor-panel" data-subtab-panel="site-contato" data-subtab-group="site-publico">
             <div class="section-head compact-head">
               <div>
@@ -200,6 +221,11 @@
             </div>
               <label class="wide-field">Texto do footer <textarea rows="3" name="footerText"></textarea></label>
               <label>Texto da parceria <input type="text" name="footerAffiliation" /></label>
+              <label>Titulo contato <input type="text" name="footerContactTitle" /></label>
+              <label>Linha contato 1 <input type="text" name="footerContactLine1" /></label>
+              <label>Linha contato 2 <input type="text" name="footerContactLine2" /></label>
+              <label>Texto botao contato <input type="text" name="footerContactAction" /></label>
+              <label>Status do sistema <input type="text" name="footerStatus" /></label>
               <label>Texto do credito <input type="text" name="footerCredit" /></label>
               <label>Link da LASTTRO <input type="url" name="footerCreditUrl" /></label>
           </article>
@@ -511,6 +537,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260614-public-editor-blocks"></script>
+    <script src="app.js?v=20260614-free-section-editor"></script>
   </body>
 </html>

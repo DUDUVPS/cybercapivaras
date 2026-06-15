@@ -5,12 +5,20 @@ const defaultContent = {
   heroTitle: "Cyber Capivaras",
   heroText: "Um time de robotica movido por tecnologia, competicao, pesquisa e trabalho em equipe.",
   heroImage: "assets/hero-robotica.png",
-  contactTitle: "Quer falar com o time?",
-  contactText: "Envie uma mensagem para projetos, parcerias, competicoes ou apresentacoes.",
+  contactTitle: "Envie uma mensagem pro time",
+  contactText: "Fale com a equipe sobre projetos, parcerias, competicoes ou apresentacoes.",
   footerText: "O Cyber Capivaras faz parte da Fabrica da Ciencia, unindo robotica, competicoes, tecnologia educacional e prototipos criativos.",
   footerAffiliation: "Projeto integrante da Fabrica da Ciencia",
   footerCredit: "LASTTRO.IO",
   footerCreditUrl: "https://lasttro.app.br",
+  footerContactTitle: "Contato",
+  footerContactLine1: "Fabrica da Ciencia",
+  footerContactLine2: "Cyber Capivaras",
+  footerContactAction: "Enviar mensagem",
+  footerStatus: "Sistemas operacionais",
+  customSectionLabel: "Personalizado",
+  customSectionTitle: "Area livre do time",
+  customSectionText: "Espaco para avisos, destaques, campanhas, laboratorios, patrocinadores ou qualquer conteudo criado pela central.",
   areas: [
     ["Software", "Logica, sensores, automacao e codigo embarcado."],
     ["Hardware", "Circuitos, motores, placas e alimentacao."],
@@ -27,6 +35,9 @@ const defaultContent = {
     ["Torneio Interno de Robotica", "2026", "Campos Belos", "1o lugar", "Competicao de prototipos autonomos e apresentacao tecnica."],
     ["Feira de Tecnologia", "2026", "IF Goiano", "Participacao", "Exposicao de projetos, testes de robo e demonstracao para visitantes."],
     ["Mostra de Projetos", "2025", "Campus Campos Belos", "Apresentacao", "Apresentacao dos primeiros prototipos e organizacao da equipe."],
+  ],
+  customBlocks: [
+    ["Destaque do mes", "Use esta caixa para divulgar uma novidade, chamada ou aviso importante.", "", "Novo", "#contato", "Falar com o time", "Destaque"],
   ],
 };
 
@@ -140,6 +151,15 @@ const blockSchemas = {
     ["Local", "IF Goiano"],
     ["Resultado", "Participacao"],
     ["Descricao", "Resumo do evento"],
+  ],
+  customBlocks: [
+    ["Titulo", "Destaque do mes"],
+    ["Texto", "Conteudo da caixa"],
+    ["Imagem", "imgs/imagem.png"],
+    ["Etiqueta", "Novo"],
+    ["Link", "#contato"],
+    ["Texto do botao", "Saiba mais"],
+    ["Status", "Destaque"],
   ],
 };
 
@@ -706,6 +726,14 @@ function setupAppForms() {
     contentForm.elements.footerAffiliation.value = content.footerAffiliation || "";
     contentForm.elements.footerCredit.value = content.footerCredit || "";
     contentForm.elements.footerCreditUrl.value = content.footerCreditUrl || "";
+    contentForm.elements.footerContactTitle.value = content.footerContactTitle || "";
+    contentForm.elements.footerContactLine1.value = content.footerContactLine1 || "";
+    contentForm.elements.footerContactLine2.value = content.footerContactLine2 || "";
+    contentForm.elements.footerContactAction.value = content.footerContactAction || "";
+    contentForm.elements.footerStatus.value = content.footerStatus || "";
+    contentForm.elements.customSectionLabel.value = content.customSectionLabel || "";
+    contentForm.elements.customSectionTitle.value = content.customSectionTitle || "";
+    contentForm.elements.customSectionText.value = content.customSectionText || "";
     renderBlockEditors(content);
     contentForm.addEventListener("input", () => showDraftToast());
     contentForm.addEventListener("change", () => showDraftToast());
@@ -721,6 +749,7 @@ function setupAppForms() {
           areas: collectBlockRows("areas"),
           projects: collectBlockRows("projects"),
           events: collectBlockRows("events"),
+          customBlocks: collectBlockRows("customBlocks"),
         };
         nextContent[type] = [...(nextContent[type] || []), createBlockRow(type)];
         renderBlockEditors(nextContent);
@@ -749,9 +778,18 @@ function setupAppForms() {
         footerAffiliation: data.footerAffiliation,
         footerCredit: data.footerCredit,
         footerCreditUrl: data.footerCreditUrl,
+        footerContactTitle: data.footerContactTitle,
+        footerContactLine1: data.footerContactLine1,
+        footerContactLine2: data.footerContactLine2,
+        footerContactAction: data.footerContactAction,
+        footerStatus: data.footerStatus,
+        customSectionLabel: data.customSectionLabel,
+        customSectionTitle: data.customSectionTitle,
+        customSectionText: data.customSectionText,
         areas: collectBlockRows("areas"),
         projects: collectBlockRows("projects"),
         events: collectBlockRows("events"),
+        customBlocks: collectBlockRows("customBlocks"),
       });
       document.querySelector("#siteEditorStatus").textContent = "Pagina principal atualizada.";
       showToast("Pagina publica atualizada.");

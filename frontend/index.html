@@ -9,7 +9,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260614-public-editor-blocks" />
+    <link rel="stylesheet" href="style.css?v=20260614-free-section-editor" />
   </head>
   <body>
     <header class="public-header">
@@ -17,7 +17,6 @@
         <img src="imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png" alt="Cyber Capivaras" />
         <span>
           <strong>Cyber Capivaras</strong>
-          <small>IF Goiano</small>
         </span>
       </a>
       <a class="account-entry" href="login.html" aria-label="Conta">
@@ -104,11 +103,20 @@
         <div class="event-timeline" id="publicEvents"></div>
       </section>
 
+      <section class="section reveal" id="personalizado">
+        <div class="section-head">
+          <p class="eyebrow" data-content="customSectionLabel">Personalizado</p>
+          <h2 data-content="customSectionTitle">Area livre do time</h2>
+          <p data-content="customSectionText">Espaco para avisos, destaques, campanhas, laboratorios, patrocinadores ou qualquer conteudo criado pela central.</p>
+        </div>
+        <div class="custom-block-grid" id="publicCustomBlocks"></div>
+      </section>
+
       <section class="section contact-strip reveal" id="contato">
         <div>
           <p class="eyebrow">Contato</p>
-          <h2 data-content="contactTitle">Quer falar com o time?</h2>
-          <p data-content="contactText">Envie uma mensagem para projetos, parcerias, competicoes ou apresentacoes.</p>
+          <h2 data-content="contactTitle">Envie uma mensagem pro time</h2>
+          <p data-content="contactText">Fale com a equipe sobre projetos, parcerias, competicoes ou apresentacoes.</p>
         </div>
         <form class="compact-form" id="contactForm">
           <input type="text" name="name" placeholder="Nome" required />
@@ -162,19 +170,19 @@
         </nav>
 
         <section class="footer-column footer-contact">
-          <h3>Contato</h3>
-          <span>Fabrica da Ciencia</span>
-          <span>Cyber Capivaras</span>
-          <a href="#contato">Enviar mensagem</a>
+          <h3 data-content="footerContactTitle">Contato</h3>
+          <span data-content="footerContactLine1">Fabrica da Ciencia</span>
+          <span data-content="footerContactLine2">Cyber Capivaras</span>
+          <a href="#contato" data-content="footerContactAction">Enviar mensagem</a>
         </section>
       </div>
 
       <div class="footer-bottom">
-        <div class="system-status"><span></span> Sistemas operacionais</div>
+        <div class="system-status"><span></span> <span data-content="footerStatus">Sistemas operacionais</span></div>
         <p>&copy; 2026 Cyber Capivaras | Fabrica da Ciencia | desenvolvido por <a href="https://lasttro.app.br" target="_blank" rel="noopener noreferrer" data-content="footerCredit" data-link-content="footerCreditUrl">LASTTRO.IO</a></p>
       </div>
     </footer>
 
-    <script src="site.js?v=20260614-public-editor-blocks"></script>
+    <script src="site.js?v=20260614-free-section-editor"></script>
   </body>
 </html>

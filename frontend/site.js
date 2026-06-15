@@ -5,12 +5,20 @@ const publicContent = {
   heroTitle: "Cyber Capivaras",
   heroText: "Um time de robotica movido por tecnologia, competicao, pesquisa e trabalho em equipe.",
   heroImage: "assets/hero-robotica.png",
-  contactTitle: "Quer falar com o time?",
-  contactText: "Envie uma mensagem para projetos, parcerias, competicoes ou apresentacoes.",
+  contactTitle: "Envie uma mensagem pro time",
+  contactText: "Fale com a equipe sobre projetos, parcerias, competicoes ou apresentacoes.",
   footerText: "O Cyber Capivaras faz parte da Fabrica da Ciencia, unindo robotica, competicoes, tecnologia educacional e prototipos criativos.",
   footerAffiliation: "Projeto integrante da Fabrica da Ciencia",
   footerCredit: "LASTTRO.IO",
   footerCreditUrl: "https://lasttro.app.br",
+  footerContactTitle: "Contato",
+  footerContactLine1: "Fabrica da Ciencia",
+  footerContactLine2: "Cyber Capivaras",
+  footerContactAction: "Enviar mensagem",
+  footerStatus: "Sistemas operacionais",
+  customSectionLabel: "Personalizado",
+  customSectionTitle: "Area livre do time",
+  customSectionText: "Espaco para avisos, destaques, campanhas, laboratorios, patrocinadores ou qualquer conteudo criado pela central.",
   areas: [
     ["Software", "Logica, sensores, automacao e codigo embarcado."],
     ["Hardware", "Circuitos, motores, placas e alimentacao."],
@@ -27,6 +35,9 @@ const publicContent = {
     ["Torneio Interno de Robotica", "2026", "Campos Belos", "1o lugar", "Competicao de prototipos autonomos e apresentacao tecnica."],
     ["Feira de Tecnologia", "2026", "IF Goiano", "Participacao", "Exposicao de projetos, testes de robo e demonstracao para visitantes."],
     ["Mostra de Projetos", "2025", "Campus Campos Belos", "Apresentacao", "Apresentacao dos primeiros prototipos e organizacao da equipe."],
+  ],
+  customBlocks: [
+    ["Destaque do mes", "Use esta caixa para divulgar uma novidade, chamada ou aviso importante.", "", "Novo", "#contato", "Falar com o time", "Destaque"],
   ],
 };
 
@@ -142,6 +153,26 @@ function renderPublicContent() {
             <h3>${name}</h3>
             <small>${place}</small>
             <p>${text}</p>
+          </article>
+        `
+      )
+      .join("");
+  }
+
+  const customBlocks = document.querySelector("#publicCustomBlocks");
+  if (customBlocks) {
+    customBlocks.innerHTML = (content.customBlocks || [])
+      .map(
+        ([title, text, image, label, link, linkText, status]) => `
+          <article class="custom-block-card">
+            ${image ? `<img src="${image}" alt="${title}" />` : ""}
+            <div>
+              ${label ? `<span>${label}</span>` : ""}
+              <h3>${title}</h3>
+              <p>${text}</p>
+              ${status ? `<small>${status}</small>` : ""}
+              ${link && linkText ? `<a class="button secondary" href="${link}">${linkText}</a>` : ""}
+            </div>
           </article>
         `
       )
