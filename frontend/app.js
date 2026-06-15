@@ -14,8 +14,15 @@ const defaultContent = {
     ["Comunicacao", "Fotos, noticias, redes sociais e documentacao."],
   ],
   projects: [
-    ["Robo Seguidor de Linha", "Autonomo com sensores infravermelhos e controle de motores.", "imgs/20250618_104600.jpg"],
-    ["Robo Explorador", "Protótipo movel para desvio de obstaculos e testes de ambiente.", "assets/hero-robotica.png"],
+    ["Robo Seguidor de Linha", "Robo autonomo com sensores infravermelhos para seguir trajetos com precisao.", "imgs/20250618_104600.jpg", "Arduino, C/C++, sensores IR, ponte H", "Autonomia e controle de percurso", "Em testes"],
+    ["Robo Explorador", "Prototipo movel para desvio de obstaculos e leitura de ambiente.", "assets/hero-robotica.png", "ESP32, sensores ultrassonicos, motores DC", "Navegacao em ambiente fechado", "Prototipo"],
+    ["Painel de Telemetria", "Interface para acompanhar estado, sensores e registros dos prototipos.", "imgs/bg-site.png", "HTML, CSS, JavaScript, GitHub", "Visualizar dados do time e projetos", "Em desenvolvimento"],
+    ["Pecas 3D", "Modelagem e impressao de suportes, carenagens e estruturas para robos.", "imgs/fotos/ft-isadorah.png", "Modelagem 3D, impressao 3D, prototipagem", "Acelerar montagem e manutencao", "Ativo"],
+  ],
+  events: [
+    ["Torneio Interno de Robotica", "2026", "Campos Belos", "1o lugar", "Competicao de prototipos autonomos e apresentacao tecnica."],
+    ["Feira de Tecnologia", "2026", "IF Goiano", "Participacao", "Exposicao de projetos, testes de robo e demonstracao para visitantes."],
+    ["Mostra de Projetos", "2025", "Campus Campos Belos", "Apresentacao", "Apresentacao dos primeiros prototipos e organizacao da equipe."],
   ],
 };
 
@@ -454,8 +461,9 @@ function setupAppTabs() {
   document.querySelectorAll("[data-subtab-target]").forEach((button) => {
     button.addEventListener("click", () => {
       const target = button.dataset.subtabTarget;
-      document.querySelectorAll("[data-subtab-target]").forEach((item) => item.classList.toggle("active", item === button));
-      document.querySelectorAll("[data-subtab-panel]").forEach((panel) => {
+      const group = button.closest("[data-subtab-group]")?.dataset.subtabGroup || "";
+      document.querySelectorAll(`[data-subtab-group="${group}"] [data-subtab-target]`).forEach((item) => item.classList.toggle("active", item === button));
+      document.querySelectorAll(`[data-subtab-panel][data-subtab-group="${group}"]`).forEach((panel) => {
         panel.classList.toggle("is-active", panel.dataset.subtabPanel === target);
       });
     });
@@ -592,6 +600,7 @@ function setupAppForms() {
     contentForm.elements.contactText.value = content.contactText || "";
     contentForm.elements.areasText.value = rowsToLines(content.areas);
     contentForm.elements.projectsText.value = rowsToLines(content.projects);
+    if (contentForm.elements.eventsText) contentForm.elements.eventsText.value = rowsToLines(content.events || []);
 
     contentForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -605,7 +614,8 @@ function setupAppForms() {
         contactTitle: data.contactTitle,
         contactText: data.contactText,
         areas: linesToRows(data.areasText, 2),
-        projects: linesToRows(data.projectsText, 3),
+        projects: linesToRows(data.projectsText, 6),
+        events: linesToRows(data.eventsText, 5),
       });
       document.querySelector("#siteEditorStatus").textContent = "Pagina principal atualizada.";
       renderSitePreview();
@@ -786,6 +796,7 @@ function renderSitePreview() {
     <article><strong>${content.heroTitle}</strong><span>${content.heroLabel}</span><p>${content.heroText}</p></article>
     <article><strong>Areas</strong><span>${content.areas.length} blocos publicados</span></article>
     <article><strong>Projetos</strong><span>${content.projects.length} projetos publicados</span></article>
+    <article><strong>Eventos</strong><span>${(content.events || []).length} eventos publicados</span></article>
     <article><strong>Equipe</strong><span>${content.members.length} integrantes na vitrine</span></article>
   `;
 }

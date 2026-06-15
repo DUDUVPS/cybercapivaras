@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260614-team-social-fields" />
+    <link rel="stylesheet" href="style.css?v=20260614-site-public-tabs" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <aside class="app-sidebar">
@@ -101,28 +101,90 @@
       </section>
 
       <section class="app-tab admin-only" id="site" data-tab-panel="site">
-        <div class="module-grid">
-          <article class="app-section">
+        <div class="subtabs site-subtabs" data-subtab-group="site-publico">
+          <button class="active" type="button" data-subtab-target="site-inicio">Inicio</button>
+          <button type="button" data-subtab-target="site-equipe">Equipe</button>
+          <button type="button" data-subtab-target="site-projetos">Projetos</button>
+          <button type="button" data-subtab-target="site-eventos">Eventos</button>
+          <button type="button" data-subtab-target="site-contato">Contato</button>
+          <button type="button" data-subtab-target="site-footer">Footer</button>
+        </div>
+        <div class="module-grid site-editor-grid">
+          <form class="app-form editor-layout" id="siteEditorForm">
+          <article class="app-section site-editor-panel is-active" data-subtab-panel="site-inicio" data-subtab-group="site-publico">
             <div class="section-head compact-head">
               <div>
                 <p class="eyebrow">Admin</p>
-                <h2>Editar pagina publica inteira</h2>
+                <h2>Inicio da pagina publica</h2>
               </div>
-              <span class="module-chip">Home</span>
+              <span class="module-chip">Hero</span>
             </div>
-            <form class="app-form editor-layout" id="siteEditorForm">
               <label>Chamada <input type="text" name="heroLabel" /></label>
               <label>Titulo <input type="text" name="heroTitle" /></label>
               <label>Imagem principal <input type="text" name="heroImage" placeholder="assets/hero-robotica.png" /></label>
               <label class="wide-field">Texto principal <textarea rows="4" name="heroText"></textarea></label>
+          </article>
+
+          <article class="app-section site-editor-panel" data-subtab-panel="site-equipe" data-subtab-group="site-publico">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Equipe</p>
+                <h2>Blocos da equipe</h2>
+              </div>
+              <span class="module-chip">Areas</span>
+            </div>
+              <label class="wide-field">Areas do time <textarea rows="8" name="areasText" placeholder="Titulo | Descricao"></textarea></label>
+          </article>
+
+          <article class="app-section site-editor-panel" data-subtab-panel="site-projetos" data-subtab-group="site-publico">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Projetos</p>
+                <h2>Projetos publicados</h2>
+              </div>
+              <span class="module-chip">Vitrine</span>
+            </div>
+              <label class="wide-field">Projetos <textarea rows="10" name="projectsText" placeholder="Nome | Descricao | imagem | tecnologias | objetivo | status"></textarea></label>
+          </article>
+
+          <article class="app-section site-editor-panel" data-subtab-panel="site-eventos" data-subtab-group="site-publico">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Eventos</p>
+                <h2>Eventos participados</h2>
+              </div>
+              <span class="module-chip">Historico</span>
+            </div>
+              <label class="wide-field">Eventos <textarea rows="10" name="eventsText" placeholder="Nome | Ano | Local | Resultado | Descricao"></textarea></label>
+          </article>
+
+          <article class="app-section site-editor-panel" data-subtab-panel="site-contato" data-subtab-group="site-publico">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Contato</p>
+                <h2>Texto do contato</h2>
+              </div>
+              <span class="module-chip">Formulario</span>
+            </div>
               <label>Contato titulo <input type="text" name="contactTitle" /></label>
               <label>Contato texto <input type="text" name="contactText" /></label>
-              <label class="wide-field">Areas do time <textarea rows="5" name="areasText" placeholder="Titulo | Descricao"></textarea></label>
-              <label class="wide-field">Projetos <textarea rows="5" name="projectsText" placeholder="Nome | Descricao | imagem"></textarea></label>
+          </article>
+
+          <article class="app-section site-editor-panel" data-subtab-panel="site-footer" data-subtab-group="site-publico">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Footer</p>
+                <h2>Rodape e creditos</h2>
+              </div>
+              <span class="module-chip">Identidade</span>
+            </div>
+              <p class="editor-note">O footer mostra Cyber Capivaras, Fabrica da Ciencia e o link da LASTTRO.</p>
+          </article>
+            <div class="site-editor-actions">
               <button class="button primary" type="submit">Salvar pagina publica</button>
               <p class="form-status" id="siteEditorStatus" role="status"></p>
-            </form>
-          </article>
+            </div>
+          </form>
           <article class="app-section">
             <div class="section-head compact-head">
               <div>
@@ -137,11 +199,11 @@
       </section>
 
       <section class="app-tab" id="tarefas" data-tab-panel="tarefas">
-        <div class="subtabs">
+        <div class="subtabs" data-subtab-group="tarefas">
           <button class="active" type="button" data-subtab-target="quadro">Quadro</button>
           <button type="button" data-subtab-target="calendario">Calendario</button>
         </div>
-        <div class="task-subtab is-active" data-subtab-panel="quadro">
+        <div class="task-subtab is-active" data-subtab-panel="quadro" data-subtab-group="tarefas">
           <article class="app-section full-span">
             <div class="section-head compact-head">
               <div>
@@ -159,7 +221,7 @@
             </form>
           </article>
         </div>
-        <div class="task-subtab" data-subtab-panel="calendario">
+        <div class="task-subtab" data-subtab-panel="calendario" data-subtab-group="tarefas">
           <article class="app-section full-span">
             <div class="section-head compact-head">
               <div>
@@ -425,6 +487,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260614-team-social-fields"></script>
+    <script src="app.js?v=20260614-site-public-tabs"></script>
   </body>
 </html>
