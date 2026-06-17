@@ -148,6 +148,10 @@ function withDefault(value, fallback) {
   return value ?? fallback;
 }
 
+function validRows(value, fallback) {
+  return Array.isArray(value) && value.some(Array.isArray) ? value.filter(Array.isArray) : fallback;
+}
+
 function getPublicContent() {
   const stored = readStoredPublicContent();
   const content = { ...publicContent, ...stored };
@@ -217,13 +221,13 @@ function renderPublicContent() {
 
   document.querySelectorAll("[data-link-list]").forEach((node) => {
     const key = node.dataset.linkList;
-    const links = Array.isArray(content[key]) && content[key].length ? content[key] : publicContent[key] || [];
+    const links = validRows(content[key], publicContent[key] || []);
     node.innerHTML = links.map(([label, url]) => `<a href="${url || "#"}">${label}</a>`).join("");
   });
 
   document.querySelectorAll("[data-social-list]").forEach((node) => {
     const key = node.dataset.socialList;
-    const links = Array.isArray(content[key]) && content[key].length ? content[key] : publicContent[key] || [];
+    const links = validRows(content[key], publicContent[key] || []);
     node.innerHTML = links
       .map(([label, url, icon]) => `
         <a href="${url || "#"}" aria-label="${label}">
@@ -235,7 +239,7 @@ function renderPublicContent() {
 
   const areas = document.querySelector("#publicAreas");
   if (areas) {
-    const rows = Array.isArray(content.areas) && content.areas.length ? content.areas : publicContent.areas;
+    const rows = validRows(content.areas, publicContent.areas);
     areas.innerHTML = rows
       .map(
         ([title, text], index) => `
@@ -251,7 +255,7 @@ function renderPublicContent() {
 
   const projects = document.querySelector("#publicProjects");
   if (projects) {
-    const rows = Array.isArray(content.projects) && content.projects.length ? content.projects : publicContent.projects;
+    const rows = validRows(content.projects, publicContent.projects);
     projects.innerHTML = rows
       .map(
         (row) => {
@@ -280,7 +284,7 @@ function renderPublicContent() {
 
   const events = document.querySelector("#publicEvents");
   if (events) {
-    const rows = Array.isArray(content.events) && content.events.length ? content.events : publicContent.events;
+    const rows = validRows(content.events, publicContent.events);
     events.innerHTML = rows
       .map(
         (row) => {
@@ -310,7 +314,7 @@ function renderPublicContent() {
 
   const customBlocks = document.querySelector("#publicCustomBlocks");
   if (customBlocks) {
-    const rows = Array.isArray(content.customBlocks) && content.customBlocks.length ? content.customBlocks : publicContent.customBlocks;
+    const rows = validRows(content.customBlocks, publicContent.customBlocks);
     customBlocks.innerHTML = rows
       .map(
         ([title, text, image, label, link, linkText, status]) => `
@@ -538,13 +542,21 @@ function registerServiceWorker() {
   });
 }
 
+function runSetup(name, setup) {
+  try {
+    setup();
+  } catch (error) {
+    console.error(`Falha ao iniciar ${name}:`, error);
+  }
+}
+
 document.body.classList.add("js-ready");
-renderPublicContent();
-setupMobileMenu();
-setupAccountPhoto();
-setupActiveNav();
-setupCarouselControls();
-setupRevealAnimations();
-setupHeroMotion();
-setupContactForm();
-registerServiceWorker();
+runSetup("conteudo publico", renderPublicContent);
+runSetup("menu mobile", setupMobileMenu);
+runSetup("foto da conta", setupAccountPhoto);
+runSetup("menu ativo", setupActiveNav);
+runSetup("carrosseis", setupCarouselControls);
+runSetup("animacoes", setupRevealAnimations);
+runSetup("hero", setupHeroMotion);
+runSetup("contato", setupContactForm);
+runSetup("pwa", registerServiceWorker);

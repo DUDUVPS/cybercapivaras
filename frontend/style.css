@@ -1221,10 +1221,15 @@ input, textarea, select {
 }
 
 .reveal {
+  opacity: 1;
+  transform: none;
+}
+.js-ready .reveal {
   opacity: 0;
   transform: translateY(26px);
   transition: opacity .7s ease, transform .7s ease;
 }
+.js-ready .reveal.is-visible,
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);

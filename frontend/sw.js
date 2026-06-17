@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v36-public-content-fallback";
+const CACHE_NAME = "cyber-capivaras-v37-reveal-safe-content";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260617-public-content-fallback",
-  "/site.js?v=20260617-public-content-fallback",
-  "/app.js?v=20260617-public-content-fallback",
+  "/style.css?v=20260617-reveal-safe-content",
+  "/site.js?v=20260617-reveal-safe-content",
+  "/app.js?v=20260617-reveal-safe-content",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"
