@@ -389,6 +389,36 @@ h2 { font-size: clamp(1.9rem, 4vw, 3.1rem); line-height: 1.08; }
 .section { padding: 84px 5vw; }
 .band { background: rgba(255,255,255,.035); border-block: 1px solid var(--line); }
 .section-head { max-width: 760px; margin-bottom: 28px; }
+.carousel-shell {
+  position: relative;
+}
+.carousel-arrow {
+  display: none;
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 999px;
+  background: rgba(8,10,15,.78);
+  color: #fff;
+  box-shadow: 0 16px 42px rgba(0,0,0,.38);
+  backdrop-filter: blur(12px);
+  transform: translateY(-50%);
+}
+.carousel-arrow svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.carousel-prev { left: 8px; }
+.carousel-next { right: 8px; }
 .feature-grid, .project-showcase, .app-grid { display: grid; gap: 18px; }
 .feature-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .project-showcase {
@@ -475,6 +505,23 @@ h2 { font-size: clamp(1.9rem, 4vw, 3.1rem); line-height: 1.08; }
   color: #dce4ee;
   font-size: .9rem;
 }
+.card-gallery {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0;
+}
+.project-showcase .card-gallery {
+  padding: 0;
+}
+.card-gallery img {
+  width: 100%;
+  height: 62px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(255,255,255,.04);
+}
 .event-timeline {
   position: relative;
   display: grid;
@@ -557,6 +604,9 @@ h2 { font-size: clamp(1.9rem, 4vw, 3.1rem); line-height: 1.08; }
   padding: 0 20px;
   color: var(--cyan);
   font-weight: 900;
+}
+.event-card .card-gallery {
+  padding: 0 20px;
 }
 .event-card p {
   margin: 0;
@@ -2214,6 +2264,9 @@ body[data-accent="red"] { --green: var(--red); }
   .project-showcase {
     grid-template-columns: none;
     grid-auto-columns: minmax(270px, 86vw);
+  }
+  .carousel-arrow {
+    display: grid;
   }
   .event-timeline {
     grid-template-columns: none;

@@ -61,15 +61,15 @@ const publicContent = {
     ["Comunicacao", "Fotos, noticias, redes sociais e documentacao."],
   ],
   projects: [
-    ["Robo Seguidor de Linha", "Robo autonomo com sensores infravermelhos para seguir trajetos com precisao.", "imgs/20250618_104600.jpg", "Arduino, C/C++, sensores IR, ponte H", "Em testes"],
-    ["Robo Explorador", "Prototipo movel para desvio de obstaculos e leitura de ambiente.", "assets/hero-robotica.png", "ESP32, sensores ultrassonicos, motores DC", "Prototipo"],
-    ["Painel de Telemetria", "Interface para acompanhar estado, sensores e registros dos prototipos.", "imgs/bg-site.png", "HTML, CSS, JavaScript, GitHub", "Em desenvolvimento"],
-    ["Pecas 3D", "Modelagem e impressao de suportes, carenagens e estruturas para robos.", "imgs/fotos/ft-isadorah.png", "Modelagem 3D, impressao 3D, prototipagem", "Ativo"],
+    ["Robo Seguidor de Linha", "Robo autonomo com sensores infravermelhos para seguir trajetos com precisao.", "imgs/20250618_104600.jpg", "Arduino, C/C++, sensores IR, ponte H", "assets/hero-robotica.png\nimgs/bg-site.png", "Em testes"],
+    ["Robo Explorador", "Prototipo movel para desvio de obstaculos e leitura de ambiente.", "assets/hero-robotica.png", "ESP32, sensores ultrassonicos, motores DC", "imgs/20250618_104600.jpg", "Prototipo"],
+    ["Painel de Telemetria", "Interface para acompanhar estado, sensores e registros dos prototipos.", "imgs/bg-site.png", "HTML, CSS, JavaScript, GitHub", "assets/hero-robotica.png", "Em desenvolvimento"],
+    ["Pecas 3D", "Modelagem e impressao de suportes, carenagens e estruturas para robos.", "imgs/fotos/ft-isadorah.png", "Modelagem 3D, impressao 3D, prototipagem", "imgs/20250618_104600.jpg", "Ativo"],
   ],
   events: [
-    ["Torneio Interno de Robotica", "2026", "Campos Belos", "1o lugar", "imgs/20250618_104600.jpg", "Competicao de prototipos autonomos e apresentacao tecnica."],
-    ["Feira de Tecnologia", "2026", "IF Goiano", "Participacao", "assets/hero-robotica.png", "Exposicao de projetos, testes de robo e demonstracao para visitantes."],
-    ["Mostra de Projetos", "2025", "Campus Campos Belos", "Apresentacao", "imgs/bg-site.png", "Apresentacao dos primeiros prototipos e organizacao da equipe."],
+    ["Torneio Interno de Robotica", "2026", "Campos Belos", "1o lugar", "imgs/20250618_104600.jpg", "assets/hero-robotica.png\nimgs/bg-site.png", "Competicao de prototipos autonomos e apresentacao tecnica."],
+    ["Feira de Tecnologia", "2026", "IF Goiano", "Participacao", "assets/hero-robotica.png", "imgs/20250618_104600.jpg", "Exposicao de projetos, testes de robo e demonstracao para visitantes."],
+    ["Mostra de Projetos", "2025", "Campus Campos Belos", "Apresentacao", "imgs/bg-site.png", "assets/hero-robotica.png", "Apresentacao dos primeiros prototipos e organizacao da equipe."],
   ],
   customBlocks: [
     ["Destaque do mes", "Use esta caixa para divulgar uma novidade, chamada ou aviso importante.", "", "Novo", "#contato", "Falar com o time", "Destaque"],
@@ -127,6 +127,24 @@ const publicTeam = [
 
 function getPublicContent() {
   return { ...publicContent, members: publicTeam, ...JSON.parse(localStorage.getItem("cyber_site_content") || "{}") };
+}
+
+function splitMediaList(value = "") {
+  const text = String(value);
+  const separator = text.includes("data:image") ? /[\n|]+/ : /[\n,|]+/;
+  return text
+    .split(separator)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function renderMiniGallery(images, title) {
+  if (!images.length) return "";
+  return `
+    <div class="card-gallery" aria-label="Mais fotos de ${title}">
+      ${images.slice(0, 5).map((image) => `<img src="${image}" alt="${title}" />`).join("")}
+    </div>
+  `;
 }
 
 function normalizePublicMember(member) {
@@ -210,7 +228,9 @@ function renderPublicContent() {
       .map(
         (row) => {
           const [title, text, image, tech = "Robotica educacional"] = row;
+          const gallery = row.length >= 6 ? row[4] : "";
           const status = row.length >= 6 ? row[5] : row[4] || "Ativo";
+          const extraImages = splitMediaList(gallery);
           return `
           <article>
             <img src="${image}" alt="${title}" />
@@ -218,6 +238,7 @@ function renderPublicContent() {
               <span class="project-status">${status}</span>
               <h3>${title}</h3>
               <p>${text}</p>
+              ${renderMiniGallery(extraImages, title)}
               <dl>
                 <div><dt>Tecnologias</dt><dd>${tech}</dd></div>
               </dl>
@@ -237,7 +258,9 @@ function renderPublicContent() {
           const [name, date, place, result] = row;
           const hasImage = row[4] && (/^(data:image|https?:\/\/|imgs\/|assets\/)/.test(row[4]) || /\.(png|jpe?g|webp|gif|ico|svg)$/i.test(row[4]));
           const image = hasImage ? row[4] : "";
-          const text = hasImage ? row[5] : row[4];
+          const gallery = row.length >= 7 ? row[5] : "";
+          const text = row.length >= 7 ? row[6] : (hasImage ? row[5] : row[4]);
+          const extraImages = splitMediaList(gallery);
           return `
           <article class="event-card">
             ${image ? `<img src="${image}" alt="${name}" />` : ""}
@@ -247,6 +270,7 @@ function renderPublicContent() {
             </div>
             <h3>${name}</h3>
             <small>${place}</small>
+            ${renderMiniGallery(extraImages, name)}
             <p>${text}</p>
           </article>
         `;
@@ -376,8 +400,22 @@ function setupActiveNav() {
   sections.forEach((section) => observer.observe(section));
 }
 
+function setupCarouselControls() {
+  document.querySelectorAll("[data-scroll-target]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = document.querySelector(`#${button.dataset.scrollTarget}`);
+      if (!target) return;
+      const direction = Number(button.dataset.scrollDirection || 1);
+      target.scrollBy({
+        left: direction * Math.max(target.clientWidth * 0.82, 240),
+        behavior: "smooth",
+      });
+    });
+  });
+}
+
 function setupRevealAnimations() {
-  const items = document.querySelectorAll(".reveal, .feature-grid article, .project-showcase article, .member-card");
+  const items = document.querySelectorAll(".reveal, .feature-grid article, .project-showcase article, .event-card, .member-card");
   if (!items.length) return;
 
   items.forEach((item) => item.classList.add("reveal"));
@@ -475,6 +513,7 @@ renderPublicContent();
 setupMobileMenu();
 setupAccountPhoto();
 setupActiveNav();
+setupCarouselControls();
 setupRevealAnimations();
 setupHeroMotion();
 setupContactForm();

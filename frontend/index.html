@@ -9,7 +9,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260617-events-images-tabs" />
+    <link rel="stylesheet" href="style.css?v=20260617-gallery-menu-arrows" />
   </head>
   <body>
     <header class="public-header">
@@ -86,7 +86,15 @@
           <h2 data-content="projectsSectionTitle">Robos e sistemas em desenvolvimento</h2>
           <p data-content="projectsSectionText">Principais prototipos, sistemas e frentes tecnicas trabalhadas pelo time.</p>
         </div>
-        <div class="project-showcase" id="publicProjects"></div>
+        <div class="carousel-shell">
+          <button class="carousel-arrow carousel-prev" type="button" data-scroll-target="publicProjects" data-scroll-direction="-1" aria-label="Projetos anteriores">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></svg>
+          </button>
+          <div class="project-showcase" id="publicProjects"></div>
+          <button class="carousel-arrow carousel-next" type="button" data-scroll-target="publicProjects" data-scroll-direction="1" aria-label="Proximos projetos">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" /></svg>
+          </button>
+        </div>
       </section>
 
       <section class="section band reveal" id="eventos" data-public-section="Events">
@@ -95,7 +103,15 @@
           <h2 data-content="eventsSectionTitle">Eventos e competicoes participados</h2>
           <p data-content="eventsSectionText">Registro das apresentacoes, torneios, feiras e momentos de troca tecnica do time.</p>
         </div>
-        <div class="event-timeline" id="publicEvents"></div>
+        <div class="carousel-shell">
+          <button class="carousel-arrow carousel-prev" type="button" data-scroll-target="publicEvents" data-scroll-direction="-1" aria-label="Eventos anteriores">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></svg>
+          </button>
+          <div class="event-timeline" id="publicEvents"></div>
+          <button class="carousel-arrow carousel-next" type="button" data-scroll-target="publicEvents" data-scroll-direction="1" aria-label="Proximos eventos">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" /></svg>
+          </button>
+        </div>
       </section>
 
       <section class="section reveal" id="personalizado" data-public-section="Custom">
@@ -165,6 +181,6 @@
       </div>
     </footer>
 
-    <script src="site.js?v=20260617-events-images-tabs"></script>
+    <script src="site.js?v=20260617-gallery-menu-arrows"></script>
   </body>
 </html>

@@ -9,6 +9,7 @@ const defaultContent = {
   siteTabEquipe: "Equipe",
   siteTabProjetos: "Projetos",
   siteTabEventos: "Eventos",
+  siteTabMenu: "Menu",
   siteTabLivre: "Livre",
   siteTabContato: "Contato",
   siteTabFooter: "Footer",
@@ -73,15 +74,15 @@ const defaultContent = {
     ["Comunicacao", "Fotos, noticias, redes sociais e documentacao."],
   ],
   projects: [
-    ["Robo Seguidor de Linha", "Robo autonomo com sensores infravermelhos para seguir trajetos com precisao.", "imgs/20250618_104600.jpg", "Arduino, C/C++, sensores IR, ponte H", "Em testes"],
-    ["Robo Explorador", "Prototipo movel para desvio de obstaculos e leitura de ambiente.", "assets/hero-robotica.png", "ESP32, sensores ultrassonicos, motores DC", "Prototipo"],
-    ["Painel de Telemetria", "Interface para acompanhar estado, sensores e registros dos prototipos.", "imgs/bg-site.png", "HTML, CSS, JavaScript, GitHub", "Em desenvolvimento"],
-    ["Pecas 3D", "Modelagem e impressao de suportes, carenagens e estruturas para robos.", "imgs/fotos/ft-isadorah.png", "Modelagem 3D, impressao 3D, prototipagem", "Ativo"],
+    ["Robo Seguidor de Linha", "Robo autonomo com sensores infravermelhos para seguir trajetos com precisao.", "imgs/20250618_104600.jpg", "Arduino, C/C++, sensores IR, ponte H", "assets/hero-robotica.png\nimgs/bg-site.png", "Em testes"],
+    ["Robo Explorador", "Prototipo movel para desvio de obstaculos e leitura de ambiente.", "assets/hero-robotica.png", "ESP32, sensores ultrassonicos, motores DC", "imgs/20250618_104600.jpg", "Prototipo"],
+    ["Painel de Telemetria", "Interface para acompanhar estado, sensores e registros dos prototipos.", "imgs/bg-site.png", "HTML, CSS, JavaScript, GitHub", "assets/hero-robotica.png", "Em desenvolvimento"],
+    ["Pecas 3D", "Modelagem e impressao de suportes, carenagens e estruturas para robos.", "imgs/fotos/ft-isadorah.png", "Modelagem 3D, impressao 3D, prototipagem", "imgs/20250618_104600.jpg", "Ativo"],
   ],
   events: [
-    ["Torneio Interno de Robotica", "2026", "Campos Belos", "1o lugar", "imgs/20250618_104600.jpg", "Competicao de prototipos autonomos e apresentacao tecnica."],
-    ["Feira de Tecnologia", "2026", "IF Goiano", "Participacao", "assets/hero-robotica.png", "Exposicao de projetos, testes de robo e demonstracao para visitantes."],
-    ["Mostra de Projetos", "2025", "Campus Campos Belos", "Apresentacao", "imgs/bg-site.png", "Apresentacao dos primeiros prototipos e organizacao da equipe."],
+    ["Torneio Interno de Robotica", "2026", "Campos Belos", "1o lugar", "imgs/20250618_104600.jpg", "assets/hero-robotica.png\nimgs/bg-site.png", "Competicao de prototipos autonomos e apresentacao tecnica."],
+    ["Feira de Tecnologia", "2026", "IF Goiano", "Participacao", "assets/hero-robotica.png", "imgs/20250618_104600.jpg", "Exposicao de projetos, testes de robo e demonstracao para visitantes."],
+    ["Mostra de Projetos", "2025", "Campus Campos Belos", "Apresentacao", "imgs/bg-site.png", "assets/hero-robotica.png", "Apresentacao dos primeiros prototipos e organizacao da equipe."],
   ],
   customBlocks: [
     ["Destaque do mes", "Use esta caixa para divulgar uma novidade, chamada ou aviso importante.", "", "Novo", "#contato", "Falar com o time", "Destaque"],
@@ -218,6 +219,7 @@ const blockSchemas = {
     ["Descricao", "Resumo do projeto"],
     ["Imagem", "imgs/projeto.png"],
     ["Tecnologias", "Arduino, sensores, motores"],
+    ["Galeria", "Uma imagem por linha"],
     ["Status", "Ativo"],
   ],
   events: [
@@ -226,6 +228,7 @@ const blockSchemas = {
     ["Local", "IF Goiano"],
     ["Resultado", "Participacao"],
     ["Imagem", "imgs/evento.png"],
+    ["Galeria", "Uma imagem por linha"],
     ["Descricao", "Resumo do evento"],
   ],
   customBlocks: [
@@ -281,7 +284,11 @@ function escapeHtml(value = "") {
 }
 
 function isMediaField(label = "") {
-  return /imagem|icone|logo|foto/i.test(label);
+  return /imagem|icone|logo|foto|galeria/i.test(label);
+}
+
+function isMediaListField(label = "") {
+  return /galeria/i.test(label);
 }
 
 function isLongTextField(label = "") {
@@ -305,6 +312,15 @@ function fileToDataUrl(file, maxSizeMb = 2.5) {
   });
 }
 
+function splitMediaList(value = "") {
+  const text = String(value);
+  const separator = text.includes("data:image") ? /[\n|]+/ : /[\n,|]+/;
+  return text
+    .split(separator)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 function updateMediaPreview(name) {
   const input = document.querySelector(`[name="${name}"]`);
   const preview = document.querySelector(`[data-media-preview="${name}"]`);
@@ -320,10 +336,14 @@ function createBlockRow(type, values = []) {
 
 function normalizeBlockRows(type, rows = []) {
   if (type === "projects") {
-    return rows.map((row) => (row.length >= 6 ? [row[0], row[1], row[2], row[3], row[5]] : row));
+    return rows.map((row) => (row.length >= 6 ? row : [row[0], row[1], row[2], row[3], "", row[4] || "Ativo"]));
   }
   if (type === "events") {
-    return rows.map((row) => (row.length === 5 ? [row[0], row[1], row[2], row[3], "", row[4]] : row));
+    return rows.map((row) => {
+      if (row.length >= 7) return row;
+      if (row.length === 6) return [row[0], row[1], row[2], row[3], row[4], "", row[5]];
+      return [row[0], row[1], row[2], row[3], "", "", row[4]];
+    });
   }
   return rows;
 }
@@ -354,10 +374,12 @@ function renderBlockEditors(content) {
                     <label>${label}
                       ${isLongTextField(label) ? `<textarea rows="3" data-block-field="${fieldIndex}" placeholder="${escapeHtml(placeholder)}">${escapeHtml(row[fieldIndex] || "")}</textarea>` : `
                         <div class="${isMediaField(label) ? "media-picker compact-media-picker" : ""}">
-                          ${isMediaField(label) ? `<img alt="Preview" data-block-media-preview="${fieldIndex}" src="${escapeHtml(row[fieldIndex] || "imgs/apple-touch-icon.png")}" />` : ""}
+                          ${isMediaField(label) ? `<img alt="Preview" data-block-media-preview="${fieldIndex}" src="${escapeHtml(splitMediaList(row[fieldIndex])[0] || "imgs/apple-touch-icon.png")}" />` : ""}
                           <div>
-                            <input type="text" data-block-field="${fieldIndex}" value="${escapeHtml(row[fieldIndex] || "")}" placeholder="${escapeHtml(placeholder)}" />
-                            ${isMediaField(label) ? `<input type="file" accept="image/*" data-block-media-file="${fieldIndex}" />` : ""}
+                            ${isMediaListField(label)
+                              ? `<textarea rows="3" data-block-field="${fieldIndex}" placeholder="${escapeHtml(placeholder)}">${escapeHtml(row[fieldIndex] || "")}</textarea>`
+                              : `<input type="text" data-block-field="${fieldIndex}" value="${escapeHtml(row[fieldIndex] || "")}" placeholder="${escapeHtml(placeholder)}" />`}
+                            ${isMediaField(label) ? `<input type="file" accept="image/*" data-block-media-file="${fieldIndex}" ${isMediaListField(label) ? "multiple" : ""} />` : ""}
                           </div>
                         </div>
                       `}
@@ -870,6 +892,7 @@ function setupAppForms() {
     contentForm.elements.siteTabEquipe.value = content.siteTabEquipe || "";
     contentForm.elements.siteTabProjetos.value = content.siteTabProjetos || "";
     contentForm.elements.siteTabEventos.value = content.siteTabEventos || "";
+    contentForm.elements.siteTabMenu.value = content.siteTabMenu || "";
     contentForm.elements.siteTabLivre.value = content.siteTabLivre || "";
     contentForm.elements.siteTabContato.value = content.siteTabContato || "";
     contentForm.elements.siteTabFooter.value = content.siteTabFooter || "";
@@ -939,7 +962,7 @@ function setupAppForms() {
       if (blockField) {
         const block = blockField.closest("[data-block-row]");
         const preview = block?.querySelector(`[data-block-media-preview="${blockField.dataset.blockField}"]`);
-        if (preview) preview.src = blockField.value || "imgs/apple-touch-icon.png";
+        if (preview) preview.src = splitMediaList(blockField.value)[0] || "imgs/apple-touch-icon.png";
       }
     });
     contentForm.addEventListener("change", () => showDraftToast());
@@ -995,10 +1018,14 @@ function setupAppForms() {
       const textInput = block?.querySelector(`[data-block-field="${fieldIndex}"]`);
       const preview = block?.querySelector(`[data-block-media-preview="${fieldIndex}"]`);
       try {
-        const value = await fileToDataUrl(blockFile.files?.[0]);
+        const files = [...(blockFile.files || [])];
+        const values = await Promise.all(files.map((file) => fileToDataUrl(file)));
+        const current = splitMediaList(textInput?.value || "");
+        const nextValues = blockFile.multiple ? [...current, ...values] : values;
+        const value = nextValues.filter(Boolean).join("\n");
         if (textInput) textInput.value = value;
-        if (preview) preview.src = value || "imgs/apple-touch-icon.png";
-        showToast("Imagem da caixa carregada. Salve para publicar.");
+        if (preview) preview.src = nextValues[0] || "imgs/apple-touch-icon.png";
+        showToast(blockFile.multiple ? "Galeria carregada. Salve para publicar." : "Imagem da caixa carregada. Salve para publicar.");
       } catch (error) {
         showToast(error.message, "error");
       }
@@ -1017,6 +1044,7 @@ function setupAppForms() {
         siteTabEquipe: data.siteTabEquipe,
         siteTabProjetos: data.siteTabProjetos,
         siteTabEventos: data.siteTabEventos,
+        siteTabMenu: data.siteTabMenu,
         siteTabLivre: data.siteTabLivre,
         siteTabContato: data.siteTabContato,
         siteTabFooter: data.siteTabFooter,

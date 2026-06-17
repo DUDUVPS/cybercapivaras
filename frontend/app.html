@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260617-events-images-tabs" />
+    <link rel="stylesheet" href="style.css?v=20260617-gallery-menu-arrows" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
@@ -108,6 +108,7 @@
           <button type="button" data-subtab-target="site-equipe" data-site-tab-label="siteTabEquipe">Equipe</button>
           <button type="button" data-subtab-target="site-projetos" data-site-tab-label="siteTabProjetos">Projetos</button>
           <button type="button" data-subtab-target="site-eventos" data-site-tab-label="siteTabEventos">Eventos</button>
+          <button type="button" data-subtab-target="site-menu" data-site-tab-label="siteTabMenu">Menu</button>
           <button type="button" data-subtab-target="site-livre" data-site-tab-label="siteTabLivre">Livre</button>
           <button type="button" data-subtab-target="site-contato" data-site-tab-label="siteTabContato">Contato</button>
           <button type="button" data-subtab-target="site-footer" data-site-tab-label="siteTabFooter">Footer</button>
@@ -129,6 +130,7 @@
               <label>Nome aba Equipe <input type="text" name="siteTabEquipe" /></label>
               <label>Nome aba Projetos <input type="text" name="siteTabProjetos" /></label>
               <label>Nome aba Eventos <input type="text" name="siteTabEventos" /></label>
+              <label>Nome aba Menu <input type="text" name="siteTabMenu" /></label>
               <label>Nome aba Livre <input type="text" name="siteTabLivre" /></label>
               <label>Nome aba Contato <input type="text" name="siteTabContato" /></label>
               <label>Nome aba Footer <input type="text" name="siteTabFooter" /></label>
@@ -165,13 +167,6 @@
               <label>Chip 1 <input type="text" name="heroSignalOne" /></label>
               <label>Chip 2 <input type="text" name="heroSignalTwo" /></label>
               <label>Chip 3 <input type="text" name="heroSignalThree" /></label>
-              <div class="block-editor wide-field" data-block-editor="headerLinks">
-                <div class="block-editor-head">
-                  <span>Links do menu superior</span>
-                  <button class="ghost-button" type="button" data-add-block="headerLinks">Novo link</button>
-                </div>
-                <div class="block-list" data-block-list="headerLinks"></div>
-              </div>
           </article>
 
           <article class="app-section site-editor-panel" data-subtab-panel="site-equipe" data-subtab-group="site-publico">
@@ -233,6 +228,24 @@
                   <button class="ghost-button" type="button" data-add-block="events">Novo evento</button>
                 </div>
                 <div class="block-list" data-block-list="events"></div>
+              </div>
+          </article>
+
+          <article class="app-section site-editor-panel" data-subtab-panel="site-menu" data-subtab-group="site-publico">
+            <div class="section-head compact-head">
+              <div>
+                <p class="eyebrow">Menu</p>
+                <h2>Barra de abas do site principal</h2>
+              </div>
+              <span class="module-chip">Criar e editar</span>
+            </div>
+              <p class="editor-note">Crie, remova e edite os botoes que aparecem no topo do site publico. Use links como #projetos, #eventos, equipe.html ou login.html.</p>
+              <div class="block-editor wide-field" data-block-editor="headerLinks">
+                <div class="block-editor-head">
+                  <span>Abas do topo</span>
+                  <button class="ghost-button" type="button" data-add-block="headerLinks">Nova aba</button>
+                </div>
+                <div class="block-list" data-block-list="headerLinks"></div>
               </div>
           </article>
 
@@ -644,6 +657,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260617-events-images-tabs"></script>
+    <script src="app.js?v=20260617-gallery-menu-arrows"></script>
   </body>
 </html>
