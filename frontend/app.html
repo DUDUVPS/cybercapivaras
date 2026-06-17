@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260617-full-app-editor-v2" />
+    <link rel="stylesheet" href="style.css?v=20260617-events-images-tabs" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
@@ -104,13 +104,13 @@
 
       <section class="app-tab admin-only" id="site" data-tab-panel="site">
         <div class="subtabs site-subtabs" data-subtab-group="site-publico">
-          <button class="active" type="button" data-subtab-target="site-inicio">Inicio</button>
-          <button type="button" data-subtab-target="site-equipe">Equipe</button>
-          <button type="button" data-subtab-target="site-projetos">Projetos</button>
-          <button type="button" data-subtab-target="site-eventos">Eventos</button>
-          <button type="button" data-subtab-target="site-livre">Livre</button>
-          <button type="button" data-subtab-target="site-contato">Contato</button>
-          <button type="button" data-subtab-target="site-footer">Footer</button>
+          <button class="active" type="button" data-subtab-target="site-inicio" data-site-tab-label="siteTabInicio">Inicio</button>
+          <button type="button" data-subtab-target="site-equipe" data-site-tab-label="siteTabEquipe">Equipe</button>
+          <button type="button" data-subtab-target="site-projetos" data-site-tab-label="siteTabProjetos">Projetos</button>
+          <button type="button" data-subtab-target="site-eventos" data-site-tab-label="siteTabEventos">Eventos</button>
+          <button type="button" data-subtab-target="site-livre" data-site-tab-label="siteTabLivre">Livre</button>
+          <button type="button" data-subtab-target="site-contato" data-site-tab-label="siteTabContato">Contato</button>
+          <button type="button" data-subtab-target="site-footer" data-site-tab-label="siteTabFooter">Footer</button>
         </div>
         <div class="module-grid site-editor-grid">
           <form class="app-form editor-layout" id="siteEditorForm">
@@ -120,11 +120,18 @@
                 <p class="eyebrow">Admin</p>
                 <h2>Inicio da pagina publica</h2>
               </div>
-              <span class="module-chip">Hero</span>
+              <span class="module-chip">Destaques</span>
             </div>
               <label>Nome do site <input type="text" name="siteName" /></label>
               <label>Link da logo/topo <input type="text" name="siteHomeLink" /></label>
               <label>Link do icone de conta <input type="text" name="accountLink" /></label>
+              <label>Nome aba Inicio <input type="text" name="siteTabInicio" /></label>
+              <label>Nome aba Equipe <input type="text" name="siteTabEquipe" /></label>
+              <label>Nome aba Projetos <input type="text" name="siteTabProjetos" /></label>
+              <label>Nome aba Eventos <input type="text" name="siteTabEventos" /></label>
+              <label>Nome aba Livre <input type="text" name="siteTabLivre" /></label>
+              <label>Nome aba Contato <input type="text" name="siteTabContato" /></label>
+              <label>Nome aba Footer <input type="text" name="siteTabFooter" /></label>
               <label class="wide-field">Logo do topo
                 <div class="media-picker" data-media-picker="siteLogo">
                   <img alt="Preview da logo do topo" data-media-preview="siteLogo" />
@@ -136,6 +143,7 @@
               </label>
               <label>Chamada <input type="text" name="heroLabel" /></label>
               <label>Titulo <input type="text" name="heroTitle" /></label>
+              <label>Nome do destaque <input type="text" name="weeklyHighlightLabel" /></label>
               <label>Imagem principal
                 <div class="media-picker" data-media-picker="heroImage">
                   <img alt="Preview da imagem principal" data-media-preview="heroImage" />
@@ -636,6 +644,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260617-full-app-editor-v2"></script>
+    <script src="app.js?v=20260617-events-images-tabs"></script>
   </body>
 </html>

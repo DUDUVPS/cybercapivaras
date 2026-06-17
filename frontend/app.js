@@ -5,10 +5,18 @@ const defaultContent = {
   siteHomeLink: "index.html",
   siteLogo: "imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png",
   accountLink: "login.html",
+  siteTabInicio: "Inicio",
+  siteTabEquipe: "Equipe",
+  siteTabProjetos: "Projetos",
+  siteTabEventos: "Eventos",
+  siteTabLivre: "Livre",
+  siteTabContato: "Contato",
+  siteTabFooter: "Footer",
   heroLabel: "IF Goiano - Campus Campos Belos",
   heroTitle: "Cyber Capivaras",
   heroText: "Um time de robotica movido por tecnologia, competicao, pesquisa e trabalho em equipe.",
   heroImage: "assets/hero-robotica.png",
+  weeklyHighlightLabel: "Destaques da semana",
   heroMetricValue: "87%",
   heroMetricLabel: "sensores calibrados",
   heroStateValue: "ON",
@@ -65,15 +73,15 @@ const defaultContent = {
     ["Comunicacao", "Fotos, noticias, redes sociais e documentacao."],
   ],
   projects: [
-    ["Robo Seguidor de Linha", "Robo autonomo com sensores infravermelhos para seguir trajetos com precisao.", "imgs/20250618_104600.jpg", "Arduino, C/C++, sensores IR, ponte H", "Autonomia e controle de percurso", "Em testes"],
-    ["Robo Explorador", "Prototipo movel para desvio de obstaculos e leitura de ambiente.", "assets/hero-robotica.png", "ESP32, sensores ultrassonicos, motores DC", "Navegacao em ambiente fechado", "Prototipo"],
-    ["Painel de Telemetria", "Interface para acompanhar estado, sensores e registros dos prototipos.", "imgs/bg-site.png", "HTML, CSS, JavaScript, GitHub", "Visualizar dados do time e projetos", "Em desenvolvimento"],
-    ["Pecas 3D", "Modelagem e impressao de suportes, carenagens e estruturas para robos.", "imgs/fotos/ft-isadorah.png", "Modelagem 3D, impressao 3D, prototipagem", "Acelerar montagem e manutencao", "Ativo"],
+    ["Robo Seguidor de Linha", "Robo autonomo com sensores infravermelhos para seguir trajetos com precisao.", "imgs/20250618_104600.jpg", "Arduino, C/C++, sensores IR, ponte H", "Em testes"],
+    ["Robo Explorador", "Prototipo movel para desvio de obstaculos e leitura de ambiente.", "assets/hero-robotica.png", "ESP32, sensores ultrassonicos, motores DC", "Prototipo"],
+    ["Painel de Telemetria", "Interface para acompanhar estado, sensores e registros dos prototipos.", "imgs/bg-site.png", "HTML, CSS, JavaScript, GitHub", "Em desenvolvimento"],
+    ["Pecas 3D", "Modelagem e impressao de suportes, carenagens e estruturas para robos.", "imgs/fotos/ft-isadorah.png", "Modelagem 3D, impressao 3D, prototipagem", "Ativo"],
   ],
   events: [
-    ["Torneio Interno de Robotica", "2026", "Campos Belos", "1o lugar", "Competicao de prototipos autonomos e apresentacao tecnica."],
-    ["Feira de Tecnologia", "2026", "IF Goiano", "Participacao", "Exposicao de projetos, testes de robo e demonstracao para visitantes."],
-    ["Mostra de Projetos", "2025", "Campus Campos Belos", "Apresentacao", "Apresentacao dos primeiros prototipos e organizacao da equipe."],
+    ["Torneio Interno de Robotica", "2026", "Campos Belos", "1o lugar", "imgs/20250618_104600.jpg", "Competicao de prototipos autonomos e apresentacao tecnica."],
+    ["Feira de Tecnologia", "2026", "IF Goiano", "Participacao", "assets/hero-robotica.png", "Exposicao de projetos, testes de robo e demonstracao para visitantes."],
+    ["Mostra de Projetos", "2025", "Campus Campos Belos", "Apresentacao", "imgs/bg-site.png", "Apresentacao dos primeiros prototipos e organizacao da equipe."],
   ],
   customBlocks: [
     ["Destaque do mes", "Use esta caixa para divulgar uma novidade, chamada ou aviso importante.", "", "Novo", "#contato", "Falar com o time", "Destaque"],
@@ -210,7 +218,6 @@ const blockSchemas = {
     ["Descricao", "Resumo do projeto"],
     ["Imagem", "imgs/projeto.png"],
     ["Tecnologias", "Arduino, sensores, motores"],
-    ["Objetivo", "Objetivo do projeto"],
     ["Status", "Ativo"],
   ],
   events: [
@@ -218,6 +225,7 @@ const blockSchemas = {
     ["Ano", "2026"],
     ["Local", "IF Goiano"],
     ["Resultado", "Participacao"],
+    ["Imagem", "imgs/evento.png"],
     ["Descricao", "Resumo do evento"],
   ],
   customBlocks: [
@@ -310,11 +318,27 @@ function createBlockRow(type, values = []) {
   return schema.map(([, placeholder], index) => values[index] || (index === 0 ? `Novo ${type}` : ""));
 }
 
+function normalizeBlockRows(type, rows = []) {
+  if (type === "projects") {
+    return rows.map((row) => (row.length >= 6 ? [row[0], row[1], row[2], row[3], row[5]] : row));
+  }
+  if (type === "events") {
+    return rows.map((row) => (row.length === 5 ? [row[0], row[1], row[2], row[3], "", row[4]] : row));
+  }
+  return rows;
+}
+
+function applySiteTabLabels(content = getContent()) {
+  document.querySelectorAll("[data-site-tab-label]").forEach((button) => {
+    button.textContent = content[button.dataset.siteTabLabel] || button.textContent;
+  });
+}
+
 function renderBlockEditors(content) {
   Object.entries(blockSchemas).forEach(([type, schema]) => {
     const list = document.querySelector(`[data-block-list="${type}"]`);
     if (!list) return;
-    const rows = content[type] || [];
+    const rows = normalizeBlockRows(type, content[type] || []);
     list.innerHTML = rows
       .map(
         (row, rowIndex) => `
@@ -842,8 +866,16 @@ function setupAppForms() {
     contentForm.elements.siteHomeLink.value = content.siteHomeLink || "";
     contentForm.elements.siteLogo.value = content.siteLogo || "";
     contentForm.elements.accountLink.value = content.accountLink || "";
+    contentForm.elements.siteTabInicio.value = content.siteTabInicio || "";
+    contentForm.elements.siteTabEquipe.value = content.siteTabEquipe || "";
+    contentForm.elements.siteTabProjetos.value = content.siteTabProjetos || "";
+    contentForm.elements.siteTabEventos.value = content.siteTabEventos || "";
+    contentForm.elements.siteTabLivre.value = content.siteTabLivre || "";
+    contentForm.elements.siteTabContato.value = content.siteTabContato || "";
+    contentForm.elements.siteTabFooter.value = content.siteTabFooter || "";
     contentForm.elements.heroLabel.value = content.heroLabel;
     contentForm.elements.heroTitle.value = content.heroTitle;
+    contentForm.elements.weeklyHighlightLabel.value = content.weeklyHighlightLabel || "";
     contentForm.elements.heroText.value = content.heroText;
     contentForm.elements.heroImage.value = content.heroImage || "";
     contentForm.elements.heroMetricValue.value = content.heroMetricValue || "";
@@ -896,6 +928,7 @@ function setupAppForms() {
     contentForm.elements.customSectionTitle.value = content.customSectionTitle || "";
     contentForm.elements.customSectionText.value = content.customSectionText || "";
     renderBlockEditors(content);
+    applySiteTabLabels(content);
     ["siteLogo", "heroImage", "footerLogo", "footerAffiliationIcon"].forEach(updateMediaPreview);
     contentForm.addEventListener("input", (event) => {
       showDraftToast();
@@ -974,14 +1007,22 @@ function setupAppForms() {
     contentForm.addEventListener("submit", (event) => {
       event.preventDefault();
       const data = Object.fromEntries(new FormData(contentForm).entries());
-      saveContent({
+      const nextContent = {
         ...getContent(),
         siteName: data.siteName,
         siteHomeLink: data.siteHomeLink,
         siteLogo: data.siteLogo,
         accountLink: data.accountLink,
+        siteTabInicio: data.siteTabInicio,
+        siteTabEquipe: data.siteTabEquipe,
+        siteTabProjetos: data.siteTabProjetos,
+        siteTabEventos: data.siteTabEventos,
+        siteTabLivre: data.siteTabLivre,
+        siteTabContato: data.siteTabContato,
+        siteTabFooter: data.siteTabFooter,
         heroLabel: data.heroLabel,
         heroTitle: data.heroTitle,
+        weeklyHighlightLabel: data.weeklyHighlightLabel,
         heroText: data.heroText,
         heroImage: data.heroImage,
         heroMetricValue: data.heroMetricValue,
@@ -1041,9 +1082,11 @@ function setupAppForms() {
         footerNavLinks: collectBlockRows("footerNavLinks"),
         footerCentralLinks: collectBlockRows("footerCentralLinks"),
         footerSocials: collectBlockRows("footerSocials"),
-      });
+      };
+      saveContent(nextContent);
       document.querySelector("#siteEditorStatus").textContent = "Pagina principal atualizada.";
       showToast("Pagina publica atualizada.");
+      applySiteTabLabels(nextContent);
       renderSitePreview();
     });
   }

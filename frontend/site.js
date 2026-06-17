@@ -9,6 +9,7 @@ const publicContent = {
   heroTitle: "Cyber Capivaras",
   heroText: "Um time de robotica movido por tecnologia, competicao, pesquisa e trabalho em equipe.",
   heroImage: "assets/hero-robotica.png",
+  weeklyHighlightLabel: "Destaques da semana",
   heroMetricValue: "87%",
   heroMetricLabel: "sensores calibrados",
   heroStateValue: "ON",
@@ -60,15 +61,15 @@ const publicContent = {
     ["Comunicacao", "Fotos, noticias, redes sociais e documentacao."],
   ],
   projects: [
-    ["Robo Seguidor de Linha", "Robo autonomo com sensores infravermelhos para seguir trajetos com precisao.", "imgs/20250618_104600.jpg", "Arduino, C/C++, sensores IR, ponte H", "Autonomia e controle de percurso", "Em testes"],
-    ["Robo Explorador", "Prototipo movel para desvio de obstaculos e leitura de ambiente.", "assets/hero-robotica.png", "ESP32, sensores ultrassonicos, motores DC", "Navegacao em ambiente fechado", "Prototipo"],
-    ["Painel de Telemetria", "Interface para acompanhar estado, sensores e registros dos prototipos.", "imgs/bg-site.png", "HTML, CSS, JavaScript, GitHub", "Visualizar dados do time e projetos", "Em desenvolvimento"],
-    ["Pecas 3D", "Modelagem e impressao de suportes, carenagens e estruturas para robos.", "imgs/fotos/ft-isadorah.png", "Modelagem 3D, impressao 3D, prototipagem", "Acelerar montagem e manutencao", "Ativo"],
+    ["Robo Seguidor de Linha", "Robo autonomo com sensores infravermelhos para seguir trajetos com precisao.", "imgs/20250618_104600.jpg", "Arduino, C/C++, sensores IR, ponte H", "Em testes"],
+    ["Robo Explorador", "Prototipo movel para desvio de obstaculos e leitura de ambiente.", "assets/hero-robotica.png", "ESP32, sensores ultrassonicos, motores DC", "Prototipo"],
+    ["Painel de Telemetria", "Interface para acompanhar estado, sensores e registros dos prototipos.", "imgs/bg-site.png", "HTML, CSS, JavaScript, GitHub", "Em desenvolvimento"],
+    ["Pecas 3D", "Modelagem e impressao de suportes, carenagens e estruturas para robos.", "imgs/fotos/ft-isadorah.png", "Modelagem 3D, impressao 3D, prototipagem", "Ativo"],
   ],
   events: [
-    ["Torneio Interno de Robotica", "2026", "Campos Belos", "1o lugar", "Competicao de prototipos autonomos e apresentacao tecnica."],
-    ["Feira de Tecnologia", "2026", "IF Goiano", "Participacao", "Exposicao de projetos, testes de robo e demonstracao para visitantes."],
-    ["Mostra de Projetos", "2025", "Campus Campos Belos", "Apresentacao", "Apresentacao dos primeiros prototipos e organizacao da equipe."],
+    ["Torneio Interno de Robotica", "2026", "Campos Belos", "1o lugar", "imgs/20250618_104600.jpg", "Competicao de prototipos autonomos e apresentacao tecnica."],
+    ["Feira de Tecnologia", "2026", "IF Goiano", "Participacao", "assets/hero-robotica.png", "Exposicao de projetos, testes de robo e demonstracao para visitantes."],
+    ["Mostra de Projetos", "2025", "Campus Campos Belos", "Apresentacao", "imgs/bg-site.png", "Apresentacao dos primeiros prototipos e organizacao da equipe."],
   ],
   customBlocks: [
     ["Destaque do mes", "Use esta caixa para divulgar uma novidade, chamada ou aviso importante.", "", "Novo", "#contato", "Falar com o time", "Destaque"],
@@ -207,7 +208,10 @@ function renderPublicContent() {
   if (projects) {
     projects.innerHTML = content.projects
       .map(
-        ([title, text, image, tech = "Robotica educacional", goal = "Pesquisa e desenvolvimento", status = "Ativo"]) => `
+        (row) => {
+          const [title, text, image, tech = "Robotica educacional"] = row;
+          const status = row.length >= 6 ? row[5] : row[4] || "Ativo";
+          return `
           <article>
             <img src="${image}" alt="${title}" />
             <div class="project-body">
@@ -216,11 +220,11 @@ function renderPublicContent() {
               <p>${text}</p>
               <dl>
                 <div><dt>Tecnologias</dt><dd>${tech}</dd></div>
-                <div><dt>Objetivo</dt><dd>${goal}</dd></div>
               </dl>
             </div>
           </article>
-        `
+        `;
+        }
       )
       .join("");
   }
@@ -229,8 +233,14 @@ function renderPublicContent() {
   if (events) {
     events.innerHTML = (content.events || [])
       .map(
-        ([name, date, place, result, text]) => `
+        (row) => {
+          const [name, date, place, result] = row;
+          const hasImage = row[4] && (/^(data:image|https?:\/\/|imgs\/|assets\/)/.test(row[4]) || /\.(png|jpe?g|webp|gif|ico|svg)$/i.test(row[4]));
+          const image = hasImage ? row[4] : "";
+          const text = hasImage ? row[5] : row[4];
+          return `
           <article class="event-card">
+            ${image ? `<img src="${image}" alt="${name}" />` : ""}
             <div>
               <span>${date}</span>
               <strong>${result}</strong>
@@ -239,7 +249,8 @@ function renderPublicContent() {
             <small>${place}</small>
             <p>${text}</p>
           </article>
-        `
+        `;
+        }
       )
       .join("");
   }

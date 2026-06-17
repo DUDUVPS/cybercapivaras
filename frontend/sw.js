@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v32-full-app-editor";
+const CACHE_NAME = "cyber-capivaras-v34-events-images-tabs";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260617-full-app-editor-v2",
-  "/site.js?v=20260617-full-app-editor-v2",
-  "/app.js?v=20260617-full-app-editor-v2",
+  "/style.css?v=20260617-events-images-tabs",
+  "/site.js?v=20260617-events-images-tabs",
+  "/app.js?v=20260617-events-images-tabs",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"
