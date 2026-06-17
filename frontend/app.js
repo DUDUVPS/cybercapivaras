@@ -4,10 +4,18 @@ const defaultContent = {
   siteName: "Cyber Capivaras",
   siteHomeLink: "index.html",
   siteLogo: "imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png",
+  accountLink: "login.html",
   heroLabel: "IF Goiano - Campus Campos Belos",
   heroTitle: "Cyber Capivaras",
   heroText: "Um time de robotica movido por tecnologia, competicao, pesquisa e trabalho em equipe.",
   heroImage: "assets/hero-robotica.png",
+  heroMetricValue: "87%",
+  heroMetricLabel: "sensores calibrados",
+  heroStateValue: "ON",
+  heroStateLabel: "sistema autonomo",
+  heroSignalOne: "2024",
+  heroSignalTwo: "Robotica",
+  heroSignalThree: "Inovacao",
   heroPrimaryText: "Ver projetos",
   heroPrimaryLink: "#projetos",
   heroSecondaryText: "Acessar app",
@@ -23,6 +31,10 @@ const defaultContent = {
   contactLabel: "Contato",
   contactTitle: "Envie uma mensagem pro time",
   contactText: "Fale com a equipe sobre projetos, parcerias, competicoes ou apresentacoes.",
+  contactNamePlaceholder: "Nome",
+  contactEmailPlaceholder: "E-mail",
+  contactMessagePlaceholder: "Mensagem",
+  contactButtonText: "Enviar",
   footerLogo: "imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png",
   footerLogoSubtitle: "Fabrica da Ciencia",
   footerAffiliationIcon: "imgs/logo-fabrica-da-ciencia.ico",
@@ -30,6 +42,7 @@ const defaultContent = {
   footerAffiliation: "Projeto integrante da Fabrica da Ciencia",
   footerCredit: "LASTTRO.IO",
   footerCreditUrl: "https://lasttro.app.br",
+  footerCopyrightText: "© 2026 Cyber Capivaras | Fabrica da Ciencia | desenvolvido por",
   footerNavTitle: "Navegacao",
   footerCentralTitle: "Central",
   footerContactTitle: "Contato",
@@ -40,6 +53,11 @@ const defaultContent = {
   customSectionLabel: "Personalizado",
   customSectionTitle: "Area livre do time",
   customSectionText: "Espaco para avisos, destaques, campanhas, laboratorios, patrocinadores ou qualquer conteudo criado pela central.",
+  showTeamSection: true,
+  showProjectsSection: true,
+  showEventsSection: true,
+  showCustomSection: true,
+  showContactSection: true,
   areas: [
     ["Software", "Logica, sensores, automacao e codigo embarcado."],
     ["Hardware", "Circuitos, motores, placas e alimentacao."],
@@ -254,6 +272,39 @@ function escapeHtml(value = "") {
   })[char]);
 }
 
+function isMediaField(label = "") {
+  return /imagem|icone|logo|foto/i.test(label);
+}
+
+function isLongTextField(label = "") {
+  return /descricao|descrição|texto|objetivo/i.test(label);
+}
+
+function fileToDataUrl(file, maxSizeMb = 2.5) {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      resolve("");
+      return;
+    }
+    if (file.size > maxSizeMb * 1024 * 1024) {
+      reject(new Error(`Imagem muito grande. Use ate ${String(maxSizeMb).replace(".", ",")} MB.`));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Nao foi possivel carregar a imagem."));
+    reader.readAsDataURL(file);
+  });
+}
+
+function updateMediaPreview(name) {
+  const input = document.querySelector(`[name="${name}"]`);
+  const preview = document.querySelector(`[data-media-preview="${name}"]`);
+  if (!input || !preview) return;
+  const value = input.value.trim();
+  preview.src = value || "imgs/apple-touch-icon.png";
+}
+
 function createBlockRow(type, values = []) {
   const schema = blockSchemas[type] || [];
   return schema.map(([, placeholder], index) => values[index] || (index === 0 ? `Novo ${type}` : ""));
@@ -277,7 +328,15 @@ function renderBlockEditors(content) {
                 .map(
                   ([label, placeholder], fieldIndex) => `
                     <label>${label}
-                      ${fieldIndex === 1 || fieldIndex === 4 ? `<textarea rows="3" data-block-field="${fieldIndex}" placeholder="${escapeHtml(placeholder)}">${escapeHtml(row[fieldIndex] || "")}</textarea>` : `<input type="text" data-block-field="${fieldIndex}" value="${escapeHtml(row[fieldIndex] || "")}" placeholder="${escapeHtml(placeholder)}" />`}
+                      ${isLongTextField(label) ? `<textarea rows="3" data-block-field="${fieldIndex}" placeholder="${escapeHtml(placeholder)}">${escapeHtml(row[fieldIndex] || "")}</textarea>` : `
+                        <div class="${isMediaField(label) ? "media-picker compact-media-picker" : ""}">
+                          ${isMediaField(label) ? `<img alt="Preview" data-block-media-preview="${fieldIndex}" src="${escapeHtml(row[fieldIndex] || "imgs/apple-touch-icon.png")}" />` : ""}
+                          <div>
+                            <input type="text" data-block-field="${fieldIndex}" value="${escapeHtml(row[fieldIndex] || "")}" placeholder="${escapeHtml(placeholder)}" />
+                            ${isMediaField(label) ? `<input type="file" accept="image/*" data-block-media-file="${fieldIndex}" />` : ""}
+                          </div>
+                        </div>
+                      `}
                     </label>
                   `
                 )
@@ -782,25 +841,41 @@ function setupAppForms() {
     contentForm.elements.siteName.value = content.siteName || "";
     contentForm.elements.siteHomeLink.value = content.siteHomeLink || "";
     contentForm.elements.siteLogo.value = content.siteLogo || "";
+    contentForm.elements.accountLink.value = content.accountLink || "";
     contentForm.elements.heroLabel.value = content.heroLabel;
     contentForm.elements.heroTitle.value = content.heroTitle;
     contentForm.elements.heroText.value = content.heroText;
     contentForm.elements.heroImage.value = content.heroImage || "";
+    contentForm.elements.heroMetricValue.value = content.heroMetricValue || "";
+    contentForm.elements.heroMetricLabel.value = content.heroMetricLabel || "";
+    contentForm.elements.heroStateValue.value = content.heroStateValue || "";
+    contentForm.elements.heroStateLabel.value = content.heroStateLabel || "";
+    contentForm.elements.heroSignalOne.value = content.heroSignalOne || "";
+    contentForm.elements.heroSignalTwo.value = content.heroSignalTwo || "";
+    contentForm.elements.heroSignalThree.value = content.heroSignalThree || "";
     contentForm.elements.heroPrimaryText.value = content.heroPrimaryText || "";
     contentForm.elements.heroPrimaryLink.value = content.heroPrimaryLink || "";
     contentForm.elements.heroSecondaryText.value = content.heroSecondaryText || "";
     contentForm.elements.heroSecondaryLink.value = content.heroSecondaryLink || "";
+    contentForm.elements.showTeamSection.checked = content.showTeamSection !== false;
     contentForm.elements.teamSectionLabel.value = content.teamSectionLabel || "";
     contentForm.elements.teamSectionTitle.value = content.teamSectionTitle || "";
+    contentForm.elements.showProjectsSection.checked = content.showProjectsSection !== false;
     contentForm.elements.projectsSectionLabel.value = content.projectsSectionLabel || "";
     contentForm.elements.projectsSectionTitle.value = content.projectsSectionTitle || "";
     contentForm.elements.projectsSectionText.value = content.projectsSectionText || "";
+    contentForm.elements.showEventsSection.checked = content.showEventsSection !== false;
     contentForm.elements.eventsSectionLabel.value = content.eventsSectionLabel || "";
     contentForm.elements.eventsSectionTitle.value = content.eventsSectionTitle || "";
     contentForm.elements.eventsSectionText.value = content.eventsSectionText || "";
+    contentForm.elements.showContactSection.checked = content.showContactSection !== false;
     contentForm.elements.contactLabel.value = content.contactLabel || "";
     contentForm.elements.contactTitle.value = content.contactTitle || "";
     contentForm.elements.contactText.value = content.contactText || "";
+    contentForm.elements.contactNamePlaceholder.value = content.contactNamePlaceholder || "";
+    contentForm.elements.contactEmailPlaceholder.value = content.contactEmailPlaceholder || "";
+    contentForm.elements.contactMessagePlaceholder.value = content.contactMessagePlaceholder || "";
+    contentForm.elements.contactButtonText.value = content.contactButtonText || "";
     contentForm.elements.footerLogo.value = content.footerLogo || "";
     contentForm.elements.footerLogoSubtitle.value = content.footerLogoSubtitle || "";
     contentForm.elements.footerAffiliationIcon.value = content.footerAffiliationIcon || "";
@@ -815,12 +890,40 @@ function setupAppForms() {
     contentForm.elements.footerContactLine2.value = content.footerContactLine2 || "";
     contentForm.elements.footerContactAction.value = content.footerContactAction || "";
     contentForm.elements.footerStatus.value = content.footerStatus || "";
+    contentForm.elements.footerCopyrightText.value = content.footerCopyrightText || "";
+    contentForm.elements.showCustomSection.checked = content.showCustomSection !== false;
     contentForm.elements.customSectionLabel.value = content.customSectionLabel || "";
     contentForm.elements.customSectionTitle.value = content.customSectionTitle || "";
     contentForm.elements.customSectionText.value = content.customSectionText || "";
     renderBlockEditors(content);
-    contentForm.addEventListener("input", () => showDraftToast());
+    ["siteLogo", "heroImage", "footerLogo", "footerAffiliationIcon"].forEach(updateMediaPreview);
+    contentForm.addEventListener("input", (event) => {
+      showDraftToast();
+      if (event.target.name && event.target.closest("[data-media-picker]")) {
+        updateMediaPreview(event.target.name);
+      }
+      const blockField = event.target.closest("[data-block-field]");
+      if (blockField) {
+        const block = blockField.closest("[data-block-row]");
+        const preview = block?.querySelector(`[data-block-media-preview="${blockField.dataset.blockField}"]`);
+        if (preview) preview.src = blockField.value || "imgs/apple-touch-icon.png";
+      }
+    });
     contentForm.addEventListener("change", () => showDraftToast());
+
+    contentForm.querySelectorAll("[data-media-file]").forEach((fileInput) => {
+      fileInput.addEventListener("change", async () => {
+        const fieldName = fileInput.dataset.mediaFile;
+        const target = contentForm.elements[fieldName];
+        try {
+          target.value = await fileToDataUrl(fileInput.files?.[0]);
+          updateMediaPreview(fieldName);
+          showToast("Imagem carregada. Salve para publicar.");
+        } catch (error) {
+          showToast(error.message, "error");
+        }
+      });
+    });
 
     contentForm.addEventListener("click", (event) => {
       const addButton = event.target.closest("[data-add-block]");
@@ -851,6 +954,23 @@ function setupAppForms() {
       }
     });
 
+    contentForm.addEventListener("change", async (event) => {
+      const blockFile = event.target.closest("[data-block-media-file]");
+      if (!blockFile) return;
+      const block = blockFile.closest("[data-block-row]");
+      const fieldIndex = blockFile.dataset.blockMediaFile;
+      const textInput = block?.querySelector(`[data-block-field="${fieldIndex}"]`);
+      const preview = block?.querySelector(`[data-block-media-preview="${fieldIndex}"]`);
+      try {
+        const value = await fileToDataUrl(blockFile.files?.[0]);
+        if (textInput) textInput.value = value;
+        if (preview) preview.src = value || "imgs/apple-touch-icon.png";
+        showToast("Imagem da caixa carregada. Salve para publicar.");
+      } catch (error) {
+        showToast(error.message, "error");
+      }
+    });
+
     contentForm.addEventListener("submit", (event) => {
       event.preventDefault();
       const data = Object.fromEntries(new FormData(contentForm).entries());
@@ -859,25 +979,41 @@ function setupAppForms() {
         siteName: data.siteName,
         siteHomeLink: data.siteHomeLink,
         siteLogo: data.siteLogo,
+        accountLink: data.accountLink,
         heroLabel: data.heroLabel,
         heroTitle: data.heroTitle,
         heroText: data.heroText,
         heroImage: data.heroImage,
+        heroMetricValue: data.heroMetricValue,
+        heroMetricLabel: data.heroMetricLabel,
+        heroStateValue: data.heroStateValue,
+        heroStateLabel: data.heroStateLabel,
+        heroSignalOne: data.heroSignalOne,
+        heroSignalTwo: data.heroSignalTwo,
+        heroSignalThree: data.heroSignalThree,
         heroPrimaryText: data.heroPrimaryText,
         heroPrimaryLink: data.heroPrimaryLink,
         heroSecondaryText: data.heroSecondaryText,
         heroSecondaryLink: data.heroSecondaryLink,
+        showTeamSection: data.showTeamSection === "on",
         teamSectionLabel: data.teamSectionLabel,
         teamSectionTitle: data.teamSectionTitle,
+        showProjectsSection: data.showProjectsSection === "on",
         projectsSectionLabel: data.projectsSectionLabel,
         projectsSectionTitle: data.projectsSectionTitle,
         projectsSectionText: data.projectsSectionText,
+        showEventsSection: data.showEventsSection === "on",
         eventsSectionLabel: data.eventsSectionLabel,
         eventsSectionTitle: data.eventsSectionTitle,
         eventsSectionText: data.eventsSectionText,
+        showContactSection: data.showContactSection === "on",
         contactLabel: data.contactLabel,
         contactTitle: data.contactTitle,
         contactText: data.contactText,
+        contactNamePlaceholder: data.contactNamePlaceholder,
+        contactEmailPlaceholder: data.contactEmailPlaceholder,
+        contactMessagePlaceholder: data.contactMessagePlaceholder,
+        contactButtonText: data.contactButtonText,
         footerLogo: data.footerLogo,
         footerLogoSubtitle: data.footerLogoSubtitle,
         footerAffiliationIcon: data.footerAffiliationIcon,
@@ -892,6 +1028,8 @@ function setupAppForms() {
         footerContactLine2: data.footerContactLine2,
         footerContactAction: data.footerContactAction,
         footerStatus: data.footerStatus,
+        footerCopyrightText: data.footerCopyrightText,
+        showCustomSection: data.showCustomSection === "on",
         customSectionLabel: data.customSectionLabel,
         customSectionTitle: data.customSectionTitle,
         customSectionText: data.customSectionText,

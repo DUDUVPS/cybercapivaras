@@ -9,7 +9,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260617-central-control" />
+    <link rel="stylesheet" href="style.css?v=20260617-full-app-editor-v2" />
   </head>
   <body>
     <header class="public-header">
@@ -19,7 +19,7 @@
           <strong data-content="siteName">Cyber Capivaras</strong>
         </span>
       </a>
-      <a class="account-entry" href="login.html" aria-label="Conta">
+      <a class="account-entry" href="login.html" aria-label="Conta" data-link-content="accountLink">
         <img id="accountPhoto" alt="" hidden />
         <svg aria-hidden="true" viewBox="0 0 24 24">
           <path d="M20 21a8 8 0 0 0-16 0" />
@@ -56,22 +56,22 @@
         <div class="hero-visual reveal">
           <img src="assets/hero-robotica.png" alt="Robo de competicao em laboratorio" data-image-content="heroImage" />
           <div class="telemetry-card telemetry-a">
-            <strong>87%</strong>
-            <span>sensores calibrados</span>
+            <strong data-content="heroMetricValue">87%</strong>
+            <span data-content="heroMetricLabel">sensores calibrados</span>
           </div>
           <div class="telemetry-card telemetry-b">
-            <strong>ON</strong>
-            <span>sistema autonomo</span>
+            <strong data-content="heroStateValue">ON</strong>
+            <span data-content="heroStateLabel">sistema autonomo</span>
           </div>
           <div class="signal-row">
-            <span>2024</span>
-            <span>Robotica</span>
-            <span>Inovacao</span>
+            <span data-content="heroSignalOne">2024</span>
+            <span data-content="heroSignalTwo">Robotica</span>
+            <span data-content="heroSignalThree">Inovacao</span>
           </div>
         </div>
       </section>
 
-      <section class="section band reveal" id="equipe">
+      <section class="section band reveal" id="equipe" data-public-section="Team">
         <div class="section-head">
           <p class="eyebrow" data-content="teamSectionLabel">Equipe</p>
           <h2 data-content="teamSectionTitle">Integrantes Cyber Capivaras</h2>
@@ -79,7 +79,7 @@
         <div class="member-grid" id="publicMembers"></div>
       </section>
 
-      <section class="section reveal" id="projetos">
+      <section class="section reveal" id="projetos" data-public-section="Projects">
         <div class="section-head">
           <p class="eyebrow" data-content="projectsSectionLabel">Projetos</p>
           <h2 data-content="projectsSectionTitle">Robos e sistemas em desenvolvimento</h2>
@@ -88,7 +88,7 @@
         <div class="project-showcase" id="publicProjects"></div>
       </section>
 
-      <section class="section band reveal" id="eventos">
+      <section class="section band reveal" id="eventos" data-public-section="Events">
         <div class="section-head">
           <p class="eyebrow" data-content="eventsSectionLabel">Eventos</p>
           <h2 data-content="eventsSectionTitle">Eventos e competicoes participados</h2>
@@ -97,7 +97,7 @@
         <div class="event-timeline" id="publicEvents"></div>
       </section>
 
-      <section class="section reveal" id="personalizado">
+      <section class="section reveal" id="personalizado" data-public-section="Custom">
         <div class="section-head">
           <p class="eyebrow" data-content="customSectionLabel">Personalizado</p>
           <h2 data-content="customSectionTitle">Area livre do time</h2>
@@ -106,17 +106,17 @@
         <div class="custom-block-grid" id="publicCustomBlocks"></div>
       </section>
 
-      <section class="section contact-strip reveal" id="contato">
+      <section class="section contact-strip reveal" id="contato" data-public-section="Contact">
         <div>
           <p class="eyebrow" data-content="contactLabel">Contato</p>
           <h2 data-content="contactTitle">Envie uma mensagem pro time</h2>
           <p data-content="contactText">Fale com a equipe sobre projetos, parcerias, competicoes ou apresentacoes.</p>
         </div>
         <form class="compact-form" id="contactForm">
-          <input type="text" name="name" placeholder="Nome" required />
-          <input type="email" name="email" placeholder="E-mail" required />
-          <textarea name="message" rows="3" placeholder="Mensagem" required></textarea>
-          <button class="button primary" type="submit">Enviar</button>
+          <input type="text" name="name" placeholder="Nome" data-placeholder-content="contactNamePlaceholder" required />
+          <input type="email" name="email" placeholder="E-mail" data-placeholder-content="contactEmailPlaceholder" required />
+          <textarea name="message" rows="3" placeholder="Mensagem" data-placeholder-content="contactMessagePlaceholder" required></textarea>
+          <button class="button primary" type="submit" data-content="contactButtonText">Enviar</button>
           <p class="form-status" id="formStatus" role="status"></p>
         </form>
       </section>
@@ -160,10 +160,10 @@
 
       <div class="footer-bottom">
         <div class="system-status"><span></span> <span data-content="footerStatus">Sistemas operacionais</span></div>
-        <p>&copy; 2026 Cyber Capivaras | Fabrica da Ciencia | desenvolvido por <a href="https://lasttro.app.br" target="_blank" rel="noopener noreferrer" data-content="footerCredit" data-link-content="footerCreditUrl">LASTTRO.IO</a></p>
+        <p><span data-content="footerCopyrightText">&copy; 2026 Cyber Capivaras | Fabrica da Ciencia | desenvolvido por</span> <a href="https://lasttro.app.br" target="_blank" rel="noopener noreferrer" data-content="footerCredit" data-link-content="footerCreditUrl">LASTTRO.IO</a></p>
       </div>
     </footer>
 
-    <script src="site.js?v=20260617-central-control"></script>
+    <script src="site.js?v=20260617-full-app-editor-v2"></script>
   </body>
 </html>

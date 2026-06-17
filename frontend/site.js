@@ -4,10 +4,18 @@ const publicContent = {
   siteName: "Cyber Capivaras",
   siteHomeLink: "index.html",
   siteLogo: "imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png",
+  accountLink: "login.html",
   heroLabel: "IF Goiano - Campus Campos Belos",
   heroTitle: "Cyber Capivaras",
   heroText: "Um time de robotica movido por tecnologia, competicao, pesquisa e trabalho em equipe.",
   heroImage: "assets/hero-robotica.png",
+  heroMetricValue: "87%",
+  heroMetricLabel: "sensores calibrados",
+  heroStateValue: "ON",
+  heroStateLabel: "sistema autonomo",
+  heroSignalOne: "2024",
+  heroSignalTwo: "Robotica",
+  heroSignalThree: "Inovacao",
   heroPrimaryText: "Ver projetos",
   heroPrimaryLink: "#projetos",
   heroSecondaryText: "Acessar app",
@@ -23,6 +31,10 @@ const publicContent = {
   contactLabel: "Contato",
   contactTitle: "Envie uma mensagem pro time",
   contactText: "Fale com a equipe sobre projetos, parcerias, competicoes ou apresentacoes.",
+  contactNamePlaceholder: "Nome",
+  contactEmailPlaceholder: "E-mail",
+  contactMessagePlaceholder: "Mensagem",
+  contactButtonText: "Enviar",
   footerLogo: "imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png",
   footerLogoSubtitle: "Fabrica da Ciencia",
   footerAffiliationIcon: "imgs/logo-fabrica-da-ciencia.ico",
@@ -30,6 +42,7 @@ const publicContent = {
   footerAffiliation: "Projeto integrante da Fabrica da Ciencia",
   footerCredit: "LASTTRO.IO",
   footerCreditUrl: "https://lasttro.app.br",
+  footerCopyrightText: "© 2026 Cyber Capivaras | Fabrica da Ciencia | desenvolvido por",
   footerNavTitle: "Navegacao",
   footerCentralTitle: "Central",
   footerContactTitle: "Contato",
@@ -144,9 +157,19 @@ function renderPublicContent() {
     if (value) node.src = value;
   });
 
+  document.querySelectorAll("[data-placeholder-content]").forEach((node) => {
+    const value = content[node.dataset.placeholderContent];
+    if (value) node.placeholder = value;
+  });
+
   document.querySelectorAll("[data-link-content]").forEach((node) => {
     const value = content[node.dataset.linkContent];
     if (value) node.href = value;
+  });
+
+  document.querySelectorAll("[data-public-section]").forEach((section) => {
+    const key = `show${section.dataset.publicSection}Section`;
+    section.hidden = content[key] === false;
   });
 
   document.querySelectorAll("[data-link-list]").forEach((node) => {
