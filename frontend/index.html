@@ -9,7 +9,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260617-integrated-gallery-pages" />
+    <link rel="stylesheet" href="style.css?v=20260617-user-pages-sequence" />
   </head>
   <body>
     <header class="public-header">
@@ -37,7 +37,7 @@
     </header>
 
     <main>
-      <section class="landing-hero animated-hero">
+      <section class="landing-hero animated-hero" data-public-section="Home">
         <div class="motion-grid" aria-hidden="true"></div>
         <div class="scan-beam" aria-hidden="true"></div>
         <div class="orbital orbital-one" aria-hidden="true"></div>
@@ -114,14 +114,7 @@
         </div>
       </section>
 
-      <section class="section reveal" id="personalizado" data-public-section="Custom">
-        <div class="section-head">
-          <p class="eyebrow" data-content="customSectionLabel">Personalizado</p>
-          <h2 data-content="customSectionTitle">Area livre do time</h2>
-          <p data-content="customSectionText">Espaco para avisos, destaques, campanhas, laboratorios, patrocinadores ou qualquer conteudo criado pela central.</p>
-        </div>
-        <div class="custom-block-grid" id="publicCustomBlocks"></div>
-      </section>
+      <div id="dynamicSections"></div>
 
       <section class="section contact-strip reveal" id="contato" data-public-section="Contact">
         <div>
@@ -181,6 +174,6 @@
       </div>
     </footer>
 
-    <script src="site.js?v=20260617-integrated-gallery-pages"></script>
+    <script src="site.js?v=20260617-user-pages-sequence"></script>
   </body>
 </html>

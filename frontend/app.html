@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260617-integrated-gallery-pages" />
+    <link rel="stylesheet" href="style.css?v=20260617-user-pages-sequence" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
@@ -108,7 +108,7 @@
           <button type="button" data-subtab-target="site-equipe" data-site-tab-label="siteTabEquipe">Equipe</button>
           <button type="button" data-subtab-target="site-projetos" data-site-tab-label="siteTabProjetos">Projetos</button>
           <button type="button" data-subtab-target="site-eventos" data-site-tab-label="siteTabEventos">Eventos</button>
-          <button type="button" data-subtab-target="site-livre" data-site-tab-label="siteTabLivre">Livre</button>
+          <button type="button" data-subtab-target="site-paginas">Paginas</button>
           <button type="button" data-subtab-target="site-contato" data-site-tab-label="siteTabContato">Contato</button>
           <button type="button" data-subtab-target="site-footer" data-site-tab-label="siteTabFooter">Footer</button>
           <button class="subtab-add-page" type="button" data-add-page title="Adicionar pagina">+</button>
@@ -130,7 +130,6 @@
               <label>Nome aba Equipe <input type="text" name="siteTabEquipe" /></label>
               <label>Nome aba Projetos <input type="text" name="siteTabProjetos" /></label>
               <label>Nome aba Eventos <input type="text" name="siteTabEventos" /></label>
-              <label>Nome aba Livre <input type="text" name="siteTabLivre" /></label>
               <label>Nome aba Contato <input type="text" name="siteTabContato" /></label>
               <label>Nome aba Footer <input type="text" name="siteTabFooter" /></label>
               <label class="wide-field">Logo do topo
@@ -166,6 +165,7 @@
               <label>Chip 1 <input type="text" name="heroSignalOne" /></label>
               <label>Chip 2 <input type="text" name="heroSignalTwo" /></label>
               <label>Chip 3 <input type="text" name="heroSignalThree" /></label>
+              <label>Sequencia inicio <input type="number" name="sectionOrderHome" min="1" step="1" /></label>
               <div class="block-editor wide-field" data-block-editor="headerLinks">
                 <div class="block-editor-head">
                   <span>Paginas do topo</span>
@@ -185,6 +185,7 @@
             </div>
               <label>Etiqueta da equipe <input type="text" name="teamSectionLabel" /></label>
               <label>Titulo da equipe <input type="text" name="teamSectionTitle" /></label>
+              <label>Sequencia equipe <input type="number" name="sectionOrderTeam" min="1" step="1" /></label>
               <label class="toggle-row"><input type="checkbox" name="showTeamSection" /> Exibir secao equipe</label>
               <div class="block-editor wide-field" data-block-editor="areas">
                 <div class="block-editor-head">
@@ -205,6 +206,7 @@
             </div>
               <label>Etiqueta projetos <input type="text" name="projectsSectionLabel" /></label>
               <label>Titulo projetos <input type="text" name="projectsSectionTitle" /></label>
+              <label>Sequencia projetos <input type="number" name="sectionOrderProjects" min="1" step="1" /></label>
               <label class="toggle-row"><input type="checkbox" name="showProjectsSection" /> Exibir secao projetos</label>
               <label class="wide-field">Texto projetos <textarea rows="3" name="projectsSectionText"></textarea></label>
               <div class="block-editor wide-field" data-block-editor="projects">
@@ -226,6 +228,7 @@
             </div>
               <label>Etiqueta eventos <input type="text" name="eventsSectionLabel" /></label>
               <label>Titulo eventos <input type="text" name="eventsSectionTitle" /></label>
+              <label>Sequencia eventos <input type="number" name="sectionOrderEvents" min="1" step="1" /></label>
               <label class="toggle-row"><input type="checkbox" name="showEventsSection" /> Exibir secao eventos</label>
               <label class="wide-field">Texto eventos <textarea rows="3" name="eventsSectionText"></textarea></label>
               <div class="block-editor wide-field" data-block-editor="events">
@@ -237,24 +240,21 @@
               </div>
           </article>
 
-          <article class="app-section site-editor-panel" data-subtab-panel="site-livre" data-subtab-group="site-publico">
+          <article class="app-section site-editor-panel" data-subtab-panel="site-paginas" data-subtab-group="site-publico">
             <div class="section-head compact-head">
               <div>
-                <p class="eyebrow">Livre</p>
-                <h2>Secao customizavel</h2>
+                <p class="eyebrow">Paginas</p>
+                <h2>Paginas criadas no site</h2>
               </div>
               <span class="module-chip">Criar e apagar</span>
             </div>
-              <label>Titulo da secao <input type="text" name="customSectionTitle" /></label>
-              <label>Etiqueta da secao <input type="text" name="customSectionLabel" /></label>
-              <label class="toggle-row"><input type="checkbox" name="showCustomSection" /> Exibir secao livre</label>
-              <label class="wide-field">Texto da secao <textarea rows="3" name="customSectionText"></textarea></label>
-              <div class="block-editor wide-field" data-block-editor="customBlocks">
+              <p class="editor-note">Cada item vira uma secao propria no site e pode aparecer na barra superior.</p>
+              <div class="block-editor wide-field" data-block-editor="customSections">
                 <div class="block-editor-head">
-                  <span>Caixas livres</span>
-                  <button class="ghost-button" type="button" data-add-block="customBlocks">Nova caixa livre</button>
+                  <span>Paginas personalizadas</span>
+                  <button class="ghost-button" type="button" data-add-block="customSections">Nova pagina</button>
                 </div>
-                <div class="block-list" data-block-list="customBlocks"></div>
+                <div class="block-list" data-block-list="customSections"></div>
               </div>
           </article>
 
@@ -268,6 +268,7 @@
             </div>
               <label>Etiqueta contato <input type="text" name="contactLabel" /></label>
               <label>Contato titulo <input type="text" name="contactTitle" /></label>
+              <label>Sequencia contato <input type="number" name="sectionOrderContact" min="1" step="1" /></label>
               <label class="toggle-row"><input type="checkbox" name="showContactSection" /> Exibir secao contato</label>
               <label>Contato texto <input type="text" name="contactText" /></label>
               <label>Placeholder nome <input type="text" name="contactNamePlaceholder" /></label>
@@ -645,6 +646,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260617-integrated-gallery-pages"></script>
+    <script src="app.js?v=20260617-user-pages-sequence"></script>
   </body>
 </html>

@@ -51,9 +51,11 @@ const publicContent = {
   footerContactLine2: "Cyber Capivaras",
   footerContactAction: "Enviar mensagem",
   footerStatus: "Sistemas operacionais",
-  customSectionLabel: "Personalizado",
-  customSectionTitle: "Area livre do time",
-  customSectionText: "Espaco para avisos, destaques, campanhas, laboratorios, patrocinadores ou qualquer conteudo criado pela central.",
+  sectionOrderHome: "1",
+  sectionOrderTeam: "2",
+  sectionOrderProjects: "3",
+  sectionOrderEvents: "4",
+  sectionOrderContact: "99",
   areas: [
     ["Software", "Logica, sensores, automacao e codigo embarcado."],
     ["Hardware", "Circuitos, motores, placas e alimentacao."],
@@ -74,6 +76,7 @@ const publicContent = {
   customBlocks: [
     ["Destaque do mes", "Use esta caixa para divulgar uma novidade, chamada ou aviso importante.", "", "Novo", "#contato", "Falar com o time", "Destaque"],
   ],
+  customSections: [],
   headerLinks: [
     ["Equipe", "equipe.html"],
     ["Projetos", "#projetos"],
@@ -150,6 +153,33 @@ function withDefault(value, fallback) {
 
 function validRows(value, fallback) {
   return Array.isArray(value) && value.some(Array.isArray) ? value.filter(Array.isArray) : fallback;
+}
+
+function migrateCustomBlocks(rows = []) {
+  return validRows(rows, []).map(([title, text, image, label, link, linkText, status], index) => [
+    label || title || `Pagina ${index + 1}`,
+    title || label || `Pagina ${index + 1}`,
+    text || "",
+    image || "",
+    String(5 + index),
+    link || "",
+    linkText || "",
+    status || "",
+  ]);
+}
+
+function slugify(value = "") {
+  return String(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "") || "pagina";
+}
+
+function sectionOrder(value, fallback) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
 }
 
 function getPublicContent() {
@@ -234,9 +264,32 @@ function renderPublicContent() {
     section.hidden = content[key] === false;
   });
 
+  const sectionOrderMap = {
+    Home: sectionOrder(content.sectionOrderHome, 1),
+    Team: sectionOrder(content.sectionOrderTeam, 2),
+    Projects: sectionOrder(content.sectionOrderProjects, 3),
+    Events: sectionOrder(content.sectionOrderEvents, 4),
+    Contact: sectionOrder(content.sectionOrderContact, 99),
+  };
+  document.querySelectorAll("[data-public-section]").forEach((section) => {
+    section.style.order = sectionOrderMap[section.dataset.publicSection] || 50;
+  });
+
   document.querySelectorAll("[data-link-list]").forEach((node) => {
     const key = node.dataset.linkList;
-    const links = validRows(content[key], publicContent[key] || []);
+    let links = validRows(content[key], publicContent[key] || []);
+    if (key === "headerLinks") {
+      const customSections = validRows(content.customSections, publicContent.customSections);
+      const customLinks = customSections.map(([label], index) => [label, `#pagina-${index + 1}-${slugify(label)}`]);
+      customLinks.forEach((customLink) => {
+        if (!links.some(([label]) => label === customLink[0])) links.splice(Math.max(links.length - 2, 0), 0, customLink);
+      });
+      links = links.map(([label, url]) => {
+        if (url && url !== "#personalizado" && !/^#pagina-/i.test(url)) return [label, url];
+        const index = customSections.findIndex(([sectionLabel]) => sectionLabel === label);
+        return [label, index >= 0 ? `#pagina-${index + 1}-${slugify(label)}` : url];
+      });
+    }
     node.innerHTML = links.map(([label, url]) => `<a href="${url || "#"}">${label}</a>`).join("");
   });
 
@@ -325,24 +378,32 @@ function renderPublicContent() {
       .join("");
   }
 
-  const customBlocks = document.querySelector("#publicCustomBlocks");
-  if (customBlocks) {
-    const rows = validRows(content.customBlocks, publicContent.customBlocks);
-    customBlocks.innerHTML = rows
-      .map(
-        ([title, text, image, label, link, linkText, status]) => `
-          <article class="custom-block-card">
-            ${image ? `<img src="${image}" alt="${title}" />` : ""}
-            <div>
-              ${label ? `<span>${label}</span>` : ""}
-              <h3>${title}</h3>
-              <p>${text}</p>
-              ${status ? `<small>${status}</small>` : ""}
-              ${link && linkText ? `<a class="button secondary" href="${link}">${linkText}</a>` : ""}
+  const dynamicSections = document.querySelector("#dynamicSections");
+  if (dynamicSections) {
+    const storedContent = readStoredPublicContent();
+    const hasCustomSections = Array.isArray(content.customSections) && content.customSections.some(Array.isArray);
+    const hasStoredCustomBlocks = Array.isArray(storedContent.customBlocks) && storedContent.customBlocks.some(Array.isArray);
+    const rows = hasCustomSections ? validRows(content.customSections, []) : (hasStoredCustomBlocks ? migrateCustomBlocks(storedContent.customBlocks) : []);
+    dynamicSections.innerHTML = rows
+      .map(([label, title, text, image, order, link, linkText, status], index) => {
+        const id = `pagina-${index + 1}-${slugify(label || title)}`;
+        return `
+          <section class="section reveal custom-public-section" id="${id}" data-dynamic-public-section style="order:${sectionOrder(order, 5 + index)}">
+            <div class="section-head">
+              ${label ? `<p class="eyebrow">${label}</p>` : ""}
+              <h2>${title || label || "Pagina"}</h2>
+              ${text ? `<p>${text}</p>` : ""}
             </div>
-          </article>
-        `
-      )
+            <article class="custom-block-card">
+              ${image ? `<img src="${image}" alt="${title || label}" />` : ""}
+              <div>
+                ${status ? `<span>${status}</span>` : ""}
+                ${link && linkText ? `<a class="button secondary" href="${link}">${linkText}</a>` : ""}
+              </div>
+            </article>
+          </section>
+        `;
+      })
       .join("");
   }
 

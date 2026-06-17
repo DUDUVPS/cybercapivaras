@@ -9,9 +9,13 @@ const defaultContent = {
   siteTabEquipe: "Equipe",
   siteTabProjetos: "Projetos",
   siteTabEventos: "Eventos",
-  siteTabLivre: "Livre",
   siteTabContato: "Contato",
   siteTabFooter: "Footer",
+  sectionOrderHome: "1",
+  sectionOrderTeam: "2",
+  sectionOrderProjects: "3",
+  sectionOrderEvents: "4",
+  sectionOrderContact: "99",
   heroLabel: "IF Goiano - Campus Campos Belos",
   heroTitle: "Cyber Capivaras",
   heroText: "Um time de robotica movido por tecnologia, competicao, pesquisa e trabalho em equipe.",
@@ -58,13 +62,9 @@ const defaultContent = {
   footerContactLine2: "Cyber Capivaras",
   footerContactAction: "Enviar mensagem",
   footerStatus: "Sistemas operacionais",
-  customSectionLabel: "Personalizado",
-  customSectionTitle: "Area livre do time",
-  customSectionText: "Espaco para avisos, destaques, campanhas, laboratorios, patrocinadores ou qualquer conteudo criado pela central.",
   showTeamSection: true,
   showProjectsSection: true,
   showEventsSection: true,
-  showCustomSection: true,
   showContactSection: true,
   areas: [
     ["Software", "Logica, sensores, automacao e codigo embarcado."],
@@ -86,6 +86,7 @@ const defaultContent = {
   customBlocks: [
     ["Destaque do mes", "Use esta caixa para divulgar uma novidade, chamada ou aviso importante.", "", "Novo", "#contato", "Falar com o time", "Destaque"],
   ],
+  customSections: [],
   headerLinks: [
     ["Equipe", "equipe.html"],
     ["Projetos", "#projetos"],
@@ -239,6 +240,16 @@ const blockSchemas = {
     ["Texto do botao", "Saiba mais"],
     ["Status", "Destaque"],
   ],
+  customSections: [
+    ["Nome da aba", "Personalizado"],
+    ["Titulo", "Titulo da pagina"],
+    ["Texto", "Conteudo da pagina"],
+    ["Imagem", "imgs/imagem.png"],
+    ["Sequencia", "5"],
+    ["Link do botao", "#contato"],
+    ["Texto do botao", "Saiba mais"],
+    ["Status", "Destaque"],
+  ],
   footerNavLinks: [
     ["Texto", "Inicio"],
     ["Link", "index.html"],
@@ -320,6 +331,15 @@ function splitMediaList(value = "") {
     .filter(Boolean);
 }
 
+function slugify(value = "") {
+  return String(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "") || "pagina";
+}
+
 function updateMediaPreview(name) {
   const input = document.querySelector(`[name="${name}"]`);
   const preview = document.querySelector(`[data-media-preview="${name}"]`);
@@ -342,6 +362,13 @@ function normalizeBlockRows(type, rows = []) {
       if (row.length >= 7) return row;
       if (row.length === 6) return [row[0], row[1], row[2], row[3], row[4], "", row[5]];
       return [row[0], row[1], row[2], row[3], "", "", row[4]];
+    });
+  }
+  if (type === "customSections") {
+    return rows.map((row, index) => {
+      if (row.length >= 8) return row;
+      if (row.length >= 7) return [row[3] || row[0] || `Pagina ${index + 1}`, row[0], row[1], row[2], String(5 + index), row[4], row[5], row[6]];
+      return row;
     });
   }
   return rows;
@@ -895,9 +922,9 @@ function setupAppForms() {
     contentForm.elements.siteTabEquipe.value = content.siteTabEquipe || "";
     contentForm.elements.siteTabProjetos.value = content.siteTabProjetos || "";
     contentForm.elements.siteTabEventos.value = content.siteTabEventos || "";
-    contentForm.elements.siteTabLivre.value = content.siteTabLivre || "";
     contentForm.elements.siteTabContato.value = content.siteTabContato || "";
     contentForm.elements.siteTabFooter.value = content.siteTabFooter || "";
+    contentForm.elements.sectionOrderHome.value = content.sectionOrderHome || "1";
     contentForm.elements.heroLabel.value = content.heroLabel;
     contentForm.elements.heroTitle.value = content.heroTitle;
     contentForm.elements.weeklyHighlightLabel.value = content.weeklyHighlightLabel || "";
@@ -917,17 +944,21 @@ function setupAppForms() {
     contentForm.elements.showTeamSection.checked = content.showTeamSection !== false;
     contentForm.elements.teamSectionLabel.value = content.teamSectionLabel || "";
     contentForm.elements.teamSectionTitle.value = content.teamSectionTitle || "";
+    contentForm.elements.sectionOrderTeam.value = content.sectionOrderTeam || "2";
     contentForm.elements.showProjectsSection.checked = content.showProjectsSection !== false;
     contentForm.elements.projectsSectionLabel.value = content.projectsSectionLabel || "";
     contentForm.elements.projectsSectionTitle.value = content.projectsSectionTitle || "";
+    contentForm.elements.sectionOrderProjects.value = content.sectionOrderProjects || "3";
     contentForm.elements.projectsSectionText.value = content.projectsSectionText || "";
     contentForm.elements.showEventsSection.checked = content.showEventsSection !== false;
     contentForm.elements.eventsSectionLabel.value = content.eventsSectionLabel || "";
     contentForm.elements.eventsSectionTitle.value = content.eventsSectionTitle || "";
+    contentForm.elements.sectionOrderEvents.value = content.sectionOrderEvents || "4";
     contentForm.elements.eventsSectionText.value = content.eventsSectionText || "";
     contentForm.elements.showContactSection.checked = content.showContactSection !== false;
     contentForm.elements.contactLabel.value = content.contactLabel || "";
     contentForm.elements.contactTitle.value = content.contactTitle || "";
+    contentForm.elements.sectionOrderContact.value = content.sectionOrderContact || "99";
     contentForm.elements.contactText.value = content.contactText || "";
     contentForm.elements.contactNamePlaceholder.value = content.contactNamePlaceholder || "";
     contentForm.elements.contactEmailPlaceholder.value = content.contactEmailPlaceholder || "";
@@ -948,10 +979,6 @@ function setupAppForms() {
     contentForm.elements.footerContactAction.value = content.footerContactAction || "";
     contentForm.elements.footerStatus.value = content.footerStatus || "";
     contentForm.elements.footerCopyrightText.value = content.footerCopyrightText || "";
-    contentForm.elements.showCustomSection.checked = content.showCustomSection !== false;
-    contentForm.elements.customSectionLabel.value = content.customSectionLabel || "";
-    contentForm.elements.customSectionTitle.value = content.customSectionTitle || "";
-    contentForm.elements.customSectionText.value = content.customSectionText || "";
     renderBlockEditors(content);
     applySiteTabLabels(content);
     ["siteLogo", "heroImage", "footerLogo", "footerAffiliationIcon"].forEach(updateMediaPreview);
@@ -994,17 +1021,24 @@ function setupAppForms() {
           areas: collectBlockRows("areas"),
           projects: collectBlockRows("projects"),
           events: collectBlockRows("events"),
-          customBlocks: collectBlockRows("customBlocks"),
+          customSections: collectBlockRows("customSections"),
           headerLinks: collectBlockRows("headerLinks"),
           footerNavLinks: collectBlockRows("footerNavLinks"),
           footerCentralLinks: collectBlockRows("footerCentralLinks"),
           footerSocials: collectBlockRows("footerSocials"),
         };
-        nextContent.headerLinks = [...(nextContent.headerLinks || []), createBlockRow("headerLinks", ["Nova pagina", "#personalizado"])];
+        const nextIndex = (nextContent.customSections || []).length + 1;
+        const pageName = `Nova pagina ${nextIndex}`;
+        const pageSlug = `#pagina-${nextIndex}-${slugify(pageName)}`;
+        nextContent.customSections = [
+          ...(nextContent.customSections || []),
+          createBlockRow("customSections", [pageName, pageName, "Edite o conteudo desta pagina.", "", String(5 + nextIndex), "", "", "Ativo"]),
+        ];
+        nextContent.headerLinks = [...(nextContent.headerLinks || []), createBlockRow("headerLinks", [pageName, pageSlug])];
         renderBlockEditors(nextContent);
-        document.querySelector('[data-subtab-target="site-inicio"]')?.click();
-        document.querySelector('[data-block-editor="headerLinks"]')?.scrollIntoView({ behavior: "smooth", block: "center" });
-        showToast("Nova pagina criada no topo. Edite nome e link, depois salve.");
+        document.querySelector('[data-subtab-target="site-paginas"]')?.click();
+        document.querySelector('[data-block-editor="customSections"]')?.scrollIntoView({ behavior: "smooth", block: "center" });
+        showToast("Nova pagina criada. Edite conteudo, sequencia e salve.");
         return;
       }
 
@@ -1015,7 +1049,7 @@ function setupAppForms() {
           areas: collectBlockRows("areas"),
           projects: collectBlockRows("projects"),
           events: collectBlockRows("events"),
-          customBlocks: collectBlockRows("customBlocks"),
+          customSections: collectBlockRows("customSections"),
           headerLinks: collectBlockRows("headerLinks"),
           footerNavLinks: collectBlockRows("footerNavLinks"),
           footerCentralLinks: collectBlockRows("footerCentralLinks"),
@@ -1067,9 +1101,13 @@ function setupAppForms() {
         siteTabEquipe: data.siteTabEquipe,
         siteTabProjetos: data.siteTabProjetos,
         siteTabEventos: data.siteTabEventos,
-        siteTabLivre: data.siteTabLivre,
         siteTabContato: data.siteTabContato,
         siteTabFooter: data.siteTabFooter,
+        sectionOrderHome: data.sectionOrderHome,
+        sectionOrderTeam: data.sectionOrderTeam,
+        sectionOrderProjects: data.sectionOrderProjects,
+        sectionOrderEvents: data.sectionOrderEvents,
+        sectionOrderContact: data.sectionOrderContact,
         heroLabel: data.heroLabel,
         heroTitle: data.heroTitle,
         weeklyHighlightLabel: data.weeklyHighlightLabel,
@@ -1120,14 +1158,10 @@ function setupAppForms() {
         footerContactAction: data.footerContactAction,
         footerStatus: data.footerStatus,
         footerCopyrightText: data.footerCopyrightText,
-        showCustomSection: data.showCustomSection === "on",
-        customSectionLabel: data.customSectionLabel,
-        customSectionTitle: data.customSectionTitle,
-        customSectionText: data.customSectionText,
         areas: collectBlockRows("areas"),
         projects: collectBlockRows("projects"),
         events: collectBlockRows("events"),
-        customBlocks: collectBlockRows("customBlocks"),
+        customSections: collectBlockRows("customSections"),
         headerLinks: collectBlockRows("headerLinks"),
         footerNavLinks: collectBlockRows("footerNavLinks"),
         footerCentralLinks: collectBlockRows("footerCentralLinks"),

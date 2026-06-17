@@ -31,6 +31,13 @@ body {
 }
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; }
+main {
+  display: flex;
+  flex-direction: column;
+}
+#dynamicSections {
+  display: contents;
+}
 
 .public-header {
   position: sticky;
@@ -918,18 +925,8 @@ h2 { font-size: clamp(1.9rem, 4vw, 3.1rem); line-height: 1.08; }
 .person-status b {
   color: var(--green);
 }
-.team-person-card.is-inactive {
-  border-color: rgba(255,48,69,.55);
-  background:
-    linear-gradient(180deg, rgba(255,48,69,.12), rgba(255,255,255,.025)),
-    rgba(8,10,15,.82);
-}
-.team-person-card.is-inactive .person-status,
 .team-person-card.is-inactive .person-status b {
   color: #ff5b6d;
-}
-.team-person-card.is-inactive .team-person-photo img {
-  filter: grayscale(.55) brightness(.72);
 }
 .person-actions {
   display: grid;
