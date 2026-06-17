@@ -125,10 +125,6 @@ const publicTeam = [
   ["Marcelo Brandao", "Membro", "N1", "imgs/fotos/ft-marcelo.png", "Participa das tarefas e apoio aos projetos.", "membro@cybercapivaras.com", "1a Geracao Fabrica", "Ativo"],
 ];
 
-function getPublicContent() {
-  return { ...publicContent, members: publicTeam, ...JSON.parse(localStorage.getItem("cyber_site_content") || "{}") };
-}
-
 function splitMediaList(value = "") {
   const text = String(value);
   const separator = text.includes("data:image") ? /[\n|]+/ : /[\n,|]+/;
@@ -136,6 +132,30 @@ function splitMediaList(value = "") {
     .split(separator)
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function readStoredPublicContent() {
+  try {
+    return JSON.parse(localStorage.getItem("cyber_site_content") || "{}") || {};
+  } catch {
+    return {};
+  }
+}
+
+function withDefault(value, fallback) {
+  if (Array.isArray(fallback)) return Array.isArray(value) && value.length ? value : fallback;
+  if (typeof fallback === "string") return typeof value === "string" && value.trim() ? value : fallback;
+  return value ?? fallback;
+}
+
+function getPublicContent() {
+  const stored = readStoredPublicContent();
+  const content = { ...publicContent, ...stored };
+  Object.entries(publicContent).forEach(([key, fallback]) => {
+    content[key] = withDefault(content[key], fallback);
+  });
+  content.members = Array.isArray(stored.members) && stored.members.length ? stored.members : publicTeam;
+  return content;
 }
 
 function renderMiniGallery(images, title) {
@@ -168,21 +188,25 @@ function renderPublicContent() {
   const content = getPublicContent();
 
   document.querySelectorAll("[data-content]").forEach((node) => {
-    node.textContent = content[node.dataset.content] || "";
+    const key = node.dataset.content;
+    node.textContent = content[key] || publicContent[key] || "";
   });
 
   document.querySelectorAll("[data-image-content]").forEach((node) => {
-    const value = content[node.dataset.imageContent];
+    const key = node.dataset.imageContent;
+    const value = content[key] || publicContent[key];
     if (value) node.src = value;
   });
 
   document.querySelectorAll("[data-placeholder-content]").forEach((node) => {
-    const value = content[node.dataset.placeholderContent];
+    const key = node.dataset.placeholderContent;
+    const value = content[key] || publicContent[key];
     if (value) node.placeholder = value;
   });
 
   document.querySelectorAll("[data-link-content]").forEach((node) => {
-    const value = content[node.dataset.linkContent];
+    const key = node.dataset.linkContent;
+    const value = content[key] || publicContent[key];
     if (value) node.href = value;
   });
 
@@ -192,12 +216,14 @@ function renderPublicContent() {
   });
 
   document.querySelectorAll("[data-link-list]").forEach((node) => {
-    const links = content[node.dataset.linkList] || [];
+    const key = node.dataset.linkList;
+    const links = Array.isArray(content[key]) && content[key].length ? content[key] : publicContent[key] || [];
     node.innerHTML = links.map(([label, url]) => `<a href="${url || "#"}">${label}</a>`).join("");
   });
 
   document.querySelectorAll("[data-social-list]").forEach((node) => {
-    const links = content[node.dataset.socialList] || [];
+    const key = node.dataset.socialList;
+    const links = Array.isArray(content[key]) && content[key].length ? content[key] : publicContent[key] || [];
     node.innerHTML = links
       .map(([label, url, icon]) => `
         <a href="${url || "#"}" aria-label="${label}">
@@ -209,7 +235,8 @@ function renderPublicContent() {
 
   const areas = document.querySelector("#publicAreas");
   if (areas) {
-    areas.innerHTML = content.areas
+    const rows = Array.isArray(content.areas) && content.areas.length ? content.areas : publicContent.areas;
+    areas.innerHTML = rows
       .map(
         ([title, text], index) => `
           <article>
@@ -224,7 +251,8 @@ function renderPublicContent() {
 
   const projects = document.querySelector("#publicProjects");
   if (projects) {
-    projects.innerHTML = content.projects
+    const rows = Array.isArray(content.projects) && content.projects.length ? content.projects : publicContent.projects;
+    projects.innerHTML = rows
       .map(
         (row) => {
           const [title, text, image, tech = "Robotica educacional"] = row;
@@ -252,7 +280,8 @@ function renderPublicContent() {
 
   const events = document.querySelector("#publicEvents");
   if (events) {
-    events.innerHTML = (content.events || [])
+    const rows = Array.isArray(content.events) && content.events.length ? content.events : publicContent.events;
+    events.innerHTML = rows
       .map(
         (row) => {
           const [name, date, place, result] = row;
@@ -281,7 +310,8 @@ function renderPublicContent() {
 
   const customBlocks = document.querySelector("#publicCustomBlocks");
   if (customBlocks) {
-    customBlocks.innerHTML = (content.customBlocks || [])
+    const rows = Array.isArray(content.customBlocks) && content.customBlocks.length ? content.customBlocks : publicContent.customBlocks;
+    customBlocks.innerHTML = rows
       .map(
         ([title, text, image, label, link, linkText, status]) => `
           <article class="custom-block-card">

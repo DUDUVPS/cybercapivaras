@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v35-gallery-menu-arrows";
+const CACHE_NAME = "cyber-capivaras-v36-public-content-fallback";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260617-gallery-menu-arrows",
-  "/site.js?v=20260617-gallery-menu-arrows",
-  "/app.js?v=20260617-gallery-menu-arrows",
+  "/style.css?v=20260617-public-content-fallback",
+  "/site.js?v=20260617-public-content-fallback",
+  "/app.js?v=20260617-public-content-fallback",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"
