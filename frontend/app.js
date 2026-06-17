@@ -430,6 +430,41 @@ function collectBlockRows(type) {
     .filter((row) => row[0]);
 }
 
+function collectEditorBlocks() {
+  return {
+    areas: collectBlockRows("areas"),
+    projects: collectBlockRows("projects"),
+    events: collectBlockRows("events"),
+    customSections: collectBlockRows("customSections"),
+    headerLinks: collectBlockRows("headerLinks"),
+    footerNavLinks: collectBlockRows("footerNavLinks"),
+    footerCentralLinks: collectBlockRows("footerCentralLinks"),
+    footerSocials: collectBlockRows("footerSocials"),
+  };
+}
+
+function createAndSaveCustomPage() {
+  const nextContent = {
+    ...getContent(),
+    ...collectEditorBlocks(),
+  };
+  const nextIndex = (nextContent.customSections || []).length + 1;
+  const pageName = `Nova pagina ${nextIndex}`;
+  const pageSlug = `#pagina-${nextIndex}-${slugify(pageName)}`;
+  nextContent.customSections = [
+    ...(nextContent.customSections || []),
+    createBlockRow("customSections", [pageName, pageName, "Edite o conteudo desta pagina.", "", String(5 + nextIndex), "", "", "Ativo"]),
+  ];
+  nextContent.headerLinks = [...(nextContent.headerLinks || []), createBlockRow("headerLinks", [pageName, pageSlug])];
+  saveContent(nextContent);
+  renderBlockEditors(nextContent);
+  applySiteTabLabels(nextContent);
+  renderSitePreview();
+  document.querySelector('[data-subtab-target="site-paginas"]')?.click();
+  document.querySelector('[data-block-editor="customSections"]')?.scrollIntoView({ behavior: "smooth", block: "center" });
+  showToast("Nova pagina criada e salva. Edite conteudo, sequencia e salve novamente.");
+}
+
 function normalizeMember(member) {
   return {
     name: member[0] || "",
@@ -912,6 +947,10 @@ function setupAppForms() {
   const roleForm = document.querySelector("#roleForm");
   const memberForm = document.querySelector("#memberForm");
 
+  document.querySelectorAll("[data-add-page]").forEach((button) => {
+    button.addEventListener("click", createAndSaveCustomPage);
+  });
+
   if (contentForm) {
     const content = getContent();
     contentForm.elements.siteName.value = content.siteName || "";
@@ -1012,48 +1051,17 @@ function setupAppForms() {
 
     contentForm.addEventListener("click", (event) => {
       const addButton = event.target.closest("[data-add-block]");
-      const addPageButton = event.target.closest("[data-add-page]");
       const removeButton = event.target.closest("[data-remove-block]");
-
-      if (addPageButton) {
-        const nextContent = {
-          ...getContent(),
-          areas: collectBlockRows("areas"),
-          projects: collectBlockRows("projects"),
-          events: collectBlockRows("events"),
-          customSections: collectBlockRows("customSections"),
-          headerLinks: collectBlockRows("headerLinks"),
-          footerNavLinks: collectBlockRows("footerNavLinks"),
-          footerCentralLinks: collectBlockRows("footerCentralLinks"),
-          footerSocials: collectBlockRows("footerSocials"),
-        };
-        const nextIndex = (nextContent.customSections || []).length + 1;
-        const pageName = `Nova pagina ${nextIndex}`;
-        const pageSlug = `#pagina-${nextIndex}-${slugify(pageName)}`;
-        nextContent.customSections = [
-          ...(nextContent.customSections || []),
-          createBlockRow("customSections", [pageName, pageName, "Edite o conteudo desta pagina.", "", String(5 + nextIndex), "", "", "Ativo"]),
-        ];
-        nextContent.headerLinks = [...(nextContent.headerLinks || []), createBlockRow("headerLinks", [pageName, pageSlug])];
-        renderBlockEditors(nextContent);
-        document.querySelector('[data-subtab-target="site-paginas"]')?.click();
-        document.querySelector('[data-block-editor="customSections"]')?.scrollIntoView({ behavior: "smooth", block: "center" });
-        showToast("Nova pagina criada. Edite conteudo, sequencia e salve.");
-        return;
-      }
 
       if (addButton) {
         const type = addButton.dataset.addBlock;
+        if (type === "customSections") {
+          createAndSaveCustomPage();
+          return;
+        }
         const nextContent = {
           ...getContent(),
-          areas: collectBlockRows("areas"),
-          projects: collectBlockRows("projects"),
-          events: collectBlockRows("events"),
-          customSections: collectBlockRows("customSections"),
-          headerLinks: collectBlockRows("headerLinks"),
-          footerNavLinks: collectBlockRows("footerNavLinks"),
-          footerCentralLinks: collectBlockRows("footerCentralLinks"),
-          footerSocials: collectBlockRows("footerSocials"),
+          ...collectEditorBlocks(),
         };
         nextContent[type] = [...(nextContent[type] || []), createBlockRow(type)];
         renderBlockEditors(nextContent);
@@ -1158,14 +1166,7 @@ function setupAppForms() {
         footerContactAction: data.footerContactAction,
         footerStatus: data.footerStatus,
         footerCopyrightText: data.footerCopyrightText,
-        areas: collectBlockRows("areas"),
-        projects: collectBlockRows("projects"),
-        events: collectBlockRows("events"),
-        customSections: collectBlockRows("customSections"),
-        headerLinks: collectBlockRows("headerLinks"),
-        footerNavLinks: collectBlockRows("footerNavLinks"),
-        footerCentralLinks: collectBlockRows("footerCentralLinks"),
-        footerSocials: collectBlockRows("footerSocials"),
+        ...collectEditorBlocks(),
       };
       saveContent(nextContent);
       document.querySelector("#siteEditorStatus").textContent = "Pagina principal atualizada.";
