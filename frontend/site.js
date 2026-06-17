@@ -162,11 +162,22 @@ function getPublicContent() {
   return content;
 }
 
-function renderMiniGallery(images, title) {
-  if (!images.length) return "";
+function renderMediaCarousel(images, title) {
+  const safeImages = images.filter(Boolean);
+  if (!safeImages.length) return "";
   return `
-    <div class="card-gallery" aria-label="Mais fotos de ${title}">
-      ${images.slice(0, 5).map((image) => `<img src="${image}" alt="${title}" />`).join("")}
+    <div class="card-media-carousel" data-media-carousel aria-label="Fotos de ${title}">
+      <div class="card-media-track">
+        ${safeImages.map((image, index) => `<img class="${index === 0 ? "is-active" : ""}" src="${image}" alt="${title}" data-media-slide="${index}" />`).join("")}
+      </div>
+      ${safeImages.length > 1 ? `
+        <button class="media-arrow media-prev" type="button" data-media-direction="-1" aria-label="Foto anterior">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6" /></svg>
+        </button>
+        <button class="media-arrow media-next" type="button" data-media-direction="1" aria-label="Proxima foto">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" /></svg>
+        </button>
+      ` : ""}
     </div>
   `;
 }
@@ -186,6 +197,10 @@ function normalizePublicMember(member) {
     github: member[9] || "",
     mainArea: member[10] || "",
   };
+}
+
+function isInactiveStatus(status = "") {
+  return !/^ativo$/i.test(String(status).trim());
 }
 
 function renderPublicContent() {
@@ -262,15 +277,14 @@ function renderPublicContent() {
           const [title, text, image, tech = "Robotica educacional"] = row;
           const gallery = row.length >= 6 ? row[4] : "";
           const status = row.length >= 6 ? row[5] : row[4] || "Ativo";
-          const extraImages = splitMediaList(gallery);
+          const images = [image, ...splitMediaList(gallery)];
           return `
           <article>
-            <img src="${image}" alt="${title}" />
+            ${renderMediaCarousel(images, title)}
             <div class="project-body">
               <span class="project-status">${status}</span>
               <h3>${title}</h3>
               <p>${text}</p>
-              ${renderMiniGallery(extraImages, title)}
               <dl>
                 <div><dt>Tecnologias</dt><dd>${tech}</dd></div>
               </dl>
@@ -293,17 +307,16 @@ function renderPublicContent() {
           const image = hasImage ? row[4] : "";
           const gallery = row.length >= 7 ? row[5] : "";
           const text = row.length >= 7 ? row[6] : (hasImage ? row[5] : row[4]);
-          const extraImages = splitMediaList(gallery);
+          const images = [image, ...splitMediaList(gallery)].filter(Boolean);
           return `
           <article class="event-card">
-            ${image ? `<img src="${image}" alt="${name}" />` : ""}
-            <div>
+            ${renderMediaCarousel(images, name)}
+            <div class="event-meta">
               <span>${date}</span>
               <strong>${result}</strong>
             </div>
             <h3>${name}</h3>
             <small>${place}</small>
-            ${renderMiniGallery(extraImages, name)}
             <p>${text}</p>
           </article>
         `;
@@ -344,7 +357,7 @@ function renderPublicTeam() {
     .map((row) => {
       const member = normalizePublicMember(row);
       return `
-        <article class="member-card team-person-card">
+        <article class="member-card team-person-card ${isInactiveStatus(member.status) ? "is-inactive" : ""}">
           <div class="member-photo team-person-photo">
             <img src="${member.image}" alt="${member.name}" />
           </div>
@@ -445,6 +458,32 @@ function setupCarouselControls() {
         behavior: "smooth",
       });
     });
+  });
+}
+
+function setupMediaCarousels() {
+  document.querySelectorAll("[data-media-carousel]").forEach((carousel) => {
+    const slides = [...carousel.querySelectorAll("[data-media-slide]")];
+    if (slides.length <= 1) return;
+    let index = 0;
+
+    const showSlide = (nextIndex) => {
+      index = (nextIndex + slides.length) % slides.length;
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle("is-active", slideIndex === index);
+      });
+    };
+
+    carousel.querySelectorAll("[data-media-direction]").forEach((button) => {
+      button.addEventListener("click", () => {
+        showSlide(index + Number(button.dataset.mediaDirection || 1));
+      });
+    });
+
+    setInterval(() => {
+      if (document.hidden || carousel.matches(":hover")) return;
+      showSlide(index + 1);
+    }, 4200);
   });
 }
 
@@ -556,6 +595,7 @@ runSetup("menu mobile", setupMobileMenu);
 runSetup("foto da conta", setupAccountPhoto);
 runSetup("menu ativo", setupActiveNav);
 runSetup("carrosseis", setupCarouselControls);
+runSetup("galerias", setupMediaCarousels);
 runSetup("animacoes", setupRevealAnimations);
 runSetup("hero", setupHeroMotion);
 runSetup("contato", setupContactForm);

@@ -9,7 +9,6 @@ const defaultContent = {
   siteTabEquipe: "Equipe",
   siteTabProjetos: "Projetos",
   siteTabEventos: "Eventos",
-  siteTabMenu: "Menu",
   siteTabLivre: "Livre",
   siteTabContato: "Contato",
   siteTabFooter: "Footer",
@@ -440,10 +439,14 @@ function getRoleLevel(role) {
   return (roleProfiles[role] || roleProfiles.Membro)[0];
 }
 
+function isInactiveStatus(status = "") {
+  return !/^ativo$/i.test(String(status).trim());
+}
+
 function renderMemberCard(memberRow, index, editable = false) {
   const member = normalizeMember(memberRow);
   return `
-    <article class="member-card team-person-card">
+    <article class="member-card team-person-card ${isInactiveStatus(member.status) ? "is-inactive" : ""}">
       <div class="member-photo team-person-photo"><img src="${member.image}" alt="${member.name}" /></div>
       <div class="member-info team-person-info">
         <h3>${member.name}</h3>
@@ -892,7 +895,6 @@ function setupAppForms() {
     contentForm.elements.siteTabEquipe.value = content.siteTabEquipe || "";
     contentForm.elements.siteTabProjetos.value = content.siteTabProjetos || "";
     contentForm.elements.siteTabEventos.value = content.siteTabEventos || "";
-    contentForm.elements.siteTabMenu.value = content.siteTabMenu || "";
     contentForm.elements.siteTabLivre.value = content.siteTabLivre || "";
     contentForm.elements.siteTabContato.value = content.siteTabContato || "";
     contentForm.elements.siteTabFooter.value = content.siteTabFooter || "";
@@ -983,7 +985,28 @@ function setupAppForms() {
 
     contentForm.addEventListener("click", (event) => {
       const addButton = event.target.closest("[data-add-block]");
+      const addPageButton = event.target.closest("[data-add-page]");
       const removeButton = event.target.closest("[data-remove-block]");
+
+      if (addPageButton) {
+        const nextContent = {
+          ...getContent(),
+          areas: collectBlockRows("areas"),
+          projects: collectBlockRows("projects"),
+          events: collectBlockRows("events"),
+          customBlocks: collectBlockRows("customBlocks"),
+          headerLinks: collectBlockRows("headerLinks"),
+          footerNavLinks: collectBlockRows("footerNavLinks"),
+          footerCentralLinks: collectBlockRows("footerCentralLinks"),
+          footerSocials: collectBlockRows("footerSocials"),
+        };
+        nextContent.headerLinks = [...(nextContent.headerLinks || []), createBlockRow("headerLinks", ["Nova pagina", "#personalizado"])];
+        renderBlockEditors(nextContent);
+        document.querySelector('[data-subtab-target="site-inicio"]')?.click();
+        document.querySelector('[data-block-editor="headerLinks"]')?.scrollIntoView({ behavior: "smooth", block: "center" });
+        showToast("Nova pagina criada no topo. Edite nome e link, depois salve.");
+        return;
+      }
 
       if (addButton) {
         const type = addButton.dataset.addBlock;
@@ -1044,7 +1067,6 @@ function setupAppForms() {
         siteTabEquipe: data.siteTabEquipe,
         siteTabProjetos: data.siteTabProjetos,
         siteTabEventos: data.siteTabEventos,
-        siteTabMenu: data.siteTabMenu,
         siteTabLivre: data.siteTabLivre,
         siteTabContato: data.siteTabContato,
         siteTabFooter: data.siteTabFooter,

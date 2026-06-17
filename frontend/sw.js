@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v37-reveal-safe-content";
+const CACHE_NAME = "cyber-capivaras-v38-integrated-gallery-pages";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260617-reveal-safe-content",
-  "/site.js?v=20260617-reveal-safe-content",
-  "/app.js?v=20260617-reveal-safe-content",
+  "/style.css?v=20260617-integrated-gallery-pages",
+  "/site.js?v=20260617-integrated-gallery-pages",
+  "/app.js?v=20260617-integrated-gallery-pages",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"
