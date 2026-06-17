@@ -1030,6 +1030,10 @@ input, textarea, select {
   align-content: start;
   gap: 11px;
 }
+.footer-column > div {
+  display: grid;
+  gap: 11px;
+}
 .footer-column h3 {
   margin: 0 0 6px;
   color: var(--green);

@@ -1,16 +1,37 @@
 const API_URL = window.location.origin;
 
 const defaultContent = {
+  siteName: "Cyber Capivaras",
+  siteHomeLink: "index.html",
+  siteLogo: "imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png",
   heroLabel: "IF Goiano - Campus Campos Belos",
   heroTitle: "Cyber Capivaras",
   heroText: "Um time de robotica movido por tecnologia, competicao, pesquisa e trabalho em equipe.",
   heroImage: "assets/hero-robotica.png",
+  heroPrimaryText: "Ver projetos",
+  heroPrimaryLink: "#projetos",
+  heroSecondaryText: "Acessar app",
+  heroSecondaryLink: "login.html",
+  teamSectionLabel: "Equipe",
+  teamSectionTitle: "Integrantes Cyber Capivaras",
+  projectsSectionLabel: "Projetos",
+  projectsSectionTitle: "Robos e sistemas em desenvolvimento",
+  projectsSectionText: "Principais prototipos, sistemas e frentes tecnicas trabalhadas pelo time.",
+  eventsSectionLabel: "Eventos",
+  eventsSectionTitle: "Eventos e competicoes participados",
+  eventsSectionText: "Registro das apresentacoes, torneios, feiras e momentos de troca tecnica do time.",
+  contactLabel: "Contato",
   contactTitle: "Envie uma mensagem pro time",
   contactText: "Fale com a equipe sobre projetos, parcerias, competicoes ou apresentacoes.",
+  footerLogo: "imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png",
+  footerLogoSubtitle: "Fabrica da Ciencia",
+  footerAffiliationIcon: "imgs/logo-fabrica-da-ciencia.ico",
   footerText: "O Cyber Capivaras faz parte da Fabrica da Ciencia, unindo robotica, competicoes, tecnologia educacional e prototipos criativos.",
   footerAffiliation: "Projeto integrante da Fabrica da Ciencia",
   footerCredit: "LASTTRO.IO",
   footerCreditUrl: "https://lasttro.app.br",
+  footerNavTitle: "Navegacao",
+  footerCentralTitle: "Central",
   footerContactTitle: "Contato",
   footerContactLine1: "Fabrica da Ciencia",
   footerContactLine2: "Cyber Capivaras",
@@ -38,6 +59,31 @@ const defaultContent = {
   ],
   customBlocks: [
     ["Destaque do mes", "Use esta caixa para divulgar uma novidade, chamada ou aviso importante.", "", "Novo", "#contato", "Falar com o time", "Destaque"],
+  ],
+  headerLinks: [
+    ["Equipe", "equipe.html"],
+    ["Projetos", "#projetos"],
+    ["Eventos", "#eventos"],
+    ["Contato", "#contato"],
+    ["Entrar no app", "login.html"],
+  ],
+  footerNavLinks: [
+    ["Inicio", "index.html"],
+    ["Equipe", "equipe.html"],
+    ["Projetos", "#projetos"],
+    ["Eventos", "#eventos"],
+    ["Contato", "#contato"],
+  ],
+  footerCentralLinks: [
+    ["Entrar no app", "login.html"],
+    ["Conquistas", "conquistas.html"],
+    ["Robos", "robos.html"],
+    ["Mais", "mais.html"],
+  ],
+  footerSocials: [
+    ["GitHub", "https://github.com/DUDUVPS/cybercapivaras", "imgs/github.png"],
+    ["Instagram", "#", "imgs/instagram.png"],
+    ["App", "login.html", ""],
   ],
 };
 
@@ -133,6 +179,10 @@ function rowsToLines(rows) {
 }
 
 const blockSchemas = {
+  headerLinks: [
+    ["Texto", "Equipe"],
+    ["Link", "equipe.html"],
+  ],
   areas: [
     ["Titulo", "Ex.: Software"],
     ["Descricao", "O que aparece nessa caixa"],
@@ -160,6 +210,19 @@ const blockSchemas = {
     ["Link", "#contato"],
     ["Texto do botao", "Saiba mais"],
     ["Status", "Destaque"],
+  ],
+  footerNavLinks: [
+    ["Texto", "Inicio"],
+    ["Link", "index.html"],
+  ],
+  footerCentralLinks: [
+    ["Texto", "Entrar no app"],
+    ["Link", "login.html"],
+  ],
+  footerSocials: [
+    ["Nome", "GitHub"],
+    ["Link", "https://github.com/..."],
+    ["Icone", "imgs/github.png"],
   ],
 };
 
@@ -716,16 +779,37 @@ function setupAppForms() {
 
   if (contentForm) {
     const content = getContent();
+    contentForm.elements.siteName.value = content.siteName || "";
+    contentForm.elements.siteHomeLink.value = content.siteHomeLink || "";
+    contentForm.elements.siteLogo.value = content.siteLogo || "";
     contentForm.elements.heroLabel.value = content.heroLabel;
     contentForm.elements.heroTitle.value = content.heroTitle;
     contentForm.elements.heroText.value = content.heroText;
     contentForm.elements.heroImage.value = content.heroImage || "";
+    contentForm.elements.heroPrimaryText.value = content.heroPrimaryText || "";
+    contentForm.elements.heroPrimaryLink.value = content.heroPrimaryLink || "";
+    contentForm.elements.heroSecondaryText.value = content.heroSecondaryText || "";
+    contentForm.elements.heroSecondaryLink.value = content.heroSecondaryLink || "";
+    contentForm.elements.teamSectionLabel.value = content.teamSectionLabel || "";
+    contentForm.elements.teamSectionTitle.value = content.teamSectionTitle || "";
+    contentForm.elements.projectsSectionLabel.value = content.projectsSectionLabel || "";
+    contentForm.elements.projectsSectionTitle.value = content.projectsSectionTitle || "";
+    contentForm.elements.projectsSectionText.value = content.projectsSectionText || "";
+    contentForm.elements.eventsSectionLabel.value = content.eventsSectionLabel || "";
+    contentForm.elements.eventsSectionTitle.value = content.eventsSectionTitle || "";
+    contentForm.elements.eventsSectionText.value = content.eventsSectionText || "";
+    contentForm.elements.contactLabel.value = content.contactLabel || "";
     contentForm.elements.contactTitle.value = content.contactTitle || "";
     contentForm.elements.contactText.value = content.contactText || "";
+    contentForm.elements.footerLogo.value = content.footerLogo || "";
+    contentForm.elements.footerLogoSubtitle.value = content.footerLogoSubtitle || "";
+    contentForm.elements.footerAffiliationIcon.value = content.footerAffiliationIcon || "";
     contentForm.elements.footerText.value = content.footerText || "";
     contentForm.elements.footerAffiliation.value = content.footerAffiliation || "";
     contentForm.elements.footerCredit.value = content.footerCredit || "";
     contentForm.elements.footerCreditUrl.value = content.footerCreditUrl || "";
+    contentForm.elements.footerNavTitle.value = content.footerNavTitle || "";
+    contentForm.elements.footerCentralTitle.value = content.footerCentralTitle || "";
     contentForm.elements.footerContactTitle.value = content.footerContactTitle || "";
     contentForm.elements.footerContactLine1.value = content.footerContactLine1 || "";
     contentForm.elements.footerContactLine2.value = content.footerContactLine2 || "";
@@ -750,6 +834,10 @@ function setupAppForms() {
           projects: collectBlockRows("projects"),
           events: collectBlockRows("events"),
           customBlocks: collectBlockRows("customBlocks"),
+          headerLinks: collectBlockRows("headerLinks"),
+          footerNavLinks: collectBlockRows("footerNavLinks"),
+          footerCentralLinks: collectBlockRows("footerCentralLinks"),
+          footerSocials: collectBlockRows("footerSocials"),
         };
         nextContent[type] = [...(nextContent[type] || []), createBlockRow(type)];
         renderBlockEditors(nextContent);
@@ -768,16 +856,37 @@ function setupAppForms() {
       const data = Object.fromEntries(new FormData(contentForm).entries());
       saveContent({
         ...getContent(),
+        siteName: data.siteName,
+        siteHomeLink: data.siteHomeLink,
+        siteLogo: data.siteLogo,
         heroLabel: data.heroLabel,
         heroTitle: data.heroTitle,
         heroText: data.heroText,
         heroImage: data.heroImage,
+        heroPrimaryText: data.heroPrimaryText,
+        heroPrimaryLink: data.heroPrimaryLink,
+        heroSecondaryText: data.heroSecondaryText,
+        heroSecondaryLink: data.heroSecondaryLink,
+        teamSectionLabel: data.teamSectionLabel,
+        teamSectionTitle: data.teamSectionTitle,
+        projectsSectionLabel: data.projectsSectionLabel,
+        projectsSectionTitle: data.projectsSectionTitle,
+        projectsSectionText: data.projectsSectionText,
+        eventsSectionLabel: data.eventsSectionLabel,
+        eventsSectionTitle: data.eventsSectionTitle,
+        eventsSectionText: data.eventsSectionText,
+        contactLabel: data.contactLabel,
         contactTitle: data.contactTitle,
         contactText: data.contactText,
+        footerLogo: data.footerLogo,
+        footerLogoSubtitle: data.footerLogoSubtitle,
+        footerAffiliationIcon: data.footerAffiliationIcon,
         footerText: data.footerText,
         footerAffiliation: data.footerAffiliation,
         footerCredit: data.footerCredit,
         footerCreditUrl: data.footerCreditUrl,
+        footerNavTitle: data.footerNavTitle,
+        footerCentralTitle: data.footerCentralTitle,
         footerContactTitle: data.footerContactTitle,
         footerContactLine1: data.footerContactLine1,
         footerContactLine2: data.footerContactLine2,
@@ -790,6 +899,10 @@ function setupAppForms() {
         projects: collectBlockRows("projects"),
         events: collectBlockRows("events"),
         customBlocks: collectBlockRows("customBlocks"),
+        headerLinks: collectBlockRows("headerLinks"),
+        footerNavLinks: collectBlockRows("footerNavLinks"),
+        footerCentralLinks: collectBlockRows("footerCentralLinks"),
+        footerSocials: collectBlockRows("footerSocials"),
       });
       document.querySelector("#siteEditorStatus").textContent = "Pagina principal atualizada.";
       showToast("Pagina publica atualizada.");

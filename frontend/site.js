@@ -1,16 +1,37 @@
 const API_URL = window.location.origin;
 
 const publicContent = {
+  siteName: "Cyber Capivaras",
+  siteHomeLink: "index.html",
+  siteLogo: "imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png",
   heroLabel: "IF Goiano - Campus Campos Belos",
   heroTitle: "Cyber Capivaras",
   heroText: "Um time de robotica movido por tecnologia, competicao, pesquisa e trabalho em equipe.",
   heroImage: "assets/hero-robotica.png",
+  heroPrimaryText: "Ver projetos",
+  heroPrimaryLink: "#projetos",
+  heroSecondaryText: "Acessar app",
+  heroSecondaryLink: "login.html",
+  teamSectionLabel: "Equipe",
+  teamSectionTitle: "Integrantes Cyber Capivaras",
+  projectsSectionLabel: "Projetos",
+  projectsSectionTitle: "Robos e sistemas em desenvolvimento",
+  projectsSectionText: "Principais prototipos, sistemas e frentes tecnicas trabalhadas pelo time.",
+  eventsSectionLabel: "Eventos",
+  eventsSectionTitle: "Eventos e competicoes participados",
+  eventsSectionText: "Registro das apresentacoes, torneios, feiras e momentos de troca tecnica do time.",
+  contactLabel: "Contato",
   contactTitle: "Envie uma mensagem pro time",
   contactText: "Fale com a equipe sobre projetos, parcerias, competicoes ou apresentacoes.",
+  footerLogo: "imgs/ChatGPT Image 2 de jul. de 2025, 18_59_21-Photoroom.png",
+  footerLogoSubtitle: "Fabrica da Ciencia",
+  footerAffiliationIcon: "imgs/logo-fabrica-da-ciencia.ico",
   footerText: "O Cyber Capivaras faz parte da Fabrica da Ciencia, unindo robotica, competicoes, tecnologia educacional e prototipos criativos.",
   footerAffiliation: "Projeto integrante da Fabrica da Ciencia",
   footerCredit: "LASTTRO.IO",
   footerCreditUrl: "https://lasttro.app.br",
+  footerNavTitle: "Navegacao",
+  footerCentralTitle: "Central",
   footerContactTitle: "Contato",
   footerContactLine1: "Fabrica da Ciencia",
   footerContactLine2: "Cyber Capivaras",
@@ -38,6 +59,31 @@ const publicContent = {
   ],
   customBlocks: [
     ["Destaque do mes", "Use esta caixa para divulgar uma novidade, chamada ou aviso importante.", "", "Novo", "#contato", "Falar com o time", "Destaque"],
+  ],
+  headerLinks: [
+    ["Equipe", "equipe.html"],
+    ["Projetos", "#projetos"],
+    ["Eventos", "#eventos"],
+    ["Contato", "#contato"],
+    ["Entrar no app", "login.html"],
+  ],
+  footerNavLinks: [
+    ["Inicio", "index.html"],
+    ["Equipe", "equipe.html"],
+    ["Projetos", "#projetos"],
+    ["Eventos", "#eventos"],
+    ["Contato", "#contato"],
+  ],
+  footerCentralLinks: [
+    ["Entrar no app", "login.html"],
+    ["Conquistas", "conquistas.html"],
+    ["Robos", "robos.html"],
+    ["Mais", "mais.html"],
+  ],
+  footerSocials: [
+    ["GitHub", "https://github.com/DUDUVPS/cybercapivaras", "imgs/github.png"],
+    ["Instagram", "#", "imgs/instagram.png"],
+    ["App", "login.html", ""],
   ],
 };
 
@@ -101,6 +147,22 @@ function renderPublicContent() {
   document.querySelectorAll("[data-link-content]").forEach((node) => {
     const value = content[node.dataset.linkContent];
     if (value) node.href = value;
+  });
+
+  document.querySelectorAll("[data-link-list]").forEach((node) => {
+    const links = content[node.dataset.linkList] || [];
+    node.innerHTML = links.map(([label, url]) => `<a href="${url || "#"}">${label}</a>`).join("");
+  });
+
+  document.querySelectorAll("[data-social-list]").forEach((node) => {
+    const links = content[node.dataset.socialList] || [];
+    node.innerHTML = links
+      .map(([label, url, icon]) => `
+        <a href="${url || "#"}" aria-label="${label}">
+          ${icon ? `<img src="${icon}" alt="" />` : `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 10-13h-7l0-7Z" /></svg>`}
+        </a>
+      `)
+      .join("");
   });
 
   const areas = document.querySelector("#publicAreas");

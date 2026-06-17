@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v29-free-section-editor";
+const CACHE_NAME = "cyber-capivaras-v30-central-control";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260614-free-section-editor",
-  "/site.js?v=20260614-free-section-editor",
-  "/app.js?v=20260614-free-section-editor",
+  "/style.css?v=20260617-central-control",
+  "/site.js?v=20260617-central-control",
+  "/app.js?v=20260617-central-control",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"

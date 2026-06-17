@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260614-free-section-editor" />
+    <link rel="stylesheet" href="style.css?v=20260617-central-control" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
@@ -122,10 +122,24 @@
               </div>
               <span class="module-chip">Hero</span>
             </div>
+              <label>Nome do site <input type="text" name="siteName" /></label>
+              <label>Link da logo/topo <input type="text" name="siteHomeLink" /></label>
+              <label class="wide-field">Logo do topo <input type="text" name="siteLogo" placeholder="imgs/logo.png" /></label>
               <label>Chamada <input type="text" name="heroLabel" /></label>
               <label>Titulo <input type="text" name="heroTitle" /></label>
               <label>Imagem principal <input type="text" name="heroImage" placeholder="assets/hero-robotica.png" /></label>
               <label class="wide-field">Texto principal <textarea rows="4" name="heroText"></textarea></label>
+              <label>Texto botao 1 <input type="text" name="heroPrimaryText" /></label>
+              <label>Link botao 1 <input type="text" name="heroPrimaryLink" /></label>
+              <label>Texto botao 2 <input type="text" name="heroSecondaryText" /></label>
+              <label>Link botao 2 <input type="text" name="heroSecondaryLink" /></label>
+              <div class="block-editor wide-field" data-block-editor="headerLinks">
+                <div class="block-editor-head">
+                  <span>Links do menu superior</span>
+                  <button class="ghost-button" type="button" data-add-block="headerLinks">Novo link</button>
+                </div>
+                <div class="block-list" data-block-list="headerLinks"></div>
+              </div>
           </article>
 
           <article class="app-section site-editor-panel" data-subtab-panel="site-equipe" data-subtab-group="site-publico">
@@ -136,6 +150,8 @@
               </div>
               <span class="module-chip">Areas</span>
             </div>
+              <label>Etiqueta da equipe <input type="text" name="teamSectionLabel" /></label>
+              <label>Titulo da equipe <input type="text" name="teamSectionTitle" /></label>
               <div class="block-editor wide-field" data-block-editor="areas">
                 <div class="block-editor-head">
                   <span>Caixas da equipe</span>
@@ -153,6 +169,9 @@
               </div>
               <span class="module-chip">Vitrine</span>
             </div>
+              <label>Etiqueta projetos <input type="text" name="projectsSectionLabel" /></label>
+              <label>Titulo projetos <input type="text" name="projectsSectionTitle" /></label>
+              <label class="wide-field">Texto projetos <textarea rows="3" name="projectsSectionText"></textarea></label>
               <div class="block-editor wide-field" data-block-editor="projects">
                 <div class="block-editor-head">
                   <span>Caixas de projetos</span>
@@ -170,6 +189,9 @@
               </div>
               <span class="module-chip">Historico</span>
             </div>
+              <label>Etiqueta eventos <input type="text" name="eventsSectionLabel" /></label>
+              <label>Titulo eventos <input type="text" name="eventsSectionTitle" /></label>
+              <label class="wide-field">Texto eventos <textarea rows="3" name="eventsSectionText"></textarea></label>
               <div class="block-editor wide-field" data-block-editor="events">
                 <div class="block-editor-head">
                   <span>Caixas de eventos</span>
@@ -207,6 +229,7 @@
               </div>
               <span class="module-chip">Formulario</span>
             </div>
+              <label>Etiqueta contato <input type="text" name="contactLabel" /></label>
               <label>Contato titulo <input type="text" name="contactTitle" /></label>
               <label>Contato texto <input type="text" name="contactText" /></label>
           </article>
@@ -219,8 +242,13 @@
               </div>
               <span class="module-chip">Identidade</span>
             </div>
+              <label>Logo footer <input type="text" name="footerLogo" /></label>
+              <label>Subtitulo logo footer <input type="text" name="footerLogoSubtitle" /></label>
+              <label>Icone parceria <input type="text" name="footerAffiliationIcon" /></label>
               <label class="wide-field">Texto do footer <textarea rows="3" name="footerText"></textarea></label>
               <label>Texto da parceria <input type="text" name="footerAffiliation" /></label>
+              <label>Titulo navegacao <input type="text" name="footerNavTitle" /></label>
+              <label>Titulo central <input type="text" name="footerCentralTitle" /></label>
               <label>Titulo contato <input type="text" name="footerContactTitle" /></label>
               <label>Linha contato 1 <input type="text" name="footerContactLine1" /></label>
               <label>Linha contato 2 <input type="text" name="footerContactLine2" /></label>
@@ -228,6 +256,27 @@
               <label>Status do sistema <input type="text" name="footerStatus" /></label>
               <label>Texto do credito <input type="text" name="footerCredit" /></label>
               <label>Link da LASTTRO <input type="url" name="footerCreditUrl" /></label>
+              <div class="block-editor wide-field" data-block-editor="footerNavLinks">
+                <div class="block-editor-head">
+                  <span>Links do footer - navegacao</span>
+                  <button class="ghost-button" type="button" data-add-block="footerNavLinks">Novo link</button>
+                </div>
+                <div class="block-list" data-block-list="footerNavLinks"></div>
+              </div>
+              <div class="block-editor wide-field" data-block-editor="footerCentralLinks">
+                <div class="block-editor-head">
+                  <span>Links do footer - central</span>
+                  <button class="ghost-button" type="button" data-add-block="footerCentralLinks">Novo link</button>
+                </div>
+                <div class="block-list" data-block-list="footerCentralLinks"></div>
+              </div>
+              <div class="block-editor wide-field" data-block-editor="footerSocials">
+                <div class="block-editor-head">
+                  <span>Redes sociais</span>
+                  <button class="ghost-button" type="button" data-add-block="footerSocials">Nova rede</button>
+                </div>
+                <div class="block-list" data-block-list="footerSocials"></div>
+              </div>
           </article>
             <div class="site-editor-actions">
               <button class="button primary" type="submit">Salvar pagina publica</button>
@@ -537,6 +586,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260614-free-section-editor"></script>
+    <script src="app.js?v=20260617-central-control"></script>
   </body>
 </html>
