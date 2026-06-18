@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v45-mobile-single-card-carousel";
+const CACHE_NAME = "cyber-capivaras-v46-refined-carousel-arrows";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260618-mobile-single-card-carousel",
-  "/site.js?v=20260618-mobile-single-card-carousel",
-  "/app.js?v=20260618-mobile-single-card-carousel",
+  "/style.css?v=20260618-refined-carousel-arrows",
+  "/site.js?v=20260618-refined-carousel-arrows",
+  "/app.js?v=20260618-refined-carousel-arrows",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"
