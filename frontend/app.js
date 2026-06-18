@@ -257,6 +257,7 @@ async function loadContentFromApi() {
 }
 
 async function saveContentToApi(content) {
+  requireAdminBackendSession();
   const response = await fetch(`${API_URL}/api/site-content`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...getAuthHeaders() },
@@ -264,7 +265,10 @@ async function saveContentToApi(content) {
   });
   const data = await response.json().catch(() => ({}));
   if (response.status === 413) throw new Error("Conteudo muito grande para enviar. Reduza algumas imagens ou use imagens menores.");
-  if (response.status === 401) throw new Error("Sessao de administrador expirada. Entre novamente no app.");
+  if (response.status === 401) {
+    localStorage.removeItem("cyber_session");
+    throw new Error("Sessao de administrador expirada. Entre novamente pelo acesso do administrador.");
+  }
   if (!response.ok) throw new Error(data.error || "Nao foi possivel salvar no backend.");
   return data;
 }
@@ -729,6 +733,16 @@ function getSession() {
   return JSON.parse(localStorage.getItem("cyber_session") || "null");
 }
 
+function hasAdminBackendSession(session = getSession()) {
+  return Boolean(session?.role === "Administrador" && session?.token);
+}
+
+function requireAdminBackendSession() {
+  if (!hasAdminBackendSession()) {
+    throw new Error("Entre pelo acesso do administrador com e-mail e senha para publicar no site.");
+  }
+}
+
 function getAuthHeaders() {
   const session = getSession();
   return session?.token ? { Authorization: `Bearer ${session.token}` } : {};
@@ -736,14 +750,14 @@ function getAuthHeaders() {
 
 function getAccessGroup(session = getSession()) {
   if (!session) return "Aluno";
-  if (session.role === "Administrador") return "Administrador";
+  if (session.role === "Administrador") return hasAdminBackendSession(session) ? "Administrador" : "Admin sem sessao";
   if (["Professor", "Orientador", "Capitao", "Lider tecnico"].includes(session.role)) return "Professor";
   return "Aluno";
 }
 
 function getAllowedTabs(session = getSession()) {
   if (!session) return ["painel"];
-  if (session.role === "Administrador") return Object.keys(appModules);
+  if (session.role === "Administrador") return hasAdminBackendSession(session) ? Object.keys(appModules) : ["painel"];
   const person = getUserPermissions()[session.email];
   return person?.tabs?.length ? person.tabs : ["painel", "equipe", "tarefas", "chamados"];
 }
@@ -951,7 +965,9 @@ function applyAccessRules() {
   if (chip) chip.textContent = group;
   if (summary) summary.textContent = group === "Administrador"
     ? "Voce controla todos os modulos, permissoes, conteudo publico e funcoes da equipe."
-    : `Seu perfil pode acessar: ${allowed.map((id) => appModules[id]).filter(Boolean).join(", ")}.`;
+    : group === "Admin sem sessao"
+      ? "Para editar e publicar o site, saia e entre pelo acesso do administrador com e-mail e senha."
+      : `Seu perfil pode acessar: ${allowed.map((id) => appModules[id]).filter(Boolean).join(", ")}.`;
 
   showAppTab(document.querySelector("[data-tab-target].active")?.dataset.tabTarget || "painel");
 }
@@ -961,7 +977,7 @@ function renderApp() {
   const session = getSession();
   if (!session) return;
 
-  const admin = session.role === "Administrador";
+  const admin = hasAdminBackendSession(session);
   const settings = getAppSettings();
   document.querySelector("#sessionLabel").textContent = `${session.name} - ${session.role} - ${session.permission}`;
   document.querySelector("#accessBadge").textContent = session.level;

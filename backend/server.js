@@ -17,7 +17,7 @@ function signAdminToken(email) {
   const payload = Buffer.from(JSON.stringify({
     email,
     role: "Administrador",
-    exp: Date.now() + 1000 * 60 * 60 * 8,
+    exp: Date.now() + 1000 * 60 * 60 * 24 * 30,
   })).toString("base64url");
   const signature = crypto.createHmac("sha256", adminSessionSecret).update(payload).digest("base64url");
   return `${payload}.${signature}`;
