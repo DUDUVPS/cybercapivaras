@@ -78,11 +78,11 @@ const publicContent = {
   ],
   customSections: [],
   headerLinks: [
-    ["Equipe", "equipe.html"],
-    ["Projetos", "#projetos"],
-    ["Eventos", "#eventos"],
-    ["Contato", "#contato"],
-    ["Entrar no app", "login.html"],
+    ["Equipe", "equipe.html", "2"],
+    ["Projetos", "#projetos", "3"],
+    ["Eventos", "#eventos", "4"],
+    ["Contato", "#contato", "90"],
+    ["Entrar no app", "login.html", "99"],
   ],
   footerNavLinks: [
     ["Inicio", "index.html"],
@@ -182,6 +182,10 @@ function sectionOrder(value, fallback) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+function normalizeLinks(rows = []) {
+  return validRows(rows, []).map(([label, url, order], index) => [label, url, order || String(index + 1)]);
+}
+
 function getPublicContent() {
   const stored = readStoredPublicContent();
   const content = { ...publicContent, ...stored };
@@ -277,19 +281,21 @@ function renderPublicContent() {
 
   document.querySelectorAll("[data-link-list]").forEach((node) => {
     const key = node.dataset.linkList;
-    let links = validRows(content[key], publicContent[key] || []);
+    let links = normalizeLinks(content[key]).length ? normalizeLinks(content[key]) : normalizeLinks(publicContent[key] || []);
     if (key === "headerLinks") {
       const customSections = validRows(content.customSections, publicContent.customSections);
-      const customLinks = customSections.map(([label], index) => [label, `#pagina-${index + 1}-${slugify(label)}`]);
+      const customLinks = customSections.map(([label, , , , order], index) => [label, `#pagina-${index + 1}-${slugify(label)}`, order || String(20 + index)]);
       customLinks.forEach((customLink) => {
         if (!links.some(([label]) => label === customLink[0])) links.splice(Math.max(links.length - 2, 0), 0, customLink);
       });
-      links = links.map(([label, url]) => {
-        if (url && url !== "#personalizado" && !/^#pagina-/i.test(url)) return [label, url];
-        const index = customSections.findIndex(([sectionLabel]) => sectionLabel === label);
-        return [label, index >= 0 ? `#pagina-${index + 1}-${slugify(label)}` : url];
+      links = links.map(([label, url, order], linkIndex) => {
+        const safeOrder = order || String(linkIndex + 1);
+        if (url && url !== "#personalizado" && !/^#pagina-/i.test(url)) return [label, url, safeOrder];
+        const sectionIndex = customSections.findIndex(([sectionLabel]) => sectionLabel === label);
+        return [label, sectionIndex >= 0 ? `#pagina-${sectionIndex + 1}-${slugify(label)}` : url, safeOrder || String(linkIndex + 1)];
       });
     }
+    links = links.slice().sort((a, b) => sectionOrder(a[2], 50) - sectionOrder(b[2], 50));
     node.innerHTML = links.map(([label, url]) => `<a href="${url || "#"}">${label}</a>`).join("");
   });
 

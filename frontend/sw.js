@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v41-page-plus-save-projects";
+const CACHE_NAME = "cyber-capivaras-v42-header-tab-order";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260617-page-plus-save-projects",
-  "/site.js?v=20260617-page-plus-save-projects",
-  "/app.js?v=20260617-page-plus-save-projects",
+  "/style.css?v=20260617-header-tab-order",
+  "/site.js?v=20260617-header-tab-order",
+  "/app.js?v=20260617-header-tab-order",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"

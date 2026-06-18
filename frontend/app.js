@@ -88,11 +88,11 @@ const defaultContent = {
   ],
   customSections: [],
   headerLinks: [
-    ["Equipe", "equipe.html"],
-    ["Projetos", "#projetos"],
-    ["Eventos", "#eventos"],
-    ["Contato", "#contato"],
-    ["Entrar no app", "login.html"],
+    ["Equipe", "equipe.html", "2"],
+    ["Projetos", "#projetos", "3"],
+    ["Eventos", "#eventos", "4"],
+    ["Contato", "#contato", "90"],
+    ["Entrar no app", "login.html", "99"],
   ],
   footerNavLinks: [
     ["Inicio", "index.html"],
@@ -209,6 +209,7 @@ const blockSchemas = {
   headerLinks: [
     ["Texto", "Equipe"],
     ["Link", "equipe.html"],
+    ["Sequencia", "1"],
   ],
   areas: [
     ["Titulo", "Ex.: Software"],
@@ -354,6 +355,9 @@ function createBlockRow(type, values = []) {
 }
 
 function normalizeBlockRows(type, rows = []) {
+  if (type === "headerLinks") {
+    return rows.map((row, index) => (row.length >= 3 ? row : [row[0], row[1], String(index + 1)]));
+  }
   if (type === "projects") {
     return rows.map((row) => (row.length >= 6 ? row : [row[0], row[1], row[2], row[3], "", row[4] || "Ativo"]));
   }
@@ -455,7 +459,7 @@ function createAndSaveCustomPage() {
     ...(nextContent.customSections || []),
     createBlockRow("customSections", [pageName, pageName, "Edite o conteudo desta pagina.", "", String(5 + nextIndex), "", "", "Ativo"]),
   ];
-  nextContent.headerLinks = [...(nextContent.headerLinks || []), createBlockRow("headerLinks", [pageName, pageSlug])];
+  nextContent.headerLinks = [...(nextContent.headerLinks || []), createBlockRow("headerLinks", [pageName, pageSlug, String(20 + nextIndex)])];
   saveContent(nextContent);
   renderBlockEditors(nextContent);
   applySiteTabLabels(nextContent);
