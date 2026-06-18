@@ -44,6 +44,14 @@ async function initDatabase() {
     )
   `);
 
+  await connectionPool.execute(`
+    CREATE TABLE IF NOT EXISTS site_content (
+      content_key VARCHAR(80) PRIMARY KEY,
+      content_json LONGTEXT NOT NULL,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `);
+
   const migrations = [
     "ALTER TABLE contacts ADD COLUMN status VARCHAR(30) NOT NULL DEFAULT 'aberto'",
     "ALTER TABLE contacts ADD COLUMN category VARCHAR(80) NOT NULL DEFAULT 'Geral'",
@@ -123,6 +131,48 @@ async function updateContactStatus(id, status) {
   return result.affectedRows > 0;
 }
 
+async function getSiteContent() {
+  const connectionPool = getPool();
+
+  if (!connectionPool) {
+    return null;
+  }
+
+  await initDatabase();
+
+  const [rows] = await connectionPool.execute(
+    "SELECT content_json FROM site_content WHERE content_key = ? LIMIT 1",
+    ["public"]
+  );
+
+  if (!rows.length) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(rows[0].content_json);
+  } catch {
+    return null;
+  }
+}
+
+async function saveSiteContent(content) {
+  const connectionPool = getPool();
+
+  if (!connectionPool) {
+    return false;
+  }
+
+  await initDatabase();
+
+  await connectionPool.execute(
+    "INSERT INTO site_content (content_key, content_json) VALUES (?, ?) ON DUPLICATE KEY UPDATE content_json = VALUES(content_json)",
+    ["public", JSON.stringify(content)]
+  );
+
+  return true;
+}
+
 async function checkDatabase() {
   const connectionPool = getPool();
 
@@ -141,6 +191,8 @@ module.exports = {
   hasDatabase,
   initDatabase,
   listContacts,
+  getSiteContent,
   saveContact,
+  saveSiteContent,
   updateContactStatus,
 };

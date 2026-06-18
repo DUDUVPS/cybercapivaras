@@ -1,4 +1,5 @@
 const API_URL = window.location.origin;
+let remoteContentLoaded = false;
 
 const defaultContent = {
   siteName: "Cyber Capivaras",
@@ -192,6 +193,33 @@ function getContent() {
 
 function saveContent(content) {
   localStorage.setItem("cyber_site_content", JSON.stringify(content));
+}
+
+async function loadContentFromApi() {
+  if (remoteContentLoaded) return;
+  remoteContentLoaded = true;
+
+  try {
+    const response = await fetch(`${API_URL}/api/site-content`, { cache: "no-store" });
+    if (!response.ok) return;
+    const data = await response.json();
+    if (data.content && typeof data.content === "object") {
+      saveContent({ ...getContent(), ...data.content });
+    }
+  } catch {
+    // Local fallback keeps the app usable if the API is offline.
+  }
+}
+
+async function saveContentToApi(content) {
+  const response = await fetch(`${API_URL}/api/site-content`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+    body: JSON.stringify({ content }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Nao foi possivel salvar no backend.");
+  return data;
 }
 
 function linesToRows(text, size) {
@@ -447,7 +475,17 @@ function collectEditorBlocks() {
   };
 }
 
-function createAndSaveCustomPage() {
+async function persistPublicContent(content, successMessage = "Conteudo publico salvo.") {
+  saveContent(content);
+  try {
+    await saveContentToApi(content);
+    showToast(successMessage);
+  } catch (error) {
+    showToast(`${successMessage} Ficou salvo neste aparelho, mas nao no backend: ${error.message}`, "warning");
+  }
+}
+
+async function createAndSaveCustomPage() {
   const nextContent = {
     ...getContent(),
     ...collectEditorBlocks(),
@@ -460,13 +498,12 @@ function createAndSaveCustomPage() {
     createBlockRow("customSections", [pageName, pageName, "Edite o conteudo desta pagina.", "", String(5 + nextIndex), "", "", "Ativo"]),
   ];
   nextContent.headerLinks = [...(nextContent.headerLinks || []), createBlockRow("headerLinks", [pageName, pageSlug, String(20 + nextIndex)])];
-  saveContent(nextContent);
+  await persistPublicContent(nextContent, "Nova pagina criada e publicada.");
   renderBlockEditors(nextContent);
   applySiteTabLabels(nextContent);
   renderSitePreview();
   document.querySelector('[data-subtab-target="site-paginas"]')?.click();
   document.querySelector('[data-block-editor="customSections"]')?.scrollIntoView({ behavior: "smooth", block: "center" });
-  showToast("Nova pagina criada e salva. Edite conteudo, sequencia e salve novamente.");
 }
 
 function normalizeMember(member) {
@@ -920,7 +957,7 @@ function renderApp() {
     });
 
     memberAdminList.querySelectorAll("[data-member-index]").forEach((button) => {
-      button.addEventListener("click", () => {
+      button.addEventListener("click", async () => {
         const content = getContent();
         const [removed] = content.members.splice(Number(button.dataset.memberIndex), 1);
         const removedEmail = normalizeMember(removed).email;
@@ -929,7 +966,7 @@ function renderApp() {
           delete permissions[removedEmail];
           saveUserPermissions(permissions);
         }
-        saveContent(content);
+        await persistPublicContent(content, "Integrante removido da equipe.");
         showToast("Integrante removido da equipe.", "warning");
         renderApp();
       });
@@ -1100,7 +1137,7 @@ function setupAppForms() {
       }
     });
 
-    contentForm.addEventListener("submit", (event) => {
+    contentForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const data = Object.fromEntries(new FormData(contentForm).entries());
       const nextContent = {
@@ -1172,9 +1209,9 @@ function setupAppForms() {
         footerCopyrightText: data.footerCopyrightText,
         ...collectEditorBlocks(),
       };
-      saveContent(nextContent);
+      document.querySelector("#siteEditorStatus").textContent = "Salvando no backend...";
+      await persistPublicContent(nextContent, "Pagina publica atualizada no backend.");
       document.querySelector("#siteEditorStatus").textContent = "Pagina principal atualizada.";
-      showToast("Pagina publica atualizada.");
       applySiteTabLabels(nextContent);
       renderSitePreview();
     });
@@ -1238,7 +1275,7 @@ function setupAppForms() {
       reader.readAsDataURL(file);
     });
 
-    memberForm.addEventListener("submit", (event) => {
+    memberForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const formData = new FormData(memberForm);
       const data = Object.fromEntries(formData.entries());
@@ -1280,7 +1317,7 @@ function setupAppForms() {
         saveRoles(roles);
       }
 
-      saveContent(content);
+      await persistPublicContent(content, "Equipe publicada no backend.");
       document.querySelector("#memberStatus").textContent = "Integrante salvo.";
       showToast(editIndex >= 0 ? "Integrante atualizado." : "Novo integrante criado.");
       memberForm.reset();
@@ -1799,16 +1836,21 @@ function setupLogout() {
   });
 }
 
-protectApp();
-renderPublicPage();
-setupRevealAnimations();
-setupLogin();
-setupAppTabs();
-renderApp();
-setupAppForms();
-setupContactForm();
-setupLogout();
-checkApi();
+async function initApp() {
+  protectApp();
+  await loadContentFromApi();
+  renderPublicPage();
+  setupRevealAnimations();
+  setupLogin();
+  setupAppTabs();
+  renderApp();
+  setupAppForms();
+  setupContactForm();
+  setupLogout();
+  checkApi();
+}
+
+initApp();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {

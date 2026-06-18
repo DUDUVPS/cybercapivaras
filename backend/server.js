@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const crypto = require("crypto");
 const path = require("path");
-const { checkDatabase, hasDatabase, initDatabase, listContacts, saveContact, updateContactStatus } = require("./db");
+const { checkDatabase, getSiteContent, hasDatabase, initDatabase, listContacts, saveContact, saveSiteContent, updateContactStatus } = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -61,15 +61,53 @@ app.get("/config.js", (req, res) => {
   res.send(`window.GOOGLE_CLIENT_ID = ${JSON.stringify(googleClientId)};`);
 });
 
-app.use(express.static(frontendPath));
+app.use(express.static(frontendPath, {
+  setHeaders: (res, filePath) => {
+    if (/\.(html|js|css)$/.test(filePath) || filePath.endsWith("sw.js")) {
+      res.set("Cache-Control", "no-store");
+    }
+  },
+}));
 
 app.get("/api", (req, res) => {
   res.json({
     name: "Cybercapivaras API",
     status: "online",
     database: hasDatabase() ? "configured" : "not configured",
-    endpoints: ["/api/health", "/api/admin/login", "/api/contact", "/api/contacts"],
+    endpoints: ["/api/health", "/api/admin/login", "/api/site-content", "/api/contact", "/api/contacts"],
   });
+});
+
+app.get("/api/site-content", async (req, res) => {
+  try {
+    const content = await getSiteContent();
+    res.set("Cache-Control", "no-store");
+    res.json({ content: content || null });
+  } catch (error) {
+    console.error("Erro ao carregar conteudo do site:", error);
+    res.status(500).json({ error: "Nao foi possivel carregar o conteudo do site." });
+  }
+});
+
+app.post("/api/site-content", requireAdmin, async (req, res) => {
+  const { content } = req.body;
+
+  if (!content || typeof content !== "object" || Array.isArray(content)) {
+    return res.status(400).json({ error: "Conteudo invalido." });
+  }
+
+  try {
+    const saved = await saveSiteContent(content);
+
+    if (!saved) {
+      return res.status(503).json({ error: "Banco de dados ainda nao configurado." });
+    }
+
+    res.json({ message: "Conteudo publico salvo." });
+  } catch (error) {
+    console.error("Erro ao salvar conteudo do site:", error);
+    res.status(500).json({ error: "Nao foi possivel salvar o conteudo do site." });
+  }
 });
 
 app.post("/api/admin/login", (req, res) => {

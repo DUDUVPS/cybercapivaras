@@ -1,4 +1,5 @@
 const API_URL = window.location.origin;
+let remotePublicContent = {};
 
 const publicContent = {
   siteName: "Cyber Capivaras",
@@ -188,12 +189,26 @@ function normalizeLinks(rows = []) {
 
 function getPublicContent() {
   const stored = readStoredPublicContent();
-  const content = { ...publicContent, ...stored };
+  const content = { ...publicContent, ...stored, ...remotePublicContent };
   Object.entries(publicContent).forEach(([key, fallback]) => {
     content[key] = withDefault(content[key], fallback);
   });
   content.members = Array.isArray(stored.members) && stored.members.length ? stored.members : publicTeam;
   return content;
+}
+
+async function loadPublicContentFromApi() {
+  try {
+    const response = await fetch(`${API_URL}/api/site-content`, { cache: "no-store" });
+    if (!response.ok) return;
+    const data = await response.json();
+    if (data.content && typeof data.content === "object") {
+      remotePublicContent = data.content;
+      localStorage.setItem("cyber_site_content", JSON.stringify(data.content));
+    }
+  } catch {
+    // Offline/local fallback keeps the last cached content visible.
+  }
 }
 
 function renderMediaCarousel(images, title) {
@@ -656,14 +671,20 @@ function runSetup(name, setup) {
   }
 }
 
-document.body.classList.add("js-ready");
-runSetup("conteudo publico", renderPublicContent);
-runSetup("menu mobile", setupMobileMenu);
-runSetup("foto da conta", setupAccountPhoto);
-runSetup("menu ativo", setupActiveNav);
-runSetup("carrosseis", setupCarouselControls);
-runSetup("galerias", setupMediaCarousels);
-runSetup("animacoes", setupRevealAnimations);
-runSetup("hero", setupHeroMotion);
-runSetup("contato", setupContactForm);
-runSetup("pwa", registerServiceWorker);
+async function initPublicSite() {
+  document.body.classList.add("js-ready");
+  runSetup("conteudo publico", renderPublicContent);
+  await loadPublicContentFromApi();
+  runSetup("conteudo publico remoto", renderPublicContent);
+  runSetup("menu mobile", setupMobileMenu);
+  runSetup("foto da conta", setupAccountPhoto);
+  runSetup("menu ativo", setupActiveNav);
+  runSetup("carrosseis", setupCarouselControls);
+  runSetup("galerias", setupMediaCarousels);
+  runSetup("animacoes", setupRevealAnimations);
+  runSetup("hero", setupHeroMotion);
+  runSetup("contato", setupContactForm);
+  runSetup("pwa", registerServiceWorker);
+}
+
+initPublicSite();

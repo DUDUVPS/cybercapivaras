@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v42-header-tab-order";
+const CACHE_NAME = "cyber-capivaras-v43-backend-public-content";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260617-header-tab-order",
-  "/site.js?v=20260617-header-tab-order",
-  "/app.js?v=20260617-header-tab-order",
+  "/style.css?v=20260618-backend-public-content",
+  "/site.js?v=20260618-backend-public-content",
+  "/app.js?v=20260618-backend-public-content",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"
@@ -15,6 +15,7 @@ const APP_SHELL = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
+  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
@@ -23,6 +24,7 @@ self.addEventListener("activate", (event) => {
       Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
     )
   );
+  self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
