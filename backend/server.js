@@ -53,7 +53,7 @@ function requireAdmin(req, res, next) {
 }
 
 app.use(cors({ origin: allowedOrigin }));
-app.use(express.json({ limit: "8mb" }));
+app.use(express.json({ limit: "50mb" }));
 
 app.get("/config.js", (req, res) => {
   res.type("application/javascript");

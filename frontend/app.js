@@ -1,5 +1,6 @@
 const API_URL = window.location.origin;
 let remoteContentLoaded = false;
+let runtimeSiteContent = null;
 
 const defaultContent = {
   siteName: "Cyber Capivaras",
@@ -188,11 +189,41 @@ const baseTeam = [
 ];
 
 function getContent() {
-  return { ...defaultContent, members: defaultMembers, ...JSON.parse(localStorage.getItem("cyber_site_content") || "{}") };
+  let stored = {};
+  try {
+    stored = JSON.parse(localStorage.getItem("cyber_site_content") || "{}");
+  } catch {
+    stored = {};
+  }
+  return { ...defaultContent, members: defaultMembers, ...stored, ...(runtimeSiteContent || {}) };
 }
 
 function saveContent(content) {
-  localStorage.setItem("cyber_site_content", JSON.stringify(content));
+  runtimeSiteContent = content;
+  try {
+    localStorage.setItem("cyber_site_content", JSON.stringify(content));
+    return true;
+  } catch {
+    try {
+      localStorage.setItem("cyber_site_content", JSON.stringify(compactContentForLocalCache(content)));
+    } catch {
+      localStorage.removeItem("cyber_site_content");
+    }
+    return false;
+  }
+}
+
+function compactContentForLocalCache(value) {
+  if (Array.isArray(value)) return value.map(compactContentForLocalCache);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, compactContentForLocalCache(item)]));
+  }
+  if (typeof value !== "string") return value;
+  if (!value.includes("data:image")) return value;
+  return value
+    .split("\n")
+    .filter((item) => !item.trim().startsWith("data:image"))
+    .join("\n");
 }
 
 function hasLocalPublicContent() {
@@ -215,6 +246,7 @@ async function loadContentFromApi() {
     if (!response.ok) return false;
     const data = await response.json();
     if (data.content && typeof data.content === "object") {
+      runtimeSiteContent = data.content;
       saveContent({ ...getContent(), ...data.content });
       return true;
     }
@@ -231,6 +263,8 @@ async function saveContentToApi(content) {
     body: JSON.stringify({ content }),
   });
   const data = await response.json().catch(() => ({}));
+  if (response.status === 413) throw new Error("Conteudo muito grande para enviar. Reduza algumas imagens ou use imagens menores.");
+  if (response.status === 401) throw new Error("Sessao de administrador expirada. Entre novamente no app.");
   if (!response.ok) throw new Error(data.error || "Nao foi possivel salvar no backend.");
   return data;
 }
@@ -489,13 +523,27 @@ function collectEditorBlocks() {
 }
 
 async function persistPublicContent(content, successMessage = "Conteudo publico salvo.") {
-  saveContent(content);
+  let apiError = null;
   try {
     await saveContentToApi(content);
-    showToast(successMessage);
   } catch (error) {
-    showToast(`${successMessage} Ficou salvo neste aparelho, mas nao no backend: ${error.message}`, "warning");
+    apiError = error;
   }
+
+  const localCached = saveContent(content);
+
+  if (apiError) {
+    showToast(`Nao salvou no backend: ${apiError.message}. ${localCached ? "Ficou salvo neste aparelho." : "O cache local tambem ficou cheio."}`, "warning");
+    return { remoteSaved: false, localCached, error: apiError };
+  }
+
+  if (!localCached) {
+    showToast(`${successMessage} O cache deste aparelho foi reduzido porque as imagens ficaram grandes.`, "warning");
+    return { remoteSaved: true, localCached: false };
+  }
+
+  showToast(successMessage);
+  return { remoteSaved: true, localCached: true };
 }
 
 async function createAndSaveCustomPage() {
@@ -1152,81 +1200,89 @@ function setupAppForms() {
 
     contentForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const data = Object.fromEntries(new FormData(contentForm).entries());
-      const nextContent = {
-        ...getContent(),
-        siteName: data.siteName,
-        siteHomeLink: data.siteHomeLink,
-        siteLogo: data.siteLogo,
-        accountLink: data.accountLink,
-        siteTabInicio: data.siteTabInicio,
-        siteTabEquipe: data.siteTabEquipe,
-        siteTabProjetos: data.siteTabProjetos,
-        siteTabEventos: data.siteTabEventos,
-        siteTabContato: data.siteTabContato,
-        siteTabFooter: data.siteTabFooter,
-        sectionOrderHome: data.sectionOrderHome,
-        sectionOrderTeam: data.sectionOrderTeam,
-        sectionOrderProjects: data.sectionOrderProjects,
-        sectionOrderEvents: data.sectionOrderEvents,
-        sectionOrderContact: data.sectionOrderContact,
-        heroLabel: data.heroLabel,
-        heroTitle: data.heroTitle,
-        weeklyHighlightLabel: data.weeklyHighlightLabel,
-        heroText: data.heroText,
-        heroImage: data.heroImage,
-        heroMetricValue: data.heroMetricValue,
-        heroMetricLabel: data.heroMetricLabel,
-        heroStateValue: data.heroStateValue,
-        heroStateLabel: data.heroStateLabel,
-        heroSignalOne: data.heroSignalOne,
-        heroSignalTwo: data.heroSignalTwo,
-        heroSignalThree: data.heroSignalThree,
-        heroPrimaryText: data.heroPrimaryText,
-        heroPrimaryLink: data.heroPrimaryLink,
-        heroSecondaryText: data.heroSecondaryText,
-        heroSecondaryLink: data.heroSecondaryLink,
-        showTeamSection: data.showTeamSection === "on",
-        teamSectionLabel: data.teamSectionLabel,
-        teamSectionTitle: data.teamSectionTitle,
-        showProjectsSection: data.showProjectsSection === "on",
-        projectsSectionLabel: data.projectsSectionLabel,
-        projectsSectionTitle: data.projectsSectionTitle,
-        projectsSectionText: data.projectsSectionText,
-        showEventsSection: data.showEventsSection === "on",
-        eventsSectionLabel: data.eventsSectionLabel,
-        eventsSectionTitle: data.eventsSectionTitle,
-        eventsSectionText: data.eventsSectionText,
-        showContactSection: data.showContactSection === "on",
-        contactLabel: data.contactLabel,
-        contactTitle: data.contactTitle,
-        contactText: data.contactText,
-        contactNamePlaceholder: data.contactNamePlaceholder,
-        contactEmailPlaceholder: data.contactEmailPlaceholder,
-        contactMessagePlaceholder: data.contactMessagePlaceholder,
-        contactButtonText: data.contactButtonText,
-        footerLogo: data.footerLogo,
-        footerLogoSubtitle: data.footerLogoSubtitle,
-        footerAffiliationIcon: data.footerAffiliationIcon,
-        footerText: data.footerText,
-        footerAffiliation: data.footerAffiliation,
-        footerCredit: data.footerCredit,
-        footerCreditUrl: data.footerCreditUrl,
-        footerNavTitle: data.footerNavTitle,
-        footerCentralTitle: data.footerCentralTitle,
-        footerContactTitle: data.footerContactTitle,
-        footerContactLine1: data.footerContactLine1,
-        footerContactLine2: data.footerContactLine2,
-        footerContactAction: data.footerContactAction,
-        footerStatus: data.footerStatus,
-        footerCopyrightText: data.footerCopyrightText,
-        ...collectEditorBlocks(),
-      };
-      document.querySelector("#siteEditorStatus").textContent = "Salvando no backend...";
-      await persistPublicContent(nextContent, "Pagina publica atualizada no backend.");
-      document.querySelector("#siteEditorStatus").textContent = "Pagina principal atualizada.";
-      applySiteTabLabels(nextContent);
-      renderSitePreview();
+      const status = document.querySelector("#siteEditorStatus");
+      try {
+        const data = Object.fromEntries(new FormData(contentForm).entries());
+        const nextContent = {
+          ...getContent(),
+          siteName: data.siteName,
+          siteHomeLink: data.siteHomeLink,
+          siteLogo: data.siteLogo,
+          accountLink: data.accountLink,
+          siteTabInicio: data.siteTabInicio,
+          siteTabEquipe: data.siteTabEquipe,
+          siteTabProjetos: data.siteTabProjetos,
+          siteTabEventos: data.siteTabEventos,
+          siteTabContato: data.siteTabContato,
+          siteTabFooter: data.siteTabFooter,
+          sectionOrderHome: data.sectionOrderHome,
+          sectionOrderTeam: data.sectionOrderTeam,
+          sectionOrderProjects: data.sectionOrderProjects,
+          sectionOrderEvents: data.sectionOrderEvents,
+          sectionOrderContact: data.sectionOrderContact,
+          heroLabel: data.heroLabel,
+          heroTitle: data.heroTitle,
+          weeklyHighlightLabel: data.weeklyHighlightLabel,
+          heroText: data.heroText,
+          heroImage: data.heroImage,
+          heroMetricValue: data.heroMetricValue,
+          heroMetricLabel: data.heroMetricLabel,
+          heroStateValue: data.heroStateValue,
+          heroStateLabel: data.heroStateLabel,
+          heroSignalOne: data.heroSignalOne,
+          heroSignalTwo: data.heroSignalTwo,
+          heroSignalThree: data.heroSignalThree,
+          heroPrimaryText: data.heroPrimaryText,
+          heroPrimaryLink: data.heroPrimaryLink,
+          heroSecondaryText: data.heroSecondaryText,
+          heroSecondaryLink: data.heroSecondaryLink,
+          showTeamSection: data.showTeamSection === "on",
+          teamSectionLabel: data.teamSectionLabel,
+          teamSectionTitle: data.teamSectionTitle,
+          showProjectsSection: data.showProjectsSection === "on",
+          projectsSectionLabel: data.projectsSectionLabel,
+          projectsSectionTitle: data.projectsSectionTitle,
+          projectsSectionText: data.projectsSectionText,
+          showEventsSection: data.showEventsSection === "on",
+          eventsSectionLabel: data.eventsSectionLabel,
+          eventsSectionTitle: data.eventsSectionTitle,
+          eventsSectionText: data.eventsSectionText,
+          showContactSection: data.showContactSection === "on",
+          contactLabel: data.contactLabel,
+          contactTitle: data.contactTitle,
+          contactText: data.contactText,
+          contactNamePlaceholder: data.contactNamePlaceholder,
+          contactEmailPlaceholder: data.contactEmailPlaceholder,
+          contactMessagePlaceholder: data.contactMessagePlaceholder,
+          contactButtonText: data.contactButtonText,
+          footerLogo: data.footerLogo,
+          footerLogoSubtitle: data.footerLogoSubtitle,
+          footerAffiliationIcon: data.footerAffiliationIcon,
+          footerText: data.footerText,
+          footerAffiliation: data.footerAffiliation,
+          footerCredit: data.footerCredit,
+          footerCreditUrl: data.footerCreditUrl,
+          footerNavTitle: data.footerNavTitle,
+          footerCentralTitle: data.footerCentralTitle,
+          footerContactTitle: data.footerContactTitle,
+          footerContactLine1: data.footerContactLine1,
+          footerContactLine2: data.footerContactLine2,
+          footerContactAction: data.footerContactAction,
+          footerStatus: data.footerStatus,
+          footerCopyrightText: data.footerCopyrightText,
+          ...collectEditorBlocks(),
+        };
+        status.textContent = "Salvando no backend...";
+        const result = await persistPublicContent(nextContent, "Pagina publica atualizada no backend.");
+        status.textContent = result.remoteSaved
+          ? "Pagina principal atualizada no backend."
+          : "Nao publicou no backend. Verifique o aviso acima.";
+        applySiteTabLabels(nextContent);
+        renderSitePreview();
+      } catch (error) {
+        status.textContent = "Erro ao salvar. Veja o aviso acima.";
+        showToast(`Erro ao salvar: ${error.message}`, "error");
+      }
     });
   }
 
