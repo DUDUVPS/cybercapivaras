@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260618-project-save-fix" />
+    <link rel="stylesheet" href="style.css?v=20260618-project-submit-fix" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
@@ -114,7 +114,7 @@
           <button class="subtab-add-page" type="button" data-add-page title="Adicionar pagina">+</button>
         </div>
         <div class="module-grid site-editor-grid">
-          <form class="app-form editor-layout" id="siteEditorForm">
+          <form class="app-form editor-layout" id="siteEditorForm" novalidate>
           <article class="app-section site-editor-panel is-active" data-subtab-panel="site-inicio" data-subtab-group="site-publico">
             <div class="section-head compact-head">
               <div>
@@ -315,7 +315,7 @@
               <label>Status do sistema <input type="text" name="footerStatus" /></label>
               <label class="wide-field">Texto copyright <input type="text" name="footerCopyrightText" /></label>
               <label>Texto do credito <input type="text" name="footerCredit" /></label>
-              <label>Link da LASTTRO <input type="url" name="footerCreditUrl" /></label>
+              <label>Link da LASTTRO <input type="text" name="footerCreditUrl" placeholder="https://lasttro.app.br" /></label>
               <div class="block-editor wide-field" data-block-editor="footerNavLinks">
                 <div class="block-editor-head">
                   <span>Links do footer - navegacao</span>
@@ -646,6 +646,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260618-project-save-fix"></script>
+    <script src="app.js?v=20260618-project-submit-fix"></script>
   </body>
 </html>

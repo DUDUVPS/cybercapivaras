@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v48-project-save-fix";
+const CACHE_NAME = "cyber-capivaras-v49-project-submit-fix";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260618-project-save-fix",
-  "/site.js?v=20260618-project-save-fix",
-  "/app.js?v=20260618-project-save-fix",
+  "/style.css?v=20260618-project-submit-fix",
+  "/site.js?v=20260618-project-submit-fix",
+  "/app.js?v=20260618-project-submit-fix",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"

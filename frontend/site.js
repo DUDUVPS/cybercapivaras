@@ -183,6 +183,14 @@ function sectionOrder(value, fallback) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+function normalizeUrl(value = "") {
+  const text = String(value).trim();
+  if (!text) return "";
+  if (/^(#|mailto:|tel:|data:|https?:\/\/|\/|\.\/|\.\.\/)/i.test(text)) return text;
+  if (/^[\w.-]+\.[a-z]{2,}(\/.*)?$/i.test(text)) return `https://${text}`;
+  return text;
+}
+
 function normalizeLinks(rows = []) {
   return validRows(rows, []).map(([label, url, order], index) => [label, url, order || String(index + 1)]);
 }
@@ -275,7 +283,7 @@ function renderPublicContent() {
   document.querySelectorAll("[data-link-content]").forEach((node) => {
     const key = node.dataset.linkContent;
     const value = content[key] || publicContent[key];
-    if (value) node.href = value;
+    if (value) node.href = normalizeUrl(value);
   });
 
   document.querySelectorAll("[data-public-section]").forEach((section) => {
@@ -311,7 +319,7 @@ function renderPublicContent() {
       });
     }
     links = links.slice().sort((a, b) => sectionOrder(a[2], 50) - sectionOrder(b[2], 50));
-    node.innerHTML = links.map(([label, url]) => `<a href="${url || "#"}">${label}</a>`).join("");
+    node.innerHTML = links.map(([label, url]) => `<a href="${normalizeUrl(url) || "#"}">${label}</a>`).join("");
   });
 
   document.querySelectorAll("[data-social-list]").forEach((node) => {
@@ -319,7 +327,7 @@ function renderPublicContent() {
     const links = validRows(content[key], publicContent[key] || []);
     node.innerHTML = links
       .map(([label, url, icon]) => `
-        <a href="${url || "#"}" aria-label="${label}">
+        <a href="${normalizeUrl(url) || "#"}" aria-label="${label}">
           ${icon ? `<img src="${icon}" alt="" />` : `<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 10-13h-7l0-7Z" /></svg>`}
         </a>
       `)
@@ -419,7 +427,7 @@ function renderPublicContent() {
               ${image ? `<img src="${image}" alt="${title || label}" />` : ""}
               <div>
                 ${status ? `<span>${status}</span>` : ""}
-                ${link && linkText ? `<a class="button secondary" href="${link}">${linkText}</a>` : ""}
+                ${link && linkText ? `<a class="button secondary" href="${normalizeUrl(link)}">${linkText}</a>` : ""}
               </div>
             </article>
           </section>
