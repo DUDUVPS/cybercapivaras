@@ -535,8 +535,9 @@ function setupCarouselControls() {
       const target = document.querySelector(`#${button.dataset.scrollTarget}`);
       if (!target) return;
       const direction = Number(button.dataset.scrollDirection || 1);
+      const isMobile = window.matchMedia("(max-width: 560px)").matches;
       target.scrollBy({
-        left: direction * Math.max(target.clientWidth * 0.82, 240),
+        left: direction * (isMobile ? target.clientWidth : Math.max(target.clientWidth * 0.82, 240)),
         behavior: "smooth",
       });
     });

@@ -2313,15 +2313,27 @@ body[data-accent="red"] { --green: var(--red); }
   }
   .project-showcase {
     grid-template-columns: none;
-    grid-auto-columns: minmax(270px, 86vw);
+    grid-auto-columns: 100%;
+    gap: 0;
+    overflow-x: hidden;
+    padding-bottom: 0;
   }
   .carousel-arrow {
     display: grid;
   }
   .event-timeline {
     grid-template-columns: none;
-    grid-auto-columns: minmax(270px, 86vw);
+    grid-auto-columns: 100%;
+    gap: 0;
+    overflow-x: hidden;
+    padding-bottom: 0;
   }
+  .project-showcase::-webkit-scrollbar,
+  .event-timeline::-webkit-scrollbar {
+    display: none;
+  }
+  .carousel-prev { left: 12px; }
+  .carousel-next { right: 12px; }
   .event-card {
     padding: 0;
   }
