@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v50-admin-token-projects";
+const CACHE_NAME = "cyber-capivaras-v51-db-only-public-save";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260618-admin-token-projects",
-  "/site.js?v=20260618-admin-token-projects",
-  "/app.js?v=20260618-admin-token-projects",
+  "/style.css?v=20260618-db-only-public-save",
+  "/site.js?v=20260618-db-only-public-save",
+  "/app.js?v=20260618-db-only-public-save",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"

@@ -527,22 +527,22 @@ function collectEditorBlocks() {
 }
 
 async function persistPublicContent(content, successMessage = "Conteudo publico salvo.") {
-  let apiError = null;
   try {
     await saveContentToApi(content);
   } catch (error) {
-    apiError = error;
+    showToast(error.message, "error");
+    return {
+      remoteSaved: false,
+      localCached: false,
+      error,
+      needsAdminLogin: isAdminSessionError(error),
+    };
   }
 
   const localCached = saveContent(content);
 
-  if (apiError) {
-    showToast(`Nao salvou no backend: ${apiError.message}. ${localCached ? "Ficou salvo neste aparelho." : "O cache local tambem ficou cheio."}`, "warning");
-    return { remoteSaved: false, localCached, error: apiError };
-  }
-
   if (!localCached) {
-    showToast(`${successMessage} O cache deste aparelho foi reduzido porque as imagens ficaram grandes.`, "warning");
+    showToast(`${successMessage} Salvo no banco de dados; o cache deste aparelho foi ignorado porque ficou grande.`, "warning");
     return { remoteSaved: true, localCached: false };
   }
 
@@ -741,6 +741,10 @@ function requireAdminBackendSession() {
   if (!hasAdminBackendSession()) {
     throw new Error("Entre pelo acesso do administrador com e-mail e senha para publicar no site.");
   }
+}
+
+function isAdminSessionError(error) {
+  return /acesso do administrador|sessao de administrador|e-mail e senha/i.test(error?.message || "");
 }
 
 function getAuthHeaders() {
@@ -993,6 +997,9 @@ function renderApp() {
     node.hidden = !admin;
   });
   applyAccessRules();
+  if (session.role === "Administrador" && !admin) {
+    showToast("Sessao admin invalida. Entre pelo acesso do administrador para editar o site.", "error");
+  }
 
   const table = document.querySelector("#teamTable");
   if (table) {
@@ -1291,8 +1298,17 @@ function setupAppForms() {
         status.textContent = "Salvando no backend...";
         const result = await persistPublicContent(nextContent, "Pagina publica atualizada no backend.");
         status.textContent = result.remoteSaved
-          ? "Pagina principal atualizada no backend."
-          : "Nao publicou no backend. Verifique o aviso acima.";
+          ? "Pagina principal salva no banco de dados."
+          : result.needsAdminLogin
+            ? "Entre novamente pelo acesso do administrador para publicar."
+            : "Nao salvou no banco de dados. Verifique o aviso acima.";
+        if (result.needsAdminLogin) {
+          localStorage.removeItem("cyber_session");
+          setTimeout(() => {
+            window.location.href = "login.html";
+          }, 1800);
+          return;
+        }
         applySiteTabLabels(nextContent);
         renderSitePreview();
       } catch (error) {
