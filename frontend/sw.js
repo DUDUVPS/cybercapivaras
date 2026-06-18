@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v43-backend-public-content";
+const CACHE_NAME = "cyber-capivaras-v44-auto-sync-public-content";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260618-backend-public-content",
-  "/site.js?v=20260618-backend-public-content",
-  "/app.js?v=20260618-backend-public-content",
+  "/style.css?v=20260618-auto-sync-public-content",
+  "/site.js?v=20260618-auto-sync-public-content",
+  "/app.js?v=20260618-auto-sync-public-content",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"

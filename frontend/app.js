@@ -195,20 +195,33 @@ function saveContent(content) {
   localStorage.setItem("cyber_site_content", JSON.stringify(content));
 }
 
+function hasLocalPublicContent() {
+  try {
+    const raw = localStorage.getItem("cyber_site_content");
+    if (!raw) return false;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" && Object.keys(parsed).length > 0;
+  } catch {
+    return false;
+  }
+}
+
 async function loadContentFromApi() {
-  if (remoteContentLoaded) return;
+  if (remoteContentLoaded) return false;
   remoteContentLoaded = true;
 
   try {
     const response = await fetch(`${API_URL}/api/site-content`, { cache: "no-store" });
-    if (!response.ok) return;
+    if (!response.ok) return false;
     const data = await response.json();
     if (data.content && typeof data.content === "object") {
       saveContent({ ...getContent(), ...data.content });
+      return true;
     }
   } catch {
     // Local fallback keeps the app usable if the API is offline.
   }
+  return false;
 }
 
 async function saveContentToApi(content) {
@@ -1838,7 +1851,15 @@ function setupLogout() {
 
 async function initApp() {
   protectApp();
-  await loadContentFromApi();
+  const hasRemoteContent = await loadContentFromApi();
+  if (!hasRemoteContent && hasLocalPublicContent() && getSession()?.token) {
+    try {
+      await saveContentToApi(getContent());
+      showToast("Conteudo deste aparelho sincronizado com o backend.");
+    } catch (error) {
+      showToast(`Nao sincronizou com o backend: ${error.message}`, "warning");
+    }
+  }
   renderPublicPage();
   setupRevealAnimations();
   setupLogin();
