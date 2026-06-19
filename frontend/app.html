@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260619-media-size-and-arrows" />
+    <link rel="stylesheet" href="style.css?v=20260619-drag-site-editors" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
@@ -249,6 +249,11 @@
               <span class="module-chip">Criar e apagar</span>
             </div>
               <p class="editor-note">Cada item vira uma secao propria no site e pode aparecer na barra superior.</p>
+              <div class="page-template-grid">
+                <button class="ghost-button" type="button" data-page-template="info">Modelo texto</button>
+                <button class="ghost-button" type="button" data-page-template="media">Modelo imagem</button>
+                <button class="ghost-button" type="button" data-page-template="cta">Modelo chamada</button>
+              </div>
               <div class="block-editor wide-field" data-block-editor="customSections">
                 <div class="block-editor-head">
                   <span>Paginas personalizadas</span>
@@ -430,6 +435,11 @@
 
               <div class="edit-form-grid">
                 <label>Nome <input type="text" name="name" placeholder="Allen Sena" required /></label>
+                <label>Selecionar conta
+                  <select name="knownAccount" id="knownAccountSelect">
+                    <option value="">Escolher conta que ja entrou</option>
+                  </select>
+                </label>
                 <label>Conta/e-mail <input type="email" name="email" placeholder="aluno@email.com" /></label>
                 <label>Funcao <input type="text" name="role" placeholder="Estudante / Arduino" required /></label>
                 <label>Geracao <input type="text" name="generation" placeholder="1a Geracao Fabrica" required /></label>
@@ -646,6 +656,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260619-media-size-and-arrows"></script>
+    <script src="app.js?v=20260619-drag-site-editors"></script>
   </body>
 </html>

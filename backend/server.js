@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const crypto = require("crypto");
 const path = require("path");
-const { checkDatabase, getSiteContent, hasDatabase, initDatabase, listContacts, saveContact, saveSiteContent, updateContactStatus } = require("./db");
+const { checkDatabase, getSiteContent, hasDatabase, initDatabase, listAppUsers, listContacts, saveAppUser, saveContact, saveSiteContent, updateContactStatus } = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -74,7 +74,7 @@ app.get("/api", (req, res) => {
     name: "Cybercapivaras API",
     status: "online",
     database: hasDatabase() ? "configured" : "not configured",
-    endpoints: ["/api/health", "/api/admin/login", "/api/site-content", "/api/contact", "/api/contacts"],
+    endpoints: ["/api/health", "/api/admin/login", "/api/site-content", "/api/users", "/api/contact", "/api/contacts"],
   });
 });
 
@@ -131,6 +131,35 @@ app.post("/api/admin/login", (req, res) => {
       permission: "Controle total do app, site e funcoes.",
     },
   });
+});
+
+app.post("/api/users", async (req, res) => {
+  const { name, email, role, picture } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: "E-mail obrigatorio." });
+  }
+
+  try {
+    const saved = await saveAppUser({ name, email, role, picture });
+    if (!saved) {
+      return res.status(503).json({ error: "Banco de dados ainda nao configurado." });
+    }
+    res.json({ message: "Usuario registrado." });
+  } catch (error) {
+    console.error("Erro ao registrar usuario:", error);
+    res.status(500).json({ error: "Nao foi possivel registrar o usuario." });
+  }
+});
+
+app.get("/api/users", requireAdmin, async (req, res) => {
+  try {
+    res.set("Cache-Control", "no-store");
+    res.json({ users: await listAppUsers() });
+  } catch (error) {
+    console.error("Erro ao listar usuarios:", error);
+    res.status(500).json({ error: "Nao foi possivel listar usuarios." });
+  }
 });
 
 app.get("/api/health", async (req, res) => {

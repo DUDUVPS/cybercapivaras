@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v52-media-size-and-arrows";
+const CACHE_NAME = "cyber-capivaras-v53-drag-site-editors";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260619-media-size-and-arrows",
-  "/site.js?v=20260619-media-size-and-arrows",
-  "/app.js?v=20260619-media-size-and-arrows",
+  "/style.css?v=20260619-drag-site-editors",
+  "/site.js?v=20260619-drag-site-editors",
+  "/app.js?v=20260619-drag-site-editors",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"

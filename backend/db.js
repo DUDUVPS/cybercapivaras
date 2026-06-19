@@ -52,6 +52,16 @@ async function initDatabase() {
     )
   `);
 
+  await connectionPool.execute(`
+    CREATE TABLE IF NOT EXISTS app_users (
+      email VARCHAR(180) PRIMARY KEY,
+      name VARCHAR(140) NOT NULL,
+      role VARCHAR(80) NOT NULL DEFAULT 'Membro',
+      picture LONGTEXT,
+      last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `);
+
   const migrations = [
     "ALTER TABLE contacts ADD COLUMN status VARCHAR(30) NOT NULL DEFAULT 'aberto'",
     "ALTER TABLE contacts ADD COLUMN category VARCHAR(80) NOT NULL DEFAULT 'Geral'",
@@ -59,6 +69,9 @@ async function initDatabase() {
     "ALTER TABLE contacts ADD COLUMN attachment_name VARCHAR(180)",
     "ALTER TABLE contacts ADD COLUMN attachment_type VARCHAR(120)",
     "ALTER TABLE contacts ADD COLUMN attachment_data LONGTEXT",
+    "ALTER TABLE app_users ADD COLUMN role VARCHAR(80) NOT NULL DEFAULT 'Membro'",
+    "ALTER TABLE app_users ADD COLUMN picture LONGTEXT",
+    "ALTER TABLE app_users ADD COLUMN last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
   ];
 
   for (const migration of migrations) {
@@ -173,6 +186,39 @@ async function saveSiteContent(content) {
   return true;
 }
 
+async function saveAppUser({ name, email, role, picture }) {
+  const connectionPool = getPool();
+
+  if (!connectionPool || !email) {
+    return false;
+  }
+
+  await initDatabase();
+
+  await connectionPool.execute(
+    "INSERT INTO app_users (email, name, role, picture) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = VALUES(name), role = VALUES(role), picture = COALESCE(VALUES(picture), picture), last_seen = CURRENT_TIMESTAMP",
+    [email, name || email, role || "Membro", picture || null]
+  );
+
+  return true;
+}
+
+async function listAppUsers() {
+  const connectionPool = getPool();
+
+  if (!connectionPool) {
+    return [];
+  }
+
+  await initDatabase();
+
+  const [rows] = await connectionPool.execute(
+    "SELECT name, email, role, picture, last_seen FROM app_users ORDER BY last_seen DESC LIMIT 200"
+  );
+
+  return rows;
+}
+
 async function checkDatabase() {
   const connectionPool = getPool();
 
@@ -192,7 +238,9 @@ module.exports = {
   initDatabase,
   listContacts,
   getSiteContent,
+  listAppUsers,
   saveContact,
+  saveAppUser,
   saveSiteContent,
   updateContactStatus,
 };

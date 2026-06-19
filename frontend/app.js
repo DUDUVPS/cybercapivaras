@@ -1,6 +1,8 @@
 const API_URL = window.location.origin;
 let remoteContentLoaded = false;
 let runtimeSiteContent = null;
+let draggedBlock = null;
+let draggedMemberIndex = null;
 
 const defaultContent = {
   siteName: "Cyber Capivaras",
@@ -469,10 +471,35 @@ function updateMediaPreview(name) {
   preview.src = value || "imgs/apple-touch-icon.png";
 }
 
+function renderKnownAccountOptions() {
+  const select = document.querySelector("#knownAccountSelect");
+  if (!select) return;
+  const users = getKnownUsers().slice().sort((a, b) => (a.name || a.email).localeCompare(b.name || b.email));
+  select.innerHTML = `
+    <option value="">Escolher conta que ja entrou</option>
+    ${users.map((user) => `<option value="${escapeHtml(user.email)}">${escapeHtml(user.name || user.email)} - ${escapeHtml(user.email)}</option>`).join("")}
+  `;
+}
+
 function createBlockRow(type, values = []) {
   const schema = blockSchemas[type] || [];
   return schema.map(([, placeholder], index) => values[index] || (index === 0 ? `Novo ${type}` : ""));
 }
+
+const pageTemplates = {
+  info: {
+    name: "Pagina informativa",
+    values: ["Nova informacao", "Titulo da pagina", "Escreva aqui o conteudo principal desta pagina.", "", "", "#contato", "Enviar mensagem", "Publicado"],
+  },
+  media: {
+    name: "Pagina com imagem",
+    values: ["Galeria", "Titulo com imagem", "Use esta pagina para mostrar fotos, prototipos ou bastidores.", "imgs/bg-site.png", "", "#projetos", "Ver projetos", "Destaque"],
+  },
+  cta: {
+    name: "Chamada",
+    values: ["Chamada", "Participe do Cyber Capivaras", "Texto curto para convite, inscricao, parceria ou aviso importante.", "", "", "#contato", "Falar com o time", "Aberto"],
+  },
+};
 
 function normalizeBlockRows(type, rows = []) {
   if (type === "headerLinks") {
@@ -514,6 +541,7 @@ function renderBlockEditors(content) {
         (row, rowIndex) => `
           <article class="editable-block" data-block-row="${type}" data-row-index="${rowIndex}">
             <div class="editable-block-head">
+              <button class="drag-handle" type="button" draggable="true" data-drag-block="${type}" aria-label="Arrastar para ordenar">Mover</button>
               <strong>${escapeHtml(row[0] || "Sem titulo")}</strong>
               <button class="ghost-button" type="button" data-remove-block="${type}" data-row-index="${rowIndex}">Remover</button>
             </div>
@@ -543,6 +571,28 @@ function renderBlockEditors(content) {
       )
       .join("");
   });
+}
+
+function reorderDraggedBlock(targetBlock) {
+  if (!draggedBlock || !targetBlock || draggedBlock.type !== targetBlock.dataset.blockRow) return false;
+  const source = draggedBlock.element;
+  if (!source || source === targetBlock) return false;
+
+  const list = targetBlock.parentElement;
+  const blocks = [...list.querySelectorAll(`[data-block-row="${draggedBlock.type}"]`)];
+  const sourceIndex = blocks.indexOf(source);
+  const targetIndex = blocks.indexOf(targetBlock);
+  if (sourceIndex < 0 || targetIndex < 0) return false;
+
+  if (sourceIndex < targetIndex) {
+    targetBlock.after(source);
+  } else {
+    targetBlock.before(source);
+  }
+
+  blocks.forEach((block) => block.classList.remove("is-drag-over"));
+  showDraftToast("Ordem alterada. Salve para publicar no banco de dados.");
+  return true;
 }
 
 function collectBlockRows(type) {
@@ -591,17 +641,22 @@ async function persistPublicContent(content, successMessage = "Conteudo publico 
   return { remoteSaved: true, localCached: true };
 }
 
-async function createAndSaveCustomPage() {
+async function createAndSaveCustomPage(templateKey = "info") {
   const nextContent = {
     ...getContent(),
     ...collectEditorBlocks(),
   };
   const nextIndex = (nextContent.customSections || []).length + 1;
-  const pageName = `Nova pagina ${nextIndex}`;
+  const template = pageTemplates[templateKey] || pageTemplates.info;
+  const pageName = `${template.name} ${nextIndex}`;
   const pageSlug = `#pagina-${nextIndex}-${slugify(pageName)}`;
+  const sectionValues = [...template.values];
+  sectionValues[0] = pageName;
+  sectionValues[1] = template.values[1] || pageName;
+  sectionValues[4] = String(5 + nextIndex);
   nextContent.customSections = [
     ...(nextContent.customSections || []),
-    createBlockRow("customSections", [pageName, pageName, "Edite o conteudo desta pagina.", "", String(5 + nextIndex), "", "", "Ativo"]),
+    createBlockRow("customSections", sectionValues),
   ];
   nextContent.headerLinks = [...(nextContent.headerLinks || []), createBlockRow("headerLinks", [pageName, pageSlug, String(20 + nextIndex)])];
   await persistPublicContent(nextContent, "Nova pagina criada e publicada.");
@@ -704,6 +759,63 @@ function saveRoles(roles) {
   localStorage.setItem("cyber_roles", JSON.stringify(roles));
 }
 
+function getKnownUsers() {
+  return JSON.parse(localStorage.getItem("cyber_known_users") || "[]");
+}
+
+function saveKnownUsers(users) {
+  localStorage.setItem("cyber_known_users", JSON.stringify(users));
+}
+
+function mergeKnownUsers(users = []) {
+  const merged = getKnownUsers();
+  users.forEach((user) => {
+    if (!user?.email) return;
+    const nextUser = {
+      name: user.name || user.email,
+      email: user.email,
+      picture: user.picture || "",
+      role: user.role || "Membro",
+    };
+    const index = merged.findIndex((item) => item.email === nextUser.email);
+    if (index >= 0) {
+      merged[index] = { ...merged[index], ...nextUser };
+    } else {
+      merged.push(nextUser);
+    }
+  });
+  saveKnownUsers(merged);
+  renderKnownAccountOptions();
+  return merged;
+}
+
+function rememberKnownUser(user = {}) {
+  if (!user.email) return;
+  mergeKnownUsers([{
+    name: user.name || user.email,
+    email: user.email,
+    picture: user.picture || "",
+    role: user.role || "Membro",
+  }]);
+  fetch(`${API_URL}/api/users`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user),
+  }).catch(() => {});
+}
+
+async function loadKnownUsersFromApi() {
+  if (!hasAdminBackendSession()) return;
+  try {
+    const response = await fetch(`${API_URL}/api/users`, { headers: getAuthHeaders(), cache: "no-store" });
+    if (!response.ok) return;
+    const data = await response.json();
+    mergeKnownUsers(data.users || []);
+  } catch {
+    // Local accounts remain available when the API is unavailable.
+  }
+}
+
 function getAppSettings() {
   return { ...defaultAppSettings, ...JSON.parse(localStorage.getItem("cyber_app_settings") || "{}") };
 }
@@ -749,6 +861,7 @@ function saveCandidates(candidates) {
 
 function startSession(user) {
   if (user.token && user.role) {
+    rememberKnownUser(user);
     localStorage.setItem("cyber_session", JSON.stringify(user));
     window.location.href = "app.html";
     return;
@@ -758,14 +871,16 @@ function startSession(user) {
   const saved = roles[user.email] || { name: user.name, email: user.email, role: "Membro" };
   const [level, permission] = roleProfiles[saved.role] || roleProfiles.Membro;
 
-  localStorage.setItem("cyber_session", JSON.stringify({
+  const sessionUser = {
     name: saved.name || user.name,
     email: user.email,
     picture: user.picture || saved.picture || "",
     role: saved.role,
     level,
     permission,
-  }));
+  };
+  rememberKnownUser(sessionUser);
+  localStorage.setItem("cyber_session", JSON.stringify(sessionUser));
 
   window.location.href = "app.html";
 }
@@ -1063,6 +1178,7 @@ function renderApp() {
         const member = normalizeMember(row);
         return `
           <article class="member-admin-row">
+            <button class="drag-handle" type="button" draggable="true" data-drag-member="${index}" aria-label="Arrastar integrante">Mover</button>
             <img src="${member.image}" alt="${member.name}" />
             <div>
               <strong>${member.name}</strong>
@@ -1096,6 +1212,40 @@ function renderApp() {
         renderApp();
       });
     });
+
+    memberAdminList.querySelectorAll("[data-drag-member]").forEach((handle) => {
+      handle.addEventListener("dragstart", (event) => {
+        draggedMemberIndex = Number(handle.dataset.dragMember);
+        handle.closest(".member-admin-row")?.classList.add("is-dragging");
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("text/plain", String(draggedMemberIndex));
+      });
+    });
+
+    memberAdminList.querySelectorAll(".member-admin-row").forEach((row, targetIndex) => {
+      row.addEventListener("dragover", (event) => {
+        if (draggedMemberIndex === null || draggedMemberIndex === targetIndex) return;
+        event.preventDefault();
+        row.classList.add("is-drag-over");
+      });
+      row.addEventListener("dragleave", () => row.classList.remove("is-drag-over"));
+      row.addEventListener("drop", async (event) => {
+        event.preventDefault();
+        row.classList.remove("is-drag-over");
+        if (draggedMemberIndex === null || draggedMemberIndex === targetIndex) return;
+        const content = getContent();
+        const [member] = content.members.splice(draggedMemberIndex, 1);
+        content.members.splice(targetIndex, 0, member);
+        draggedMemberIndex = null;
+        await persistPublicContent(content, "Ordem da equipe salva no banco de dados.");
+        renderApp();
+      });
+    });
+
+    memberAdminList.ondragend = () => {
+      draggedMemberIndex = null;
+      memberAdminList.querySelectorAll(".member-admin-row").forEach((row) => row.classList.remove("is-dragging", "is-drag-over"));
+    };
   }
 
   const projectsCount = document.querySelector("#projectsCount");
@@ -1114,7 +1264,11 @@ function setupAppForms() {
   const memberForm = document.querySelector("#memberForm");
 
   document.querySelectorAll("[data-add-page]").forEach((button) => {
-    button.addEventListener("click", createAndSaveCustomPage);
+    button.addEventListener("click", () => createAndSaveCustomPage("info"));
+  });
+
+  document.querySelectorAll("[data-page-template]").forEach((button) => {
+    button.addEventListener("click", () => createAndSaveCustomPage(button.dataset.pageTemplate));
   });
 
   if (contentForm) {
@@ -1239,6 +1393,41 @@ function setupAppForms() {
         removeButton.closest("[data-block-row]")?.remove();
         showToast("Caixa removida. Salve para publicar.", "warning");
       }
+    });
+
+    contentForm.addEventListener("dragstart", (event) => {
+      const handle = event.target.closest("[data-drag-block]");
+      if (!handle) return;
+      const block = handle.closest("[data-block-row]");
+      draggedBlock = { type: handle.dataset.dragBlock, element: block };
+      block?.classList.add("is-dragging");
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", handle.dataset.dragBlock);
+    });
+
+    contentForm.addEventListener("dragover", (event) => {
+      const targetBlock = event.target.closest("[data-block-row]");
+      if (!draggedBlock || !targetBlock || draggedBlock.type !== targetBlock.dataset.blockRow) return;
+      event.preventDefault();
+      targetBlock.classList.add("is-drag-over");
+    });
+
+    contentForm.addEventListener("dragleave", (event) => {
+      event.target.closest("[data-block-row]")?.classList.remove("is-drag-over");
+    });
+
+    contentForm.addEventListener("drop", (event) => {
+      const targetBlock = event.target.closest("[data-block-row]");
+      if (!targetBlock || !draggedBlock) return;
+      event.preventDefault();
+      reorderDraggedBlock(targetBlock);
+      draggedBlock?.element?.classList.remove("is-dragging");
+      draggedBlock = null;
+    });
+
+    contentForm.addEventListener("dragend", () => {
+      document.querySelectorAll(".editable-block").forEach((block) => block.classList.remove("is-dragging", "is-drag-over"));
+      draggedBlock = null;
     });
 
     contentForm.addEventListener("change", async (event) => {
@@ -1366,6 +1555,8 @@ function setupAppForms() {
       const roles = getRoles();
       roles[data.email] = data;
       saveRoles(roles);
+      rememberKnownUser({ name: data.name, email: data.email, role: data.role });
+      renderKnownAccountOptions();
       document.querySelector("#roleStatus").textContent = "Funcao salva.";
       showToast("Funcao e acesso salvos.");
       roleForm.reset();
@@ -1374,11 +1565,23 @@ function setupAppForms() {
   }
 
   if (memberForm) {
+    renderKnownAccountOptions();
+    document.querySelector("#knownAccountSelect")?.addEventListener("change", (event) => {
+      const user = getKnownUsers().find((item) => item.email === event.target.value);
+      if (!user) return;
+      memberForm.elements.name.value = user.name || "";
+      memberForm.elements.email.value = user.email || "";
+      if (user.picture && !memberForm.elements.image.value) memberForm.elements.image.value = user.picture;
+      updateMemberEditPreview();
+      showToast("Conta selecionada para este integrante.");
+    });
+
     const clearButton = document.querySelector("#clearMemberForm");
     if (clearButton) {
       clearButton.addEventListener("click", () => {
         memberForm.reset();
         memberForm.elements.index.value = "";
+        memberForm.elements.knownAccount.value = "";
         memberForm.elements.generation.value = "1a Geracao Fabrica";
         memberForm.elements.status.value = "Ativo";
         memberForm.querySelectorAll('[name="tabs"]').forEach((input) => {
@@ -1394,27 +1597,19 @@ function setupAppForms() {
     memberForm.addEventListener("change", updateMemberEditPreview);
     memberForm.addEventListener("change", () => showDraftToast("Alteracao na equipe detectada. Salve o integrante."));
 
-    document.querySelector("#memberPhotoFile")?.addEventListener("change", (event) => {
+    document.querySelector("#memberPhotoFile")?.addEventListener("change", async (event) => {
       const file = event.target.files?.[0];
       if (!file) return;
-      if (file.size > 2.5 * 1024 * 1024) {
-        document.querySelector("#memberStatus").textContent = "Escolha uma imagem menor que 2,5 MB.";
-        event.target.value = "";
-        return;
-      }
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        memberForm.elements.image.value = reader.result;
+      try {
+        memberForm.elements.image.value = await fileToDataUrl(file, 1);
         updateMemberEditPreview();
-        document.querySelector("#memberStatus").textContent = "Foto carregada. Clique em salvar integrante.";
-        showToast("Foto carregada na caixa de edicao.");
-      };
-      reader.onerror = () => {
+        document.querySelector("#memberStatus").textContent = "Foto otimizada. Clique em salvar integrante.";
+        showToast("Foto otimizada na caixa de edicao.");
+      } catch (error) {
         document.querySelector("#memberStatus").textContent = "Nao foi possivel carregar a foto.";
-        showToast("Nao foi possivel carregar a foto.", "error");
-      };
-      reader.readAsDataURL(file);
+        showToast(error.message, "error");
+      }
     });
 
     memberForm.addEventListener("submit", async (event) => {
@@ -1457,6 +1652,8 @@ function setupAppForms() {
         const roles = getRoles();
         roles[member.email] = { name: member.name, email: member.email, role: member.role };
         saveRoles(roles);
+        rememberKnownUser({ name: member.name, email: member.email, role: member.role, picture: member.image });
+        renderKnownAccountOptions();
       }
 
       await persistPublicContent(content, "Equipe publicada no backend.");
@@ -1486,6 +1683,7 @@ function fillMemberForm(index) {
 
   form.elements.index.value = index;
   form.elements.name.value = member.name;
+  form.elements.knownAccount.value = member.email;
   form.elements.email.value = member.email;
   form.elements.role.value = member.role;
   form.elements.generation.value = member.generation;
@@ -1980,6 +2178,7 @@ function setupLogout() {
 
 async function initApp() {
   protectApp();
+  await loadKnownUsersFromApi();
   const hasRemoteContent = await loadContentFromApi();
   if (!hasRemoteContent && hasLocalPublicContent() && getSession()?.token) {
     try {

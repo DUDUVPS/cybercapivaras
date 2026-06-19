@@ -1633,6 +1633,12 @@ input, textarea, select {
   display: grid;
   gap: 14px;
 }
+.page-template-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
 .editable-block {
   display: grid;
   gap: 14px;
@@ -1642,8 +1648,30 @@ input, textarea, select {
   background:
     linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.025)),
     rgba(0,0,0,.12);
+  transition: border-color .2s ease, opacity .2s ease, transform .2s ease;
+}
+.editable-block.is-dragging {
+  opacity: .58;
+}
+.editable-block.is-drag-over {
+  border-color: rgba(64,242,155,.72);
+  transform: translateY(2px);
+}
+.drag-handle {
+  min-height: 34px;
+  border: 1px solid rgba(64,242,155,.28);
+  border-radius: 999px;
+  background: rgba(64,242,155,.08);
+  color: var(--green);
+  padding: 7px 12px;
+  font-weight: 950;
+  cursor: grab;
+}
+.drag-handle:active {
+  cursor: grabbing;
 }
 .editable-block-head strong {
+  flex: 1;
   color: var(--green);
 }
 .editable-block-grid {
@@ -1889,8 +1917,14 @@ input, textarea, select {
 }
 .member-admin-row {
   display: grid !important;
-  grid-template-columns: 52px minmax(0, 1fr) auto auto;
+  grid-template-columns: auto 52px minmax(0, 1fr) auto auto;
   align-items: center;
+}
+.member-admin-row.is-dragging {
+  opacity: .58;
+}
+.member-admin-row.is-drag-over {
+  border-color: rgba(64,242,155,.72);
 }
 .member-admin-row img {
   width: 52px;
@@ -2150,6 +2184,7 @@ body[data-accent="red"] { --green: var(--red); }
   .app-sidebar { position: static; height: auto; }
   .module-grid, .inline-form, .editor-layout, .permission-matrix, .task-layout, .kanban-board, .compact-members, .team-workspace, .member-editor-form { grid-template-columns: 1fr; }
   .editable-block-grid { grid-template-columns: 1fr; }
+  .page-template-grid { grid-template-columns: 1fr; }
   .edit-photo-panel img { max-height: 420px; }
   .permission-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .workspace-header, .workspace-actions { align-items: stretch; flex-direction: column; }
@@ -2438,7 +2473,7 @@ body[data-accent="red"] { --green: var(--red); }
     font-size: .6rem;
   }
   .member-admin-row {
-    grid-template-columns: 48px minmax(0, 1fr);
+    grid-template-columns: auto 48px minmax(0, 1fr);
   }
   .edit-form-grid,
   .permission-grid,
