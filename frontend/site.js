@@ -187,6 +187,7 @@ function normalizeUrl(value = "") {
   const text = String(value).trim();
   if (!text) return "";
   if (/^(#|mailto:|tel:|data:|https?:\/\/|\/|\.\/|\.\.\/)/i.test(text)) return text;
+  if (/^[\w-]+\.html([?#].*)?$/i.test(text)) return `${window.location.origin}/${text}`;
   if (/^[\w.-]+\.[a-z]{2,}(\/.*)?$/i.test(text)) return `https://${text}`;
   return text;
 }
@@ -462,7 +463,7 @@ function renderPublicTeam() {
                 <a class="${member.instagram ? "" : "is-disabled"}" href="${member.instagram || "#"}" aria-label="Instagram de ${member.name}"><img src="imgs/instagram.png" alt="" /></a>
                 <a class="${member.github ? "" : "is-disabled"}" href="${member.github || "#"}" aria-label="GitHub de ${member.name}"><img src="imgs/github.png" alt="" /></a>
               </div>
-              <a class="person-details" href="mais.html">Detalhes</a>
+              <a class="person-details" href="${normalizeUrl("mais.html")}">Detalhes</a>
             </div>
           </div>
         </article>

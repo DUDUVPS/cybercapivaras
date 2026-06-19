@@ -62,6 +62,14 @@ async function initDatabase() {
     )
   `);
 
+  await connectionPool.execute(`
+    CREATE TABLE IF NOT EXISTS app_state (
+      state_key VARCHAR(80) PRIMARY KEY,
+      state_json LONGTEXT NOT NULL,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `);
+
   const migrations = [
     "ALTER TABLE contacts ADD COLUMN status VARCHAR(30) NOT NULL DEFAULT 'aberto'",
     "ALTER TABLE contacts ADD COLUMN category VARCHAR(80) NOT NULL DEFAULT 'Geral'",
@@ -219,6 +227,46 @@ async function listAppUsers() {
   return rows;
 }
 
+async function getAppState() {
+  const connectionPool = getPool();
+
+  if (!connectionPool) {
+    return {};
+  }
+
+  await initDatabase();
+
+  const [rows] = await connectionPool.execute("SELECT state_key, state_json FROM app_state");
+  const state = {};
+
+  rows.forEach((row) => {
+    try {
+      state[row.state_key] = JSON.parse(row.state_json);
+    } catch {
+      state[row.state_key] = null;
+    }
+  });
+
+  return state;
+}
+
+async function saveAppState(key, value) {
+  const connectionPool = getPool();
+
+  if (!connectionPool || !key) {
+    return false;
+  }
+
+  await initDatabase();
+
+  await connectionPool.execute(
+    "INSERT INTO app_state (state_key, state_json) VALUES (?, ?) ON DUPLICATE KEY UPDATE state_json = VALUES(state_json)",
+    [key, JSON.stringify(value)]
+  );
+
+  return true;
+}
+
 async function checkDatabase() {
   const connectionPool = getPool();
 
@@ -237,8 +285,10 @@ module.exports = {
   hasDatabase,
   initDatabase,
   listContacts,
+  getAppState,
   getSiteContent,
   listAppUsers,
+  saveAppState,
   saveContact,
   saveAppUser,
   saveSiteContent,

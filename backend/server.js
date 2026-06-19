@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const crypto = require("crypto");
 const path = require("path");
-const { checkDatabase, getSiteContent, hasDatabase, initDatabase, listAppUsers, listContacts, saveAppUser, saveContact, saveSiteContent, updateContactStatus } = require("./db");
+const { checkDatabase, getAppState, getSiteContent, hasDatabase, initDatabase, listAppUsers, listContacts, saveAppState, saveAppUser, saveContact, saveSiteContent, updateContactStatus } = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -74,7 +74,7 @@ app.get("/api", (req, res) => {
     name: "Cybercapivaras API",
     status: "online",
     database: hasDatabase() ? "configured" : "not configured",
-    endpoints: ["/api/health", "/api/admin/login", "/api/site-content", "/api/users", "/api/contact", "/api/contacts"],
+    endpoints: ["/api/health", "/api/admin/login", "/api/site-content", "/api/app-state", "/api/users", "/api/contact", "/api/contacts"],
   });
 });
 
@@ -159,6 +159,35 @@ app.get("/api/users", requireAdmin, async (req, res) => {
   } catch (error) {
     console.error("Erro ao listar usuarios:", error);
     res.status(500).json({ error: "Nao foi possivel listar usuarios." });
+  }
+});
+
+app.get("/api/app-state", requireAdmin, async (req, res) => {
+  try {
+    res.set("Cache-Control", "no-store");
+    res.json({ state: await getAppState() });
+  } catch (error) {
+    console.error("Erro ao carregar estado do app:", error);
+    res.status(500).json({ error: "Nao foi possivel carregar os dados da central." });
+  }
+});
+
+app.post("/api/app-state", requireAdmin, async (req, res) => {
+  const { key, value } = req.body;
+
+  if (!key || typeof key !== "string") {
+    return res.status(400).json({ error: "Chave invalida." });
+  }
+
+  try {
+    const saved = await saveAppState(key, value);
+    if (!saved) {
+      return res.status(503).json({ error: "Banco de dados ainda nao configurado." });
+    }
+    res.json({ message: "Dados da central salvos." });
+  } catch (error) {
+    console.error("Erro ao salvar estado do app:", error);
+    res.status(500).json({ error: "Nao foi possivel salvar os dados da central." });
   }
 });
 

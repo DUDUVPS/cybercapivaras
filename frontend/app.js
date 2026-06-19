@@ -3,6 +3,7 @@ let remoteContentLoaded = false;
 let runtimeSiteContent = null;
 let draggedBlock = null;
 let draggedMemberIndex = null;
+let remoteAppStateLoaded = false;
 
 const defaultContent = {
   siteName: "Cyber Capivaras",
@@ -228,6 +229,43 @@ function compactContentForLocalCache(value) {
     .join("\n");
 }
 
+function normalizeUrl(value = "") {
+  const text = String(value).trim();
+  if (!text) return "";
+  if (/^(#|mailto:|tel:|data:|https?:\/\/|\/|\.\/|\.\.\/)/i.test(text)) return text;
+  if (/^[\w-]+\.html([?#].*)?$/i.test(text)) return `${window.location.origin}/${text}`;
+  if (/^[\w.-]+\.[a-z]{2,}(\/.*)?$/i.test(text)) return `https://${text}`;
+  return text;
+}
+
+function normalizeLinkRows(rows = []) {
+  return rows.map((row) => {
+    const next = [...row];
+    if (next[1]) next[1] = normalizeUrl(next[1]);
+    return next;
+  });
+}
+
+function normalizePublicContentLinks(content) {
+  return {
+    ...content,
+    siteHomeLink: normalizeUrl(content.siteHomeLink),
+    accountLink: normalizeUrl(content.accountLink),
+    heroPrimaryLink: normalizeUrl(content.heroPrimaryLink),
+    heroSecondaryLink: normalizeUrl(content.heroSecondaryLink),
+    footerCreditUrl: normalizeUrl(content.footerCreditUrl),
+    headerLinks: normalizeLinkRows(content.headerLinks || []),
+    footerNavLinks: normalizeLinkRows(content.footerNavLinks || []),
+    footerCentralLinks: normalizeLinkRows(content.footerCentralLinks || []),
+    footerSocials: normalizeLinkRows(content.footerSocials || []),
+    customSections: (content.customSections || []).map((row) => {
+      const next = [...row];
+      if (next[5]) next[5] = normalizeUrl(next[5]);
+      return next;
+    }),
+  };
+}
+
 function hasLocalPublicContent() {
   try {
     const raw = localStorage.getItem("cyber_site_content");
@@ -260,10 +298,11 @@ async function loadContentFromApi() {
 
 async function saveContentToApi(content) {
   requireAdminBackendSession();
+  const normalizedContent = normalizePublicContentLinks(content);
   const response = await fetch(`${API_URL}/api/site-content`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-    body: JSON.stringify({ content }),
+    body: JSON.stringify({ content: normalizedContent }),
   });
   const data = await response.json().catch(() => ({}));
   if (response.status === 413) throw new Error("Conteudo muito grande para enviar. Reduza algumas imagens ou use imagens menores.");
@@ -618,8 +657,9 @@ function collectEditorBlocks() {
 }
 
 async function persistPublicContent(content, successMessage = "Conteudo publico salvo.") {
+  const normalizedContent = normalizePublicContentLinks(content);
   try {
-    await saveContentToApi(content);
+    await saveContentToApi(normalizedContent);
   } catch (error) {
     showToast(error.message, "error");
     return {
@@ -630,7 +670,7 @@ async function persistPublicContent(content, successMessage = "Conteudo publico 
     };
   }
 
-  const localCached = saveContent(content);
+  const localCached = saveContent(normalizedContent);
 
   if (!localCached) {
     showToast(`${successMessage} Salvo no banco de dados; o cache deste aparelho foi ignorado porque ficou grande.`, "warning");
@@ -755,8 +795,49 @@ function getRoles() {
   return JSON.parse(localStorage.getItem("cyber_roles") || '{"admin@cybercapivaras.com":{"name":"Administrador","email":"admin@cybercapivaras.com","role":"Administrador"}}');
 }
 
+const appStateLocalKeys = {
+  roles: "cyber_roles",
+  settings: "cyber_app_settings",
+  tasks: "cyber_tasks",
+  permissions: "cyber_user_permissions",
+  candidates: "cyber_candidates",
+};
+
+async function loadAppStateFromApi() {
+  if (remoteAppStateLoaded || !hasAdminBackendSession()) return;
+  remoteAppStateLoaded = true;
+
+  try {
+    const response = await fetch(`${API_URL}/api/app-state`, { headers: getAuthHeaders(), cache: "no-store" });
+    if (!response.ok) return;
+    const data = await response.json();
+    const state = data.state || {};
+    Object.entries(appStateLocalKeys).forEach(([key, localKey]) => {
+      if (key in state && state[key] !== null) {
+        localStorage.setItem(localKey, JSON.stringify(state[key]));
+      }
+    });
+  } catch {
+    showToast("Nao foi possivel carregar os dados da central do banco.", "warning");
+  }
+}
+
+function saveAppStateToApi(key, value) {
+  if (!hasAdminBackendSession()) return;
+  fetch(`${API_URL}/api/app-state`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
+    body: JSON.stringify({ key, value }),
+  })
+    .then((response) => {
+      if (!response.ok) throw new Error("Falha ao salvar no banco.");
+    })
+    .catch(() => showToast("Nao salvou os dados da central no banco.", "error"));
+}
+
 function saveRoles(roles) {
   localStorage.setItem("cyber_roles", JSON.stringify(roles));
+  saveAppStateToApi("roles", roles);
 }
 
 function getKnownUsers() {
@@ -822,6 +903,7 @@ function getAppSettings() {
 
 function saveAppSettings(settings) {
   localStorage.setItem("cyber_app_settings", JSON.stringify(settings));
+  saveAppStateToApi("settings", settings);
 }
 
 function normalizeTask(task) {
@@ -837,6 +919,7 @@ function getTasks() {
 
 function saveTasks(tasks) {
   localStorage.setItem("cyber_tasks", JSON.stringify(tasks));
+  saveAppStateToApi("tasks", tasks);
 }
 
 function getUserPermissions() {
@@ -845,6 +928,7 @@ function getUserPermissions() {
 
 function saveUserPermissions(rules) {
   localStorage.setItem("cyber_user_permissions", JSON.stringify(rules));
+  saveAppStateToApi("permissions", rules);
 }
 
 function getCandidates() {
@@ -857,6 +941,7 @@ function getCandidates() {
 
 function saveCandidates(candidates) {
   localStorage.setItem("cyber_candidates", JSON.stringify(candidates));
+  saveAppStateToApi("candidates", candidates);
 }
 
 function startSession(user) {
@@ -2012,6 +2097,12 @@ function setupDataTools() {
       keys.forEach((key) => {
         if (key in data) localStorage.setItem(key, JSON.stringify(data[key]));
       });
+      saveContentToApi(getContent()).catch((error) => showToast(error.message, "error"));
+      if (data.cyber_roles) saveAppStateToApi("roles", data.cyber_roles);
+      if (data.cyber_app_settings) saveAppStateToApi("settings", data.cyber_app_settings);
+      if (data.cyber_tasks) saveAppStateToApi("tasks", data.cyber_tasks);
+      if (data.cyber_candidates) saveAppStateToApi("candidates", data.cyber_candidates);
+      if (data.cyber_user_permissions) saveAppStateToApi("permissions", data.cyber_user_permissions);
       if (status) status.textContent = "Dados importados.";
       showToast("Dados importados.");
       renderApp();
@@ -2023,6 +2114,12 @@ function setupDataTools() {
 
   resetButton.addEventListener("click", () => {
     keys.forEach((key) => localStorage.removeItem(key));
+    saveContentToApi(defaultContent).catch((error) => showToast(error.message, "error"));
+    saveAppStateToApi("roles", getRoles());
+    saveAppStateToApi("settings", defaultAppSettings);
+    saveAppStateToApi("tasks", defaultTasks);
+    saveAppStateToApi("candidates", defaultCandidates);
+    saveAppStateToApi("permissions", defaultUserPermissions);
     if (status) status.textContent = "Dados demo restaurados.";
     showToast("Dados demo restaurados.", "warning");
     renderApp();
@@ -2178,6 +2275,7 @@ function setupLogout() {
 
 async function initApp() {
   protectApp();
+  await loadAppStateFromApi();
   await loadKnownUsersFromApi();
   const hasRemoteContent = await loadContentFromApi();
   if (!hasRemoteContent && hasLocalPublicContent() && getSession()?.token) {
