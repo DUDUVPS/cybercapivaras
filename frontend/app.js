@@ -425,7 +425,7 @@ function isMediaListField(label = "") {
 }
 
 function isLongTextField(label = "") {
-  return /descricao|descrição|texto|objetivo/i.test(label);
+  return /descricao|descrição|texto|objetivo|caixas/i.test(label);
 }
 
 function readFileAsDataUrl(file) {

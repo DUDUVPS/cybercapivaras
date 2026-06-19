@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v55-sponsor-page-template";
+const CACHE_NAME = "cyber-capivaras-v56-sponsor-card-polish";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260619-sponsor-page-template",
-  "/site.js?v=20260619-sponsor-page-template",
-  "/app.js?v=20260619-sponsor-page-template",
+  "/style.css?v=20260619-sponsor-card-polish",
+  "/site.js?v=20260619-sponsor-card-polish",
+  "/app.js?v=20260619-sponsor-card-polish",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"
