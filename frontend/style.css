@@ -481,10 +481,12 @@ h2 { font-size: clamp(1.9rem, 4vw, 3.1rem); line-height: 1.08; }
 .card-media-carousel {
   position: relative;
   overflow: hidden;
+  aspect-ratio: 16 / 10;
   min-height: 240px;
   background: #0b0f17;
 }
 .project-showcase .card-media-carousel {
+  aspect-ratio: 16 / 10;
   min-height: 300px;
 }
 .card-media-track {
@@ -737,8 +739,8 @@ h2 { font-size: clamp(1.9rem, 4vw, 3.1rem); line-height: 1.08; }
 .team-lead p { color: var(--muted); }
 .member-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
 }
 .member-card {
   overflow: hidden;
@@ -2336,9 +2338,13 @@ body[data-accent="red"] { --green: var(--red); }
     overflow-x: hidden;
     padding-bottom: 0;
   }
+  .carousel-shell {
+    padding-bottom: 50px;
+  }
   .carousel-arrow {
     display: grid;
-    top: 110px;
+    top: auto;
+    bottom: 2px;
   }
   .event-timeline {
     grid-template-columns: none;
@@ -2351,13 +2357,14 @@ body[data-accent="red"] { --green: var(--red); }
   .event-timeline::-webkit-scrollbar {
     display: none;
   }
-  .carousel-prev { left: 8px; }
-  .carousel-next { right: 8px; }
+  .carousel-prev { left: calc(50% - 44px); }
+  .carousel-next { right: auto; left: calc(50% + 6px); }
   .event-card {
     padding: 0;
   }
   .event-card .card-media-carousel {
-    height: 210px;
+    height: auto;
+    min-height: 210px;
   }
   .event-card .event-meta {
     align-items: flex-start;

@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v51-db-only-public-save";
+const CACHE_NAME = "cyber-capivaras-v52-media-size-and-arrows";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260618-db-only-public-save",
-  "/site.js?v=20260618-db-only-public-save",
-  "/app.js?v=20260618-db-only-public-save",
+  "/style.css?v=20260619-media-size-and-arrows",
+  "/site.js?v=20260619-media-size-and-arrows",
+  "/app.js?v=20260619-media-size-and-arrows",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"

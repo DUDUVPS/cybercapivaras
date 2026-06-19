@@ -385,21 +385,62 @@ function isLongTextField(label = "") {
   return /descricao|descrição|texto|objetivo/i.test(label);
 }
 
-function fileToDataUrl(file, maxSizeMb = 2.5) {
+function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
-    if (!file) {
-      resolve("");
-      return;
-    }
-    if (file.size > maxSizeMb * 1024 * 1024) {
-      reject(new Error(`Imagem muito grande. Use ate ${String(maxSizeMb).replace(".", ",")} MB.`));
-      return;
-    }
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
     reader.onerror = () => reject(new Error("Nao foi possivel carregar a imagem."));
     reader.readAsDataURL(file);
   });
+}
+
+function loadImageFromFile(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(image);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Nao foi possivel processar a imagem."));
+    };
+    image.src = url;
+  });
+}
+
+async function fileToDataUrl(file, maxSizeMb = 1.2) {
+  if (!file) return "";
+  if (!file.type.startsWith("image/") || /svg|gif/i.test(file.type)) {
+    return readFileAsDataUrl(file);
+  }
+
+  const image = await loadImageFromFile(file);
+  const maxSide = 1400;
+  const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+  const width = Math.max(1, Math.round(image.naturalWidth * scale));
+  const height = Math.max(1, Math.round(image.naturalHeight * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d", { alpha: false });
+  if (!context) return readFileAsDataUrl(file);
+  context.fillStyle = "#0b0f17";
+  context.fillRect(0, 0, width, height);
+  context.drawImage(image, 0, 0, width, height);
+
+  const mimeType = canvas.toDataURL("image/webp", 0.78).startsWith("data:image/webp") ? "image/webp" : "image/jpeg";
+  let quality = 0.82;
+  let result = canvas.toDataURL(mimeType, quality);
+  const maxBytes = maxSizeMb * 1024 * 1024;
+
+  while (result.length * 0.75 > maxBytes && quality > 0.48) {
+    quality -= 0.08;
+    result = canvas.toDataURL(mimeType, quality);
+  }
+
+  return result;
 }
 
 function splitMediaList(value = "") {
@@ -1167,7 +1208,7 @@ function setupAppForms() {
         try {
           target.value = await fileToDataUrl(fileInput.files?.[0]);
           updateMediaPreview(fieldName);
-          showToast("Imagem carregada. Salve para publicar.");
+          showToast("Imagem otimizada. Salve para publicar no banco de dados.");
         } catch (error) {
           showToast(error.message, "error");
         }
@@ -1215,7 +1256,7 @@ function setupAppForms() {
         const value = nextValues.filter(Boolean).join("\n");
         if (textInput) textInput.value = value;
         if (preview) preview.src = nextValues[0] || "imgs/apple-touch-icon.png";
-        showToast(blockFile.multiple ? "Galeria carregada. Salve para publicar." : "Imagem da caixa carregada. Salve para publicar.");
+        showToast(blockFile.multiple ? "Galeria otimizada. Salve para publicar no banco de dados." : "Imagem otimizada. Salve para publicar no banco de dados.");
       } catch (error) {
         showToast(error.message, "error");
       }
