@@ -370,6 +370,8 @@ const blockSchemas = {
     ["Link do botao", "#contato"],
     ["Texto do botao", "Saiba mais"],
     ["Status", "Destaque"],
+    ["Modelo", "padrao ou patrocinio"],
+    ["Caixas", "nome | texto | imagem/logo"],
   ],
   footerNavLinks: [
     ["Texto", "Inicio"],
@@ -536,7 +538,22 @@ const pageTemplates = {
   },
   cta: {
     name: "Chamada",
-    values: ["Chamada", "Participe do Cyber Capivaras", "Texto curto para convite, inscricao, parceria ou aviso importante.", "", "", "#contato", "Falar com o time", "Aberto"],
+    values: ["Chamada", "Participe do Cyber Capivaras", "Texto curto para convite, inscricao, parceria ou aviso importante.", "", "", "#contato", "Falar com o time", "Aberto", "padrao", ""],
+  },
+  sponsors: {
+    name: "Patrocinio",
+    values: [
+      "Patrocinio",
+      "Conheca Nossos Patrocinadores",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "patrocinio",
+      "nome patrocinio | text adicional | imgs/apple-touch-icon.png\nnome patrocinio | text adicional | imgs/apple-touch-icon.png\nnome patrocinio | text adicional | imgs/apple-touch-icon.png\nnome patrocinio | text adicional | imgs/apple-touch-icon.png",
+    ],
   },
 };
 
@@ -556,8 +573,9 @@ function normalizeBlockRows(type, rows = []) {
   }
   if (type === "customSections") {
     return rows.map((row, index) => {
-      if (row.length >= 8) return row;
-      if (row.length >= 7) return [row[3] || row[0] || `Pagina ${index + 1}`, row[0], row[1], row[2], String(5 + index), row[4], row[5], row[6]];
+      if (row.length >= 10) return row;
+      if (row.length >= 8) return [...row, "padrao", ""];
+      if (row.length >= 7) return [row[3] || row[0] || `Pagina ${index + 1}`, row[0], row[1], row[2], String(5 + index), row[4], row[5], row[6], "padrao", ""];
       return row;
     });
   }

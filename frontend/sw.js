@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v54-db-state-absolute-links";
+const CACHE_NAME = "cyber-capivaras-v55-sponsor-page-template";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260619-db-state-absolute-links",
-  "/site.js?v=20260619-db-state-absolute-links",
-  "/app.js?v=20260619-db-state-absolute-links",
+  "/style.css?v=20260619-sponsor-page-template",
+  "/site.js?v=20260619-sponsor-page-template",
+  "/app.js?v=20260619-sponsor-page-template",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"

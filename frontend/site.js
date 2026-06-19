@@ -169,6 +169,13 @@ function migrateCustomBlocks(rows = []) {
   ]);
 }
 
+function parseCardRows(value = "") {
+  return String(value)
+    .split("\n")
+    .map((line) => line.split("|").map((part) => part.trim()))
+    .filter((parts) => parts[0] || parts[1] || parts[2]);
+}
+
 function slugify(value = "") {
   return String(value)
     .normalize("NFD")
@@ -415,8 +422,38 @@ function renderPublicContent() {
     const hasStoredCustomBlocks = Array.isArray(storedContent.customBlocks) && storedContent.customBlocks.some(Array.isArray);
     const rows = hasCustomSections ? validRows(content.customSections, []) : (hasStoredCustomBlocks ? migrateCustomBlocks(storedContent.customBlocks) : []);
     dynamicSections.innerHTML = rows
-      .map(([label, title, text, image, order, link, linkText, status], index) => {
+      .map(([label, title, text, image, order, link, linkText, status, model, boxes], index) => {
         const id = `pagina-${index + 1}-${slugify(label || title)}`;
+        if (model === "patrocinio") {
+          const cards = parseCardRows(boxes).length ? parseCardRows(boxes) : [
+            ["nome patrocinio", "text adicional", image],
+            ["nome patrocinio", "text adicional", image],
+            ["nome patrocinio", "text adicional", image],
+            ["nome patrocinio", "text adicional", image],
+          ];
+          return `
+            <section class="section reveal sponsor-public-section" id="${id}" data-dynamic-public-section style="order:${sectionOrder(order, 5 + index)}">
+              <div class="section-head">
+                ${label ? `<p class="eyebrow">${label}</p>` : ""}
+                <h2>${title || label || "Patrocinio"}</h2>
+                ${text ? `<p>${text}</p>` : ""}
+              </div>
+              <div class="sponsor-card-grid">
+                ${cards.map(([name, description, logo]) => `
+                  <article class="sponsor-card">
+                    <div class="sponsor-logo">
+                      ${logo ? `<img src="${logo}" alt="${name}" />` : `<span>logo</span>`}
+                    </div>
+                    <div>
+                      <h3>${name || "nome patrocinio"}</h3>
+                      <p>${description || "text adicional"}</p>
+                    </div>
+                  </article>
+                `).join("")}
+              </div>
+            </section>
+          `;
+        }
         return `
           <section class="section reveal custom-public-section" id="${id}" data-dynamic-public-section style="order:${sectionOrder(order, 5 + index)}">
             <div class="section-head">

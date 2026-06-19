@@ -713,6 +713,58 @@ h2 { font-size: clamp(1.9rem, 4vw, 3.1rem); line-height: 1.08; }
 .custom-block-card p {
   color: var(--muted);
 }
+.sponsor-public-section {
+  border-block: 1px solid var(--line);
+  background: rgba(255,255,255,.018);
+}
+.sponsor-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 28px;
+  max-width: 1500px;
+  margin: 46px auto 0;
+}
+.sponsor-card {
+  min-height: 330px;
+  display: grid;
+  align-content: space-between;
+  gap: 28px;
+  padding: 28px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.028)),
+    rgba(0,0,0,.18);
+  box-shadow: 0 18px 50px rgba(0,0,0,.24);
+}
+.sponsor-logo {
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: rgba(255,255,255,.045);
+}
+.sponsor-logo img {
+  max-width: 78%;
+  max-height: 118px;
+  object-fit: contain;
+}
+.sponsor-logo span {
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 950;
+}
+.sponsor-card h3 {
+  margin: 0 0 8px;
+  color: #fff;
+  font-size: clamp(1.25rem, 2vw, 1.8rem);
+}
+.sponsor-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
 .team-showcase {
   display: grid;
   grid-template-columns: minmax(240px, .62fr) minmax(0, 1.38fr);
@@ -2173,6 +2225,7 @@ body[data-accent="red"] { --green: var(--red); }
   .event-timeline {
     grid-template-columns: none;
   }
+  .sponsor-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .member-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .team-reference-grid, .compact-members { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .team-lead { position: static; }
@@ -2409,6 +2462,9 @@ body[data-accent="red"] { --green: var(--red); }
     font-size: 1.45rem;
   }
   .member-grid { grid-template-columns: 1fr; }
+  .sponsor-card-grid { grid-template-columns: 1fr; gap: 16px; }
+  .sponsor-card { min-height: 260px; border-radius: 18px; padding: 22px; }
+  .sponsor-logo { min-height: 120px; }
   .member-card {
     display: grid;
     grid-template-columns: 112px minmax(0, 1fr);
