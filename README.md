@@ -1,132 +1,88 @@
-# RoboTech - Site do Time de Robótica
+# Cyber Capivaras
 
-Projeto em HTML, CSS e JavaScript, com backend Node.js/Express pronto para deploy no Railway via GitHub.
+Site publico e Central Operacional do time de robotica Cyber Capivaras.
 
-## Estrutura
+O projeto usa:
+
+- HTML, CSS e JavaScript no frontend.
+- Node.js + Express no backend.
+- MySQL no Railway para salvar os dados.
+- Google Login para usuarios.
+- Login por e-mail e senha apenas para administrador.
+
+## Pastas principais
 
 ```text
-robotica-site/
-  frontend/
-    index.html
-    style.css
-    app.js
-    assets/
-      hero-robotica.png
-  backend/
-    package.json
-    server.js
-    .env.example
+frontend/  telas, CSS, JS, imagens e PWA
+backend/   API, login admin, banco MySQL e servidor Railway
 ```
 
-## Como rodar o frontend
+Leia o mapa completo em:
 
-Abra o arquivo `frontend/index.html` no navegador.
+```text
+ESTRUTURA_DO_PROJETO.md
+```
 
-No Railway, o backend também serve o frontend automaticamente. A URL pública do serviço abre o site, e as rotas `/api/*` continuam funcionando como API.
+## Rodar localmente
 
-## Como rodar o backend localmente
+Na raiz do projeto:
 
 ```bash
-cd backend
 npm install
 npm start
 ```
 
-A API ficará em:
+Depois abra:
 
 ```text
 http://localhost:3000
 ```
 
-## Como conectar o frontend ao Railway
+## Paginas principais
 
-Depois de publicar o backend no Railway, copie a URL gerada e altere esta linha em `frontend/app.js`:
-
-```js
-const API_URL = "https://sua-url-do-railway.up.railway.app";
+```text
+/index.html     site publico
+/equipe.html    equipe publica
+/login.html     login
+/app.html       Central Operacional
 ```
 
-## Deploy do backend no Railway com GitHub
+## Arquivos mais importantes
 
-1. Crie um repositório no GitHub e envie a pasta do projeto.
-2. No Railway, clique em `New Project`.
-3. Escolha `Deploy from GitHub repo`.
-4. Selecione o repositório.
-5. Configure o diretório do serviço como `backend`, se necessário.
-6. Use o comando de start:
+```text
+frontend/site.js     monta o site publico com os dados do banco
+frontend/app.js      controla a Central Operacional
+frontend/style.css   visual do site e do app
+backend/server.js    rotas da API e login admin
+backend/db.js        conexao e funcoes do MySQL
+```
+
+## Variaveis no Railway
+
+```text
+MYSQL_URL
+GOOGLE_CLIENT_ID
+ADMIN_EMAIL
+ADMIN_PASSWORD
+ADMIN_SESSION_SECRET
+```
+
+## Deploy
+
+O Railway usa:
+
+```text
+package.json
+railway.json
+backend/server.js
+```
+
+O comando de start e:
 
 ```bash
 npm start
 ```
 
-7. Adicione a variável `ALLOWED_ORIGIN` com o endereço do frontend em produção.
+## Regra do projeto
 
-## MySQL no Railway
-
-1. No projeto do Railway, clique em `+ New`.
-2. Escolha `Database` e depois `MySQL`.
-3. No serviço do backend, adicione a variável:
-
-```text
-MYSQL_URL=${{MySQL.MYSQL_URL}}
-```
-
-O backend cria automaticamente a tabela `contacts` quando iniciar.
-
-## Login com Google
-
-O frontend usa Google Identity Services. Para ativar o botao real do Google:
-
-1. Abra a pagina `Clients` no Google Cloud Console e crie um OAuth Client ID do tipo `Web application`.
-2. Configure a tela de consentimento/branding do app.
-3. Adicione a origem autorizada:
-
-```text
-https://cybercapivaras.up.railway.app
-```
-
-Para testar localmente, adicione tambem:
-
-```text
-http://localhost:3000
-```
-
-4. Copie o Client ID e coloque no Railway em `Variables`:
-
-```text
-GOOGLE_CLIENT_ID=SEU_CLIENT_ID.apps.googleusercontent.com
-```
-
-O backend serve `/config.js` dinamicamente com essa variavel. Nao precisa editar `frontend/config.js` em producao.
-Enquanto o Client ID estiver vazio, o site mostra um botao Google em modo demo/local.
-O login por e-mail e senha e exclusivo do administrador.
-
-## Login do administrador
-
-O administrador e validado pelo backend. Configure estas variaveis no Railway:
-
-```text
-ADMIN_EMAIL=seu-email-admin
-ADMIN_PASSWORD=sua-senha-forte
-ADMIN_SESSION_SECRET=um-texto-grande-e-aleatorio
-```
-
-O formulario de e-mail e senha fica oculto na tela de login e aparece apenas em `Acesso do administrador`.
-Os chamados recebidos pelo site so podem ser listados e atualizados por uma sessao de administrador.
-
-## Endpoints
-
-```text
-GET /api/health
-POST /api/contact
-```
-
-Exemplo do corpo para contato:
-
-```json
-{
-  "name": "Eduardo",
-  "email": "eduardo@email.com",
-  "message": "Quero saber mais sobre o time."
-}
-```
+O site deve ser editado pela Central Operacional sempre que possivel. Evite colocar conteudo manual direto no codigo quando esse conteudo deveria ser controlado pelo app.
