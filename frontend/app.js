@@ -495,6 +495,25 @@ function splitMediaList(value = "") {
     .filter(Boolean);
 }
 
+function parseSponsorBoxLines(value = "") {
+  return String(value)
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [name = "", text = "", logo = ""] = line.split("|").map((part) => part.trim());
+      return { name, text, logo };
+    })
+    .filter((box) => box.name || box.text || box.logo);
+}
+
+function sponsorBoxesToLines(boxes = []) {
+  return boxes
+    .map((box) => [box.name, box.text, box.logo].map((value) => String(value || "").trim()).join(" | "))
+    .filter((line) => line.replace(/[|\s]/g, ""))
+    .join("\n");
+}
+
 function slugify(value = "") {
   return String(value)
     .normalize("NFD")
@@ -588,6 +607,87 @@ function applySiteTabLabels(content = getContent()) {
   });
 }
 
+function isSponsorBoxesField(type, row, label) {
+  return type === "customSections" && label === "Caixas" && String(row[8] || "").trim().toLowerCase() === "patrocinio";
+}
+
+function renderSponsorBoxItem(box = {}) {
+  const logo = box.logo || "imgs/apple-touch-icon.png";
+  return `
+    <article class="sponsor-box-item" data-sponsor-box-item>
+      <div class="sponsor-box-logo">
+        <img alt="Logo do patrocinador" src="${escapeHtml(logo)}" data-sponsor-logo-preview />
+        <div>
+          <label>Logo ou imagem
+            <input type="text" data-sponsor-logo value="${escapeHtml(box.logo || "")}" placeholder="imgs/logo.png ou cole uma URL" />
+          </label>
+          <input type="file" accept="image/*" data-sponsor-file />
+        </div>
+      </div>
+      <div class="sponsor-box-grid">
+        <label>Nome do patrocinador
+          <input type="text" data-sponsor-name value="${escapeHtml(box.name || "")}" placeholder="Nome do patrocinador" />
+        </label>
+        <label>Texto adicional
+          <textarea rows="3" data-sponsor-text placeholder="Texto curto que aparece dentro da caixa">${escapeHtml(box.text || "")}</textarea>
+        </label>
+      </div>
+      <button class="ghost-button danger-button" type="button" data-remove-sponsor-box>Remover caixa</button>
+    </article>
+  `;
+}
+
+function renderSponsorBoxEditor(value = "") {
+  const boxes = parseSponsorBoxLines(value);
+  const safeBoxes = boxes.length ? boxes : [{ name: "", text: "", logo: "" }];
+  return `
+    <div class="sponsor-box-editor" data-sponsor-editor>
+      <strong>Caixas de patrocinio</strong>
+      <textarea data-block-field="9" hidden>${escapeHtml(value || "")}</textarea>
+      <div class="sponsor-box-editor-head">
+        <span>Edite cada patrocinador em uma caixa separada.</span>
+        <button class="ghost-button" type="button" data-add-sponsor-box>Adicionar caixa</button>
+      </div>
+      <div class="sponsor-box-list" data-sponsor-box-list>
+        ${safeBoxes.map((box) => renderSponsorBoxItem(box)).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderBlockField(type, row, label, placeholder, fieldIndex) {
+  if (isSponsorBoxesField(type, row, label)) {
+    return renderSponsorBoxEditor(row[fieldIndex] || "");
+  }
+
+  return `
+    <label>${label}
+      ${isLongTextField(label) ? `<textarea rows="3" data-block-field="${fieldIndex}" placeholder="${escapeHtml(placeholder)}">${escapeHtml(row[fieldIndex] || "")}</textarea>` : `
+        <div class="${isMediaField(label) ? "media-picker compact-media-picker" : ""}">
+          ${isMediaField(label) ? `<img alt="Preview" data-block-media-preview="${fieldIndex}" src="${escapeHtml(splitMediaList(row[fieldIndex])[0] || "imgs/apple-touch-icon.png")}" />` : ""}
+          <div>
+            ${isMediaListField(label)
+              ? `<textarea rows="3" data-block-field="${fieldIndex}" placeholder="${escapeHtml(placeholder)}">${escapeHtml(row[fieldIndex] || "")}</textarea>`
+              : `<input type="text" data-block-field="${fieldIndex}" value="${escapeHtml(row[fieldIndex] || "")}" placeholder="${escapeHtml(placeholder)}" />`}
+            ${isMediaField(label) ? `<input type="file" accept="image/*" data-block-media-file="${fieldIndex}" ${isMediaListField(label) ? "multiple" : ""} />` : ""}
+          </div>
+        </div>
+      `}
+    </label>
+  `;
+}
+
+function syncSponsorBoxEditor(editor) {
+  if (!editor) return;
+  const boxes = [...editor.querySelectorAll("[data-sponsor-box-item]")].map((item) => ({
+    name: item.querySelector("[data-sponsor-name]")?.value || "",
+    text: item.querySelector("[data-sponsor-text]")?.value || "",
+    logo: item.querySelector("[data-sponsor-logo]")?.value || "",
+  }));
+  const hiddenField = editor.querySelector('[data-block-field="9"]');
+  if (hiddenField) hiddenField.value = sponsorBoxesToLines(boxes);
+}
+
 function renderBlockEditors(content) {
   Object.entries(blockSchemas).forEach(([type, schema]) => {
     const list = document.querySelector(`[data-block-list="${type}"]`);
@@ -604,23 +704,7 @@ function renderBlockEditors(content) {
             </div>
             <div class="editable-block-grid">
               ${schema
-                .map(
-                  ([label, placeholder], fieldIndex) => `
-                    <label>${label}
-                      ${isLongTextField(label) ? `<textarea rows="3" data-block-field="${fieldIndex}" placeholder="${escapeHtml(placeholder)}">${escapeHtml(row[fieldIndex] || "")}</textarea>` : `
-                        <div class="${isMediaField(label) ? "media-picker compact-media-picker" : ""}">
-                          ${isMediaField(label) ? `<img alt="Preview" data-block-media-preview="${fieldIndex}" src="${escapeHtml(splitMediaList(row[fieldIndex])[0] || "imgs/apple-touch-icon.png")}" />` : ""}
-                          <div>
-                            ${isMediaListField(label)
-                              ? `<textarea rows="3" data-block-field="${fieldIndex}" placeholder="${escapeHtml(placeholder)}">${escapeHtml(row[fieldIndex] || "")}</textarea>`
-                              : `<input type="text" data-block-field="${fieldIndex}" value="${escapeHtml(row[fieldIndex] || "")}" placeholder="${escapeHtml(placeholder)}" />`}
-                            ${isMediaField(label) ? `<input type="file" accept="image/*" data-block-media-file="${fieldIndex}" ${isMediaListField(label) ? "multiple" : ""} />` : ""}
-                          </div>
-                        </div>
-                      `}
-                    </label>
-                  `
-                )
+                .map(([label, placeholder], fieldIndex) => renderBlockField(type, row, label, placeholder, fieldIndex))
                 .join("")}
             </div>
           </article>
@@ -1455,6 +1539,14 @@ function setupAppForms() {
         const preview = block?.querySelector(`[data-block-media-preview="${blockField.dataset.blockField}"]`);
         if (preview) preview.src = splitMediaList(blockField.value)[0] || "imgs/apple-touch-icon.png";
       }
+      const sponsorEditor = event.target.closest("[data-sponsor-editor]");
+      if (sponsorEditor && event.target.matches("[data-sponsor-name], [data-sponsor-text], [data-sponsor-logo]")) {
+        const sponsorItem = event.target.closest("[data-sponsor-box-item]");
+        const preview = sponsorItem?.querySelector("[data-sponsor-logo-preview]");
+        const logoInput = sponsorItem?.querySelector("[data-sponsor-logo]");
+        if (preview && logoInput) preview.src = logoInput.value || "imgs/apple-touch-icon.png";
+        syncSponsorBoxEditor(sponsorEditor);
+      }
     });
     contentForm.addEventListener("change", () => showDraftToast());
 
@@ -1473,8 +1565,29 @@ function setupAppForms() {
     });
 
     contentForm.addEventListener("click", (event) => {
+      const addSponsorBoxButton = event.target.closest("[data-add-sponsor-box]");
+      const removeSponsorBoxButton = event.target.closest("[data-remove-sponsor-box]");
       const addButton = event.target.closest("[data-add-block]");
       const removeButton = event.target.closest("[data-remove-block]");
+
+      if (addSponsorBoxButton) {
+        const editor = addSponsorBoxButton.closest("[data-sponsor-editor]");
+        editor?.querySelector("[data-sponsor-box-list]")?.insertAdjacentHTML("beforeend", renderSponsorBoxItem());
+        syncSponsorBoxEditor(editor);
+        showToast("Caixa de patrocinador adicionada. Salve para publicar.");
+        return;
+      }
+
+      if (removeSponsorBoxButton) {
+        const editor = removeSponsorBoxButton.closest("[data-sponsor-editor]");
+        removeSponsorBoxButton.closest("[data-sponsor-box-item]")?.remove();
+        if (editor && !editor.querySelector("[data-sponsor-box-item]")) {
+          editor.querySelector("[data-sponsor-box-list]")?.insertAdjacentHTML("beforeend", renderSponsorBoxItem());
+        }
+        syncSponsorBoxEditor(editor);
+        showToast("Caixa de patrocinador removida. Salve para publicar.", "warning");
+        return;
+      }
 
       if (addButton) {
         const type = addButton.dataset.addBlock;
@@ -1534,6 +1647,24 @@ function setupAppForms() {
     });
 
     contentForm.addEventListener("change", async (event) => {
+      const sponsorFile = event.target.closest("[data-sponsor-file]");
+      if (sponsorFile) {
+        const item = sponsorFile.closest("[data-sponsor-box-item]");
+        const editor = sponsorFile.closest("[data-sponsor-editor]");
+        const logoInput = item?.querySelector("[data-sponsor-logo]");
+        const preview = item?.querySelector("[data-sponsor-logo-preview]");
+        try {
+          const value = await fileToDataUrl(sponsorFile.files?.[0], 0.7);
+          if (logoInput) logoInput.value = value;
+          if (preview) preview.src = value || "imgs/apple-touch-icon.png";
+          syncSponsorBoxEditor(editor);
+          showToast("Logo do patrocinador otimizada. Salve para publicar no banco de dados.");
+        } catch (error) {
+          showToast(error.message, "error");
+        }
+        return;
+      }
+
       const blockFile = event.target.closest("[data-block-media-file]");
       if (!blockFile) return;
       const block = blockFile.closest("[data-block-row]");
