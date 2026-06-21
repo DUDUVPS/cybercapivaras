@@ -209,7 +209,7 @@ function getPublicContent() {
   Object.entries(publicContent).forEach(([key, fallback]) => {
     content[key] = withDefault(content[key], fallback);
   });
-  content.members = Array.isArray(stored.members) && stored.members.length ? stored.members : publicTeam;
+  content.members = Array.isArray(content.members) && content.members.length ? content.members : publicTeam;
   return content;
 }
 
@@ -220,7 +220,11 @@ async function loadPublicContentFromApi() {
     const data = await response.json();
     if (data.content && typeof data.content === "object") {
       remotePublicContent = data.content;
-      localStorage.setItem("cyber_site_content", JSON.stringify(data.content));
+      try {
+        localStorage.setItem("cyber_site_content", JSON.stringify(data.content));
+      } catch {
+        localStorage.removeItem("cyber_site_content");
+      }
     }
   } catch {
     // Offline/local fallback keeps the last cached content visible.

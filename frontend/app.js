@@ -453,25 +453,47 @@ function loadImageFromFile(file) {
   });
 }
 
-async function fileToDataUrl(file, maxSizeMb = 1.2) {
+async function fileToDataUrl(file, maxSizeMb = 1.2, options = {}) {
   if (!file) return "";
   if (!file.type.startsWith("image/") || /svg|gif/i.test(file.type)) {
     return readFileAsDataUrl(file);
   }
 
   const image = await loadImageFromFile(file);
-  const maxSide = 1400;
+  const maxSide = options.maxSide || 1400;
   const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
   const width = Math.max(1, Math.round(image.naturalWidth * scale));
   const height = Math.max(1, Math.round(image.naturalHeight * scale));
   const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
-  const context = canvas.getContext("2d", { alpha: false });
+  const preserveTransparency = Boolean(options.preserveTransparency);
+  const context = canvas.getContext("2d", { alpha: preserveTransparency });
   if (!context) return readFileAsDataUrl(file);
-  context.fillStyle = "#0b0f17";
-  context.fillRect(0, 0, width, height);
+  if (!preserveTransparency) {
+    context.fillStyle = "#0b0f17";
+    context.fillRect(0, 0, width, height);
+  }
   context.drawImage(image, 0, 0, width, height);
+
+  if (preserveTransparency) {
+    let outputCanvas = canvas;
+    let result = outputCanvas.toDataURL("image/png");
+    const maxBytes = maxSizeMb * 1024 * 1024;
+
+    while (result.length * 0.75 > maxBytes && Math.max(outputCanvas.width, outputCanvas.height) > 180) {
+      const nextCanvas = document.createElement("canvas");
+      nextCanvas.width = Math.max(1, Math.round(outputCanvas.width * 0.82));
+      nextCanvas.height = Math.max(1, Math.round(outputCanvas.height * 0.82));
+      const nextContext = nextCanvas.getContext("2d", { alpha: true });
+      if (!nextContext) break;
+      nextContext.drawImage(outputCanvas, 0, 0, nextCanvas.width, nextCanvas.height);
+      outputCanvas = nextCanvas;
+      result = outputCanvas.toDataURL("image/png");
+    }
+
+    return result;
+  }
 
   const mimeType = canvas.toDataURL("image/webp", 0.78).startsWith("data:image/webp") ? "image/webp" : "image/jpeg";
   let quality = 0.82;
@@ -1654,7 +1676,7 @@ function setupAppForms() {
         const logoInput = item?.querySelector("[data-sponsor-logo]");
         const preview = item?.querySelector("[data-sponsor-logo-preview]");
         try {
-          const value = await fileToDataUrl(sponsorFile.files?.[0], 0.7);
+          const value = await fileToDataUrl(sponsorFile.files?.[0], 0.7, { preserveTransparency: true, maxSide: 900 });
           if (logoInput) logoInput.value = value;
           if (preview) preview.src = value || "imgs/apple-touch-icon.png";
           syncSponsorBoxEditor(editor);
@@ -1805,7 +1827,7 @@ function setupAppForms() {
       if (!user) return;
       memberForm.elements.name.value = user.name || "";
       memberForm.elements.email.value = user.email || "";
-      if (user.picture && !memberForm.elements.image.value) memberForm.elements.image.value = user.picture;
+      if (user.picture) memberForm.elements.image.value = user.picture;
       updateMemberEditPreview();
       showToast("Conta selecionada para este integrante.");
     });
@@ -1890,7 +1912,20 @@ function setupAppForms() {
         renderKnownAccountOptions();
       }
 
-      await persistPublicContent(content, "Equipe publicada no backend.");
+      document.querySelector("#memberStatus").textContent = "Salvando equipe no backend...";
+      const result = await persistPublicContent(content, "Equipe publicada no backend.");
+      if (!result.remoteSaved) {
+        document.querySelector("#memberStatus").textContent = result.needsAdminLogin
+          ? "Entre novamente como administrador para salvar a equipe."
+          : "Nao salvou no banco. Revise o aviso e tente novamente.";
+        if (result.needsAdminLogin) {
+          localStorage.removeItem("cyber_session");
+          setTimeout(() => {
+            window.location.href = "login.html";
+          }, 1800);
+        }
+        return;
+      }
       document.querySelector("#memberStatus").textContent = "Integrante salvo.";
       showToast(editIndex >= 0 ? "Integrante atualizado." : "Novo integrante criado.");
       memberForm.reset();

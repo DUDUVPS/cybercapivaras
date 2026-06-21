@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v57-sponsor-box-editor";
+const CACHE_NAME = "cyber-capivaras-v58-review-save-fixes";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260621-sponsor-box-editor",
-  "/site.js?v=20260621-sponsor-box-editor",
-  "/app.js?v=20260621-sponsor-box-editor",
+  "/style.css?v=20260621-review-save-fixes",
+  "/site.js?v=20260621-review-save-fixes",
+  "/app.js?v=20260621-review-save-fixes",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"
