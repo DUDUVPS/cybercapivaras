@@ -194,6 +194,41 @@ async function saveSiteContent(content) {
   return true;
 }
 
+async function updateOwnMemberProfile(email, profile = {}) {
+  const content = await getSiteContent();
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+
+  if (!content || !normalizedEmail || !Array.isArray(content.members)) {
+    return { saved: false, reason: "not_found" };
+  }
+
+  const memberIndex = content.members.findIndex((row) => (
+    Array.isArray(row) && String(row[5] || "").trim().toLowerCase() === normalizedEmail
+  ));
+
+  if (memberIndex < 0) {
+    return { saved: false, reason: "not_found" };
+  }
+
+  const current = content.members[memberIndex];
+  content.members[memberIndex] = [
+    profile.name || current[0] || "",
+    current[1] || "Membro",
+    current[2] || "N1",
+    profile.image || current[3] || "imgs/apple-touch-icon.png",
+    profile.description || current[4] || "",
+    current[5] || normalizedEmail,
+    current[6] || "1a Geracao Fabrica",
+    current[7] || "Ativo",
+    profile.instagram || current[8] || "",
+    profile.github || current[9] || "",
+    current[10] || "",
+  ];
+
+  const saved = await saveSiteContent(content);
+  return { saved, content, member: content.members[memberIndex] };
+}
+
 async function saveAppUser({ name, email, role, picture }) {
   const connectionPool = getPool();
 
@@ -292,5 +327,6 @@ module.exports = {
   saveContact,
   saveAppUser,
   saveSiteContent,
+  updateOwnMemberProfile,
   updateContactStatus,
 };

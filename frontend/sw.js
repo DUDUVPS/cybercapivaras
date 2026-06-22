@@ -1,13 +1,13 @@
-const CACHE_NAME = "cyber-capivaras-v58-review-save-fixes";
+const CACHE_NAME = "cyber-capivaras-v59-self-team-dashboard";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/login.html",
   "/app.html",
   "/equipe.html",
-  "/style.css?v=20260621-review-save-fixes",
-  "/site.js?v=20260621-review-save-fixes",
-  "/app.js?v=20260621-review-save-fixes",
+  "/style.css?v=20260622-self-team-dashboard",
+  "/site.js?v=20260622-self-team-dashboard",
+  "/app.js?v=20260622-self-team-dashboard",
   "/config.js?v=20260610-pwa-tickets",
   "/assets/hero-robotica.png",
   "/imgs/apple-touch-icon.png"

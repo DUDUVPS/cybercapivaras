@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const crypto = require("crypto");
 const path = require("path");
-const { checkDatabase, getAppState, getSiteContent, hasDatabase, initDatabase, listAppUsers, listContacts, saveAppState, saveAppUser, saveContact, saveSiteContent, updateContactStatus } = require("./db");
+const { checkDatabase, getAppState, getSiteContent, hasDatabase, initDatabase, listAppUsers, listContacts, saveAppState, saveAppUser, saveContact, saveSiteContent, updateContactStatus, updateOwnMemberProfile } = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -107,6 +107,31 @@ app.post("/api/site-content", requireAdmin, async (req, res) => {
   } catch (error) {
     console.error("Erro ao salvar conteudo do site:", error);
     res.status(500).json({ error: "Nao foi possivel salvar o conteudo do site." });
+  }
+});
+
+app.patch("/api/member-profile", async (req, res) => {
+  const { email, profile } = req.body;
+
+  if (!email || !profile || typeof profile !== "object" || Array.isArray(profile)) {
+    return res.status(400).json({ error: "Perfil invalido." });
+  }
+
+  try {
+    const result = await updateOwnMemberProfile(email, profile);
+
+    if (!result.saved && result.reason === "not_found") {
+      return res.status(404).json({ error: "Nenhum integrante vinculado a este e-mail. Peca para o administrador vincular sua conta na equipe." });
+    }
+
+    if (!result.saved) {
+      return res.status(503).json({ error: "Banco de dados ainda nao configurado." });
+    }
+
+    res.json({ message: "Seu perfil da equipe foi atualizado.", content: result.content, member: result.member });
+  } catch (error) {
+    console.error("Erro ao salvar perfil da equipe:", error);
+    res.status(500).json({ error: "Nao foi possivel salvar seu perfil da equipe." });
   }
 });
 

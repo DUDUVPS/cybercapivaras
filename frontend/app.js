@@ -4,6 +4,7 @@ let runtimeSiteContent = null;
 let draggedBlock = null;
 let draggedMemberIndex = null;
 let remoteAppStateLoaded = false;
+let latestTickets = [];
 
 const defaultContent = {
   siteName: "Cyber Capivaras",
@@ -805,6 +806,18 @@ async function persistPublicContent(content, successMessage = "Conteudo publico 
   return { remoteSaved: true, localCached: true };
 }
 
+async function saveOwnMemberProfileToApi(email, profile) {
+  const response = await fetch(`${API_URL}/api/member-profile`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, profile }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || "Nao foi possivel salvar seu perfil.");
+  if (data.content) saveContent({ ...getContent(), ...data.content });
+  return data;
+}
+
 async function createAndSaveCustomPage(templateKey = "info") {
   const nextContent = {
     ...getContent(),
@@ -1102,6 +1115,23 @@ function hasAdminBackendSession(session = getSession()) {
   return Boolean(session?.role === "Administrador" && session?.token);
 }
 
+function normalizeEmail(value = "") {
+  return String(value || "").trim().toLowerCase();
+}
+
+function findMemberIndexByEmail(email, content = getContent()) {
+  const target = normalizeEmail(email);
+  if (!target) return -1;
+  return (content.members || []).findIndex((row) => normalizeEmail(normalizeMember(row).email) === target);
+}
+
+function canEditMember(index, session = getSession()) {
+  if (!session) return false;
+  if (hasAdminBackendSession(session)) return true;
+  const member = normalizeMember(getContent().members[index] || []);
+  return normalizeEmail(member.email) === normalizeEmail(session.email);
+}
+
 function requireAdminBackendSession() {
   if (!hasAdminBackendSession()) {
     throw new Error("Entre pelo acesso do administrador com e-mail e senha para publicar no site.");
@@ -1315,7 +1345,6 @@ function applyAccessRules() {
   if (!document.body.classList.contains("app-shell")) return;
   const session = getSession();
   const allowed = getAllowedTabs(session);
-  const group = getAccessGroup(session);
 
   document.querySelectorAll("[data-tab-target]").forEach((button) => {
     button.hidden = !allowed.includes(button.dataset.tabTarget);
@@ -1329,16 +1358,73 @@ function applyAccessRules() {
     node.hidden = !canInterview(session);
   });
 
-  const chip = document.querySelector("#accessGroupChip");
-  const summary = document.querySelector("#accessSummary");
-  if (chip) chip.textContent = group;
-  if (summary) summary.textContent = group === "Administrador"
-    ? "Voce controla todos os modulos, permissoes, conteudo publico e funcoes da equipe."
-    : group === "Admin sem sessao"
-      ? "Para editar e publicar o site, saia e entre pelo acesso do administrador com e-mail e senha."
-      : `Seu perfil pode acessar: ${allowed.map((id) => appModules[id]).filter(Boolean).join(", ")}.`;
-
   showAppTab(document.querySelector("[data-tab-target].active")?.dataset.tabTarget || "painel");
+}
+
+function renderDashboard() {
+  const content = getContent();
+  const tasks = getTasks();
+  const pendingTasks = tasks.filter((task) => task.status !== "concluida");
+  const openTickets = latestTickets.filter((ticket) => ticket.status !== "resolvido");
+  const events = (content.events || []).filter((row) => row?.[0]);
+  const attentionList = document.querySelector("#attentionList");
+  const myMemberPanel = document.querySelector("#myMemberPanel");
+  const session = getSession();
+  const myMemberIndex = findMemberIndexByEmail(session?.email, content);
+  const myMember = myMemberIndex >= 0 ? normalizeMember(content.members[myMemberIndex]) : null;
+
+  const pendingTasksCount = document.querySelector("#pendingTasksCount");
+  const openTicketsCount = document.querySelector("#openTicketsCount");
+  const nextEventCount = document.querySelector("#nextEventCount");
+  const attentionChip = document.querySelector("#attentionChip");
+  const myMemberStatus = document.querySelector("#myMemberStatus");
+
+  if (pendingTasksCount) pendingTasksCount.textContent = pendingTasks.length;
+  if (openTicketsCount) openTicketsCount.textContent = openTickets.length;
+  if (nextEventCount) nextEventCount.textContent = events.length;
+  if (attentionChip) attentionChip.textContent = pendingTasks.length || openTickets.length ? "Pendente" : "Em dia";
+  if (myMemberStatus) myMemberStatus.textContent = myMember ? myMember.status : "Nao vinculado";
+
+  if (attentionList) {
+    const nextTask = pendingTasks[0];
+    const nextTicket = openTickets[0];
+    const nextEvent = events[0];
+    attentionList.innerHTML = [
+      nextTask ? `<article><strong>${nextTask.title}</strong><span>Tarefa em ${nextTask.area || "geral"} para ${nextTask.due || "sem data"}.</span></article>` : `<article><strong>Tarefas</strong><span>Nenhuma tarefa pendente.</span></article>`,
+      nextTicket ? `<article><strong>${nextTicket.category || "Chamado"}</strong><span>${nextTicket.name}: ${nextTicket.message}</span></article>` : `<article><strong>Chamados</strong><span>Nenhum chamado aberto carregado.</span></article>`,
+      nextEvent ? `<article><strong>${nextEvent[0]}</strong><span>${nextEvent[2] || "Local nao informado"} - ${nextEvent[1] || "sem data"}.</span></article>` : `<article><strong>Eventos</strong><span>Nenhum evento cadastrado.</span></article>`,
+    ].join("");
+  }
+
+  if (myMemberPanel) {
+    myMemberPanel.innerHTML = myMember
+      ? `<article><strong>${myMember.name}</strong><span>${myMember.role} - ${myMember.generation}</span></article><article><strong>Editar cadastro</strong><span>Abra a aba Equipe para trocar sua foto, detalhes e redes.</span></article>`
+      : `<article><strong>Cadastro nao vinculado</strong><span>Peca para o administrador vincular seu e-mail na equipe.</span></article>`;
+  }
+}
+
+function applyMemberFormAccess() {
+  const form = document.querySelector("#memberForm");
+  if (!form) return;
+
+  const session = getSession();
+  const admin = hasAdminBackendSession(session);
+  const controlledFields = ["knownAccount", "email", "role", "generation", "mainArea", "status"];
+  controlledFields.forEach((name) => {
+    if (!form.elements[name]) return;
+    form.elements[name].disabled = !admin;
+    form.elements[name].closest("label").hidden = !admin;
+  });
+  const permissions = form.querySelector(".member-permissions");
+  if (permissions) permissions.hidden = !admin;
+  form.querySelectorAll('.member-permissions input').forEach((input) => {
+    input.disabled = !admin;
+  });
+
+  const clearButton = document.querySelector("#clearMemberForm");
+  if (clearButton) clearButton.hidden = !admin;
+  const mode = document.querySelector("#memberEditMode");
+  if (mode) mode.textContent = admin ? "Admin" : "Meu perfil";
 }
 
 function renderApp() {
@@ -1349,7 +1435,6 @@ function renderApp() {
   const admin = hasAdminBackendSession(session);
   const settings = getAppSettings();
   document.querySelector("#sessionLabel").textContent = `${session.name} - ${session.role} - ${session.permission}`;
-  document.querySelector("#accessBadge").textContent = session.level;
   document.querySelector("#workspaceTitle").textContent = settings.appName;
   document.querySelector("#appBrandName").textContent = settings.appName;
   document.querySelector("#sidebarUser").textContent = session.name;
@@ -1368,7 +1453,7 @@ function renderApp() {
 
   const table = document.querySelector("#teamTable");
   if (table) {
-    table.innerHTML = getContent().members.map((member, index) => renderMemberCard(member, index, admin)).join("");
+    table.innerHTML = getContent().members.map((member, index) => renderMemberCard(member, index, canEditMember(index, session))).join("");
 
     table.querySelectorAll("[data-edit-member]").forEach((button) => {
       button.addEventListener("click", () => fillMemberForm(Number(button.dataset.editMember)));
@@ -1457,11 +1542,8 @@ function renderApp() {
     };
   }
 
-  const projectsCount = document.querySelector("#projectsCount");
-  const teamCount = document.querySelector("#teamCount");
-  if (projectsCount) projectsCount.textContent = getContent().projects.length;
-  if (teamCount) teamCount.textContent = getContent().members.length + Object.values(getRoles()).filter((item) => item.email !== "admin@cybercapivaras.com").length;
-
+  renderDashboard();
+  applyMemberFormAccess();
   renderTasks();
   renderCandidates();
   loadTickets();
@@ -1872,7 +1954,40 @@ function setupAppForms() {
       event.preventDefault();
       const formData = new FormData(memberForm);
       const data = Object.fromEntries(formData.entries());
+      const session = getSession();
+      const admin = hasAdminBackendSession(session);
       const content = getContent();
+      const editIndex = memberForm.elements.index.value === "" ? -1 : Number(memberForm.elements.index.value);
+
+      if (!admin) {
+        if (editIndex < 0 || !canEditMember(editIndex, session)) {
+          document.querySelector("#memberStatus").textContent = "Voce so pode salvar o seu proprio cadastro.";
+          showToast("Voce so pode salvar o seu proprio cadastro da equipe.", "error");
+          return;
+        }
+
+        const current = normalizeMember(content.members[editIndex]);
+        const profile = {
+          name: memberForm.elements.name.value,
+          image: memberForm.elements.image.value,
+          description: memberForm.elements.description.value,
+          instagram: memberForm.elements.instagram.value,
+          github: memberForm.elements.github.value,
+        };
+        document.querySelector("#memberStatus").textContent = "Salvando seu perfil no banco...";
+
+        try {
+          await saveOwnMemberProfileToApi(current.email || session.email, profile);
+          document.querySelector("#memberStatus").textContent = "Seu cadastro foi salvo.";
+          showToast("Seu perfil da equipe foi atualizado.");
+          renderApp();
+        } catch (error) {
+          document.querySelector("#memberStatus").textContent = "Nao salvou. Veja o aviso acima.";
+          showToast(error.message, "error");
+        }
+        return;
+      }
+
       const member = {
         name: data.name,
         email: data.email,
@@ -1887,7 +2002,6 @@ function setupAppForms() {
         mainArea: data.mainArea,
       };
       const row = memberToRow(member);
-      const editIndex = data.index === "" ? -1 : Number(data.index);
 
       if (editIndex >= 0) {
         content.members[editIndex] = row;
@@ -1947,6 +2061,10 @@ function setupAppForms() {
 function fillMemberForm(index) {
   const form = document.querySelector("#memberForm");
   if (!form) return;
+  if (!canEditMember(index)) {
+    showToast("Voce so pode editar o seu proprio cadastro da equipe.", "error");
+    return;
+  }
   const member = normalizeMember(getContent().members[index]);
   const rule = member.email ? getUserPermissions()[member.email] : null;
 
@@ -1974,6 +2092,7 @@ function fillMemberForm(index) {
   form.elements.name.focus();
   document.querySelector("#memberStatus").textContent = "Editando integrante selecionado.";
   showToast(`Editando ${member.name}.`);
+  applyMemberFormAccess();
 }
 
 function updateMemberEditPreview() {
@@ -2389,6 +2508,8 @@ async function loadTickets() {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error);
     const tickets = data.contacts || [];
+    latestTickets = tickets;
+    renderDashboard();
 
     if (!tickets.length) {
       list.innerHTML = `<article class="empty-state">Nenhum chamado recebido ainda.</article>`;
@@ -2428,6 +2549,8 @@ async function loadTickets() {
       });
     });
   } catch (error) {
+    latestTickets = [];
+    renderDashboard();
     list.innerHTML = `<article class="empty-state">Nao foi possivel carregar os chamados.</article>`;
   }
 }
@@ -2478,7 +2601,6 @@ async function initApp() {
   setupAppForms();
   setupContactForm();
   setupLogout();
-  checkApi();
 }
 
 initApp();

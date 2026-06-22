@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.webmanifest" />
     <meta name="theme-color" content="#080a0f" />
     <link rel="apple-touch-icon" href="imgs/apple-touch-icon.png" />
-    <link rel="stylesheet" href="style.css?v=20260621-review-save-fixes" />
+    <link rel="stylesheet" href="style.css?v=20260622-self-team-dashboard" />
   </head>
   <body class="app-screen app-shell" data-protected="true">
     <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
@@ -52,52 +52,47 @@
         </div>
         <div class="workspace-actions">
           <a class="ghost-button" href="index.html">Ver site</a>
-          <div class="access-badge" id="accessBadge">N2</div>
         </div>
       </header>
 
       <section class="app-tab is-active" id="painel" data-tab-panel="painel">
         <div class="app-grid">
           <article class="app-card metric">
-            <span id="projectsCount">3</span>
-            <h3>Projetos ativos</h3>
-            <p>Robos, testes e prototipos acompanhados pela equipe.</p>
+            <span id="pendingTasksCount">0</span>
+            <h3>Tarefas pendentes</h3>
+            <p>Atividades a fazer ou em andamento.</p>
           </article>
           <article class="app-card metric">
-            <span id="teamCount">10</span>
-            <h3>Integrantes</h3>
-            <p>Funcoes, permissoes e hierarquia do time.</p>
+            <span id="openTicketsCount">0</span>
+            <h3>Chamados abertos</h3>
+            <p>Pedidos que ainda precisam de resposta.</p>
           </article>
           <article class="app-card metric">
-            <span id="apiState">...</span>
-            <h3>Railway + MySQL</h3>
-            <p id="apiStateText">Verificando backend.</p>
+            <span id="nextEventCount">0</span>
+            <h3>Proximos eventos</h3>
+            <p>Eventos cadastrados para acompanhar.</p>
           </article>
         </div>
         <div class="module-grid">
           <article class="app-section">
             <div class="section-head compact-head">
               <div>
-                <p class="eyebrow">Operacao</p>
-                <h2>Resumo da central</h2>
+                <p class="eyebrow">Prioridade</p>
+                <h2>O que precisa de atencao</h2>
               </div>
-              <span class="module-chip">Ao vivo</span>
+              <span class="module-chip" id="attentionChip">Agora</span>
             </div>
-            <div class="ops-list">
-              <article><strong>Site publico</strong><span>Conteudo, contato e vitrine do time.</span></article>
-              <article><strong>Equipe</strong><span>Funcoes, hierarquia e permissoes.</span></article>
-              <article><strong>Processo seletivo</strong><span>Candidatos e etapas de entrada.</span></article>
-            </div>
+            <div class="ops-list" id="attentionList"></div>
           </article>
           <article class="app-section">
             <div class="section-head compact-head">
               <div>
-                <p class="eyebrow">Acesso</p>
-                <h2>Meu nivel no app</h2>
+                <p class="eyebrow">Minha equipe</p>
+                <h2>Meu cadastro</h2>
               </div>
-              <span class="module-chip" id="accessGroupChip">Equipe</span>
+              <span class="module-chip" id="myMemberStatus">Equipe</span>
             </div>
-            <p id="accessSummary">Carregando permissoes...</p>
+            <div class="ops-list" id="myMemberPanel"></div>
           </article>
         </div>
       </section>
@@ -416,7 +411,7 @@
             <div class="member-grid compact-members team-edit-grid" id="teamTable"></div>
           </article>
 
-          <article class="app-section team-edit-box admin-only" id="memberEditBox">
+          <article class="app-section team-edit-box" id="memberEditBox">
             <div class="section-head compact-head">
               <div>
                 <p class="eyebrow">Caixa de edicao</p>
@@ -657,6 +652,6 @@
       </section>
     </main>
 
-    <script src="app.js?v=20260621-review-save-fixes"></script>
+    <script src="app.js?v=20260622-self-team-dashboard"></script>
   </body>
 </html>
